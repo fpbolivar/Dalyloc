@@ -1,4 +1,5 @@
 // ignore: file_names
+import 'package:daly_doc/core/colors/colors.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 // ignore: depend_on_referenced_packages
 import 'package:syncfusion_flutter_core/theme.dart';
@@ -14,18 +15,21 @@ class CalendarAlertView extends StatelessWidget {
         body: SfDateRangePickerTheme(
             data: SfDateRangePickerThemeData(
               //brightness: Brightness.dark,
-              backgroundColor: Colors.black,
-              viewHeaderTextStyle: whiteColorStyle(),
-              cellTextStyle: whiteColorStyle(),
-              selectionTextStyle: whiteColorStyle(),
-              // todayHighlightColor: Colors.amber,
-              // todayTextStyle: TextStyle(color: Colors.white),
-              leadingCellTextStyle: whiteColorStyle(),
-              leadingDatesTextStyle: whiteColorStyle(),
-              weekendDatesTextStyle: whiteColorStyle(),
-              weekNumberTextStyle: whiteColorStyle(),
-              headerTextStyle: whiteColorStyle(),
-              activeDatesTextStyle: whiteColorStyle(),
+              backgroundColor: Colors.white,
+              viewHeaderTextStyle: colorStyle(),
+              cellTextStyle: colorStyle(),
+              selectionTextStyle: const TextStyle(color: Colors.white),
+              selectionColor: AppColor.buttonColor,
+              todayHighlightColor: AppColor.buttonColor,
+              todayTextStyle: TextStyle(
+                color: AppColor.buttonColor,
+              ),
+              leadingCellTextStyle: colorStyle(),
+              leadingDatesTextStyle: colorStyle(),
+              weekendDatesTextStyle: colorStyle(),
+              weekNumberTextStyle: colorStyle(),
+              headerTextStyle: colorStyle(),
+              activeDatesTextStyle: colorStyle(),
             ),
             child: SfDateRangePicker(
               view: DateRangePickerView.month,
@@ -38,7 +42,7 @@ class CalendarAlertView extends StatelessWidget {
   }
 
 //METHOD : - WhiteColorStyle
-  TextStyle whiteColorStyle() {
-    return const TextStyle(color: Colors.white);
+  TextStyle colorStyle() {
+    return const TextStyle(color: Colors.black, fontSize: 12);
   }
 }

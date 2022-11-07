@@ -9,7 +9,7 @@ class Routes {
       Function(String)? onBackPress}) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => child),
+      CupertinoPageRoute(builder: (context) => child),
     );
 
     // Navigator.of(context)
@@ -19,5 +19,33 @@ class Routes {
     //     onBackPress(value);
     //   }
     // });
+  }
+
+  static presentSimple(
+      {required BuildContext context,
+      required Widget child,
+      Function(String)? onBackPress}) {
+    Navigator.push(
+      context,
+      CupertinoPageRoute(builder: (context) => child, fullscreenDialog: true),
+    );
+
+    // Navigator.of(context)
+    //     .push(CupertinoPageRoute(builder: (context) => child))
+    //     .then((value) {
+    //   if (onBackPress != null) {
+    //     onBackPress(value);
+    //   }
+    // });
+  }
+
+  static pushSimpleAndReplaced(
+      {required BuildContext context,
+      required Widget child,
+      Function(String)? onBackPress}) {
+    Navigator.pushReplacement(
+      context,
+      CupertinoPageRoute(builder: (context) => child),
+    );
   }
 }

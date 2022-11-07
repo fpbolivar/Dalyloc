@@ -32,7 +32,7 @@ class ScheduleOptionCardView extends StatelessWidget {
             textAlign: TextAlign.center,
             // ignore: prefer_const_constructors
             style: TextStyle(
-                fontWeight: FontWeight.w900, fontSize: 15, color: Colors.black),
+                fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black),
           ),
           const Spacer(),
         ],
