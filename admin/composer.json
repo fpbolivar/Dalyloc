@@ -6,11 +6,16 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "firebase/php-jwt": "^6.3",
         "fruitcake/laravel-cors": "^2.0",
+        "google/apiclient": "^2.12",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.11",
-        "laravel/tinker": "^2.5"
+        "laravel/socialite": " 5.1",
+        "laravel/tinker": "^2.5",
+        "socialiteproviders/facebook": "^4.1",
+        "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
@@ -20,6 +25,7 @@
         "nunomaduro/collision": "^5.10",
         "phpunit/phpunit": "^9.5.10"
     },
+    
     "autoload": {
         "psr-4": {
             "App\\": "app/",
@@ -47,6 +53,7 @@
             "@php artisan key:generate --ansi"
         ]
     },
+    
     "extra": {
         "laravel": {
             "dont-discover": []
@@ -59,4 +66,5 @@
     },
     "minimum-stability": "dev",
     "prefer-stable": true
+    
 }
