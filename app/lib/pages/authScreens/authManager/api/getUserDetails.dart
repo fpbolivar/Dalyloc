@@ -4,6 +4,11 @@ import '../../../../utils/exportWidgets.dart';
 
 class UserDetailsApi {
   Future<void> getUserData() async {
+    if (await internetCheck() == false) {
+      showAlert(LocalString.internetNot);
+
+      return;
+    }
     try {
       Response response = await get(Uri.parse(HttpUrls.WS_GETUSERDATA),
           headers: HttpUrls.headerData() as Map<String, String>);

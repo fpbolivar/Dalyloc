@@ -4,6 +4,7 @@ class LocalString {
   static const lblDalyDoc = "Daly Doc";
   static String userName = "User";
   static String userMobileNo = "1234567890";
+
   static bool isRunningLoader = false;
   static const internetNot = "Connection lost.Check your internet connection.";
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

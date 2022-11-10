@@ -1,3 +1,4 @@
+import 'package:daly_doc/pages/authScreens/authManager/api/forgotPassword.dart';
 import 'package:daly_doc/widgets/socialLoginButton/socialLoginButton.dart';
 import '../../../utils/exportPackages.dart';
 import '../../../utils/exportScreens.dart';
@@ -80,7 +81,14 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
               const SizedBox(
                 height: 50,
               ),
-              CustomButton.regular(title: LocalString.lblSubmit),
+              CustomButton.regular(
+                title: LocalString.lblSubmit,
+                onTap: () {
+                  ForgotPasswordApi().createPassword(
+                      password: passwordTFC.text,
+                      passwordConfirmation: cnfPasswordTFC.text);
+                },
+              ),
               const SizedBox(
                 height: 100,
               ),

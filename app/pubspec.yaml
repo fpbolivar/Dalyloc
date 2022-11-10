@@ -35,6 +35,24 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  path_provider: ^2.0.11
+  flutter_lints: ^2.0.0
+  http: ^0.13.4
+
+  syncfusion_flutter_calendar: ^20.3.49
+  syncfusion_flutter_datepicker: ^20.3.49
+  google_sign_in:
+  shared_preferences: ^2.0.15
+  connectivity:
+  firebase_messaging:
+  flutter_login_facebook:
+
+  firebase_core:
+  client_information:
+  splash_screen_view: ^3.0.0
+  animations: ^2.0.3
+  flutter_html: 2.1.5
+  sqflite: ^2.2.0+3
 
 dev_dependencies:
   flutter_test:
@@ -45,23 +63,6 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
-  http: ^0.13.4
-  add_2_calendar:
-  syncfusion_flutter_calendar: ^20.3.49
-  syncfusion_flutter_datepicker: ^20.3.49
-  google_sign_in:
-  shared_preferences: ^2.0.15
-  connectivity:
-  firebase_messaging:
-  flutter_login_facebook:
-  flutter_time_picker_spinner:
-  device_info_plus:
-  firebase_core:
-  client_information:
-  splash_screen_view: ^3.0.0
-  animations: ^2.0.3
-  flutter_html: 2.1.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

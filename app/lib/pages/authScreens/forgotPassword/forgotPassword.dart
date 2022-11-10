@@ -1,8 +1,10 @@
+import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/widgets/socialLoginButton/socialLoginButton.dart';
 
 import '../../../utils/exportPackages.dart';
 import '../../../utils/exportScreens.dart';
 import '../../../utils/exportWidgets.dart';
+import '../authManager/api/forgotPassword.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   String? red;
@@ -17,6 +19,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   TextEditingController passwordTFC = TextEditingController();
   TextEditingController cnfPasswordTFC = TextEditingController();
   TextEditingController nameTFC = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,9 +73,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
               CustomButton.regular(
                 title: LocalString.lblSend,
-                onTap: () {
-                  Routes.pushSimple(
-                      context: context, child: CreateNewPasswordScreen());
+                onTap: () async {
+                  await LocalStore().set_MobileNumberOfUser(mobileTFC.text);
+                  ForgotPasswordApi().forgotPassword(mobileTFC.text);
                 },
               ),
               const SizedBox(

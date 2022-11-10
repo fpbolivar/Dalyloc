@@ -11,8 +11,7 @@ class SocialLoginManager {
   late final GoogleSignInAuthentication? googleAuth;
 
   loginFaceBook(BuildContext context) async {
-    var fb = FacebookLogin(debug: true);
-
+    final fb = FacebookLogin();
     final res = await fb.logIn(permissions: [
       FacebookPermission.publicProfile,
       FacebookPermission.email,
@@ -51,7 +50,6 @@ class SocialLoginManager {
 
   googleSignIn(BuildContext context) async {
     try {
-      await _googleSignIn.signOut();
       googleUser = await _googleSignIn.signIn();
 
       googleAuth = await googleUser!.authentication;

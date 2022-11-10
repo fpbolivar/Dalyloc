@@ -1,4 +1,5 @@
 import 'package:daly_doc/core/localStore/localStore.dart';
+import 'package:daly_doc/pages/authScreens/authManager/api/forgotPassword.dart';
 import 'package:daly_doc/widgets/socialLoginButton/socialLoginButton.dart';
 
 import '../../../utils/exportPackages.dart';
@@ -8,7 +9,9 @@ import '../../allowLocation/allowLocation.dart';
 
 class OtpVerifyScreen extends StatefulWidget {
   String? red;
-  OtpVerifyScreen({Key? key, this.red}) : super(key: key);
+  bool forgotPassword;
+  OtpVerifyScreen({Key? key, this.red, this.forgotPassword = false})
+      : super(key: key);
 
   @override
   State<OtpVerifyScreen> createState() => _OtpVerifyScreenState();
@@ -19,12 +22,14 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
 
   TextEditingController otpTFC = TextEditingController();
   @override
+  @override
   void initState() {
+    super.initState();
+    print("object=LocalString.forgotPasswordOtp");
     WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        setState(() async {
-          userOTP = await LocalStore().getotp();
-        });
+      (timeStamp) async {
+        userOTP = await LocalStore().getotp();
+        setState(() {});
       },
     );
   }
@@ -83,7 +88,9 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
               CustomButton.regular(
                 title: LocalString.lblVerify,
                 onTap: () {
-                  RegisterApis().otpApi(otp: otpTFC.text);
+                  widget.forgotPassword == false
+                      ? RegisterApis().otpApi(otp: otpTFC.text)
+                      : ForgotPasswordApi().otpApi(otp: otpTFC.text);
                 },
               ),
               Padding(
@@ -165,7 +172,9 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
           const Spacer(),
           InkWell(
             onTap: () {
-              RegisterApis().resendOtp();
+              widget.forgotPassword == false
+                  ? RegisterApis().resendOtp()
+                  : ForgotPasswordApi().resendOtp();
               Future.delayed(const Duration(seconds: 2), () {
                 otp();
                 setState(() {});

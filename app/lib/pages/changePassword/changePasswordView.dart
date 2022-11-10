@@ -5,6 +5,8 @@ import '../../../utils/exportScreens.dart';
 import '../../../utils/exportWidgets.dart';
 import 'dart:math';
 
+import '../authScreens/authManager/api/changePasswordapi.dart';
+
 class ChangePassswordView extends StatefulWidget {
   String? red;
   ChangePassswordView({Key? key, this.red}) : super(key: key);
@@ -76,7 +78,10 @@ class _ChangePassswordViewState extends State<ChangePassswordView> {
               CustomButton.regular(
                 title: LocalString.lblSubmit,
                 onTap: () {
-                  // Routes.pushSimple(context: context, child: OtpVerifyScreen());
+                  ChangePasswordApi().ChangePassword(
+                      oldPassword: currentTFC.text,
+                      password: passwordTFC.text,
+                      passwordConfirmation: cnfPasswordTFC.text);
                 },
               ),
               const SizedBox(

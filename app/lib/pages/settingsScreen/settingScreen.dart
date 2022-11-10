@@ -1,3 +1,5 @@
+import 'package:daly_doc/core/localStore/localStore.dart';
+import 'package:daly_doc/pages/authScreens/authManager/api/logoutApi.dart';
 import 'package:daly_doc/pages/smartScheduleScreens/smartScheduleView.dart';
 import 'package:daly_doc/widgets/socialLoginButton/socialLoginButton.dart';
 import '../../../utils/exportPackages.dart';
@@ -39,7 +41,11 @@ class _SettingScreenState extends State<SettingScreen> {
     SettingOption(title: "Smart Scheduling", section: 3),
   ];
   List<SettingOption> logoutOption = [
-    SettingOption(title: "Logout", section: 4, type: SettingType.logout),
+    SettingOption(
+      title: "Logout",
+      section: 4,
+      type: SettingType.logout,
+    ),
   ];
   @override
   Widget build(BuildContext context) {
@@ -117,7 +123,10 @@ class _SettingScreenState extends State<SettingScreen> {
                 height: 20,
               ),
               SectionRowListView(
-                  itemList: logoutOption, onTap: (sectionIndex, rowIndex) {})
+                  itemList: logoutOption,
+                  onTap: (sectionIndex, rowIndex) async {
+                    LogoutApi().logout();
+                  })
             ]),
       ),
     );

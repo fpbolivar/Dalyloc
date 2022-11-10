@@ -39,18 +39,18 @@ class LoginApi {
         dismissWaitDialog();
 
         showAlert(data['message'].toString());
-        print("Bearer Token ${data["access_token"]}");
+        print("Bearer Token== ${data["access_token"]}");
         var token = data["access_token"];
         var name = data["details"]['name'];
         var mobile = data["details"]['phone_no'];
         LocalString.userMobileNo = mobile;
         LocalString.userName = name;
-        // await LocalStore().set_MobileNumberOfUser(mobile);
-        // await LocalStore().set_nameofuser(name);
+        await LocalStore().set_MobileNumberOfUser(mobile);
+        await LocalStore().set_nameofuser(name);
         await LocalStore().setToken(token);
         Routes.pushSimpleAndReplaced(
             context: LocalString.navigatorKey.currentState!.overlay!.context,
-            child: UserProfileViewScreen());
+            child: ScheduleCalendarScreen());
       } else {
         dismissWaitDialog();
         showAlert(data['message'].toString());

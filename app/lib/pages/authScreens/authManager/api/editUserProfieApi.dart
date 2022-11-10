@@ -3,6 +3,9 @@ import 'package:http/http.dart' as http;
 import 'package:daly_doc/utils/exportPackages.dart';
 import 'package:daly_doc/widgets/dialogs/CommonDialogs.dart';
 
+import '../../../../core/LocalString/localString.dart';
+import '../../../../core/apisUtils/internetCheck.dart';
+
 class EditUserDataApi {
   EdituserData({
     String dob = "",
@@ -14,6 +17,11 @@ class EditUserDataApi {
     String weight = "",
     String gender = "",
   }) async {
+    if (await internetCheck() == false) {
+      showAlert(LocalString.internetNot);
+
+      return;
+    }
     waitDialog();
 
     var headers2 = {"Authorization": token, 'Content-Type': 'application/json'};

@@ -88,6 +88,11 @@ class RegisterApis {
   }
 
   resendOtp() async {
+    if (await internetCheck() == false) {
+      showAlert(LocalString.internetNot);
+
+      return;
+    }
     waitDialog();
     var uid = await LocalStore().getuid();
     try {
@@ -121,6 +126,11 @@ class RegisterApis {
   otpApi({
     required String otp,
   }) async {
+    if (await internetCheck() == false) {
+      showAlert(LocalString.internetNot);
+
+      return;
+    }
     var uid = await LocalStore().getuid();
     var param = {"user_id": uid, "otp": otp};
     try {
