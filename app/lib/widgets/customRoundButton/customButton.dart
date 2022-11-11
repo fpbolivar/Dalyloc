@@ -1,9 +1,11 @@
 import '../../../utils/exportPackages.dart';
+import '../../utils/exportWidgets.dart';
 
 class CustomButton extends StatelessWidget {
   double width = 100;
   double height = 100;
   double fontSize = 17;
+  double borderWidth = 0;
   String title = "";
   bool? shadow;
   Color? background;
@@ -17,8 +19,22 @@ class CustomButton extends StatelessWidget {
       this.shadow,
       this.height = 44,
       this.title = "",
+      this.borderWidth = 0,
       this.fontSize = 20,
       this.radius = 5,
+      this.background,
+      this.titleColor,
+      this.onTap,
+      this.fontweight = FontWeight.w400});
+  CustomButton.regular(
+      {super.key,
+      this.width = double.infinity,
+      this.shadow = false,
+      this.height = 50,
+      this.title = "",
+      this.borderWidth = 0,
+      this.fontSize = 18,
+      this.radius = 8,
       this.background,
       this.titleColor,
       this.onTap,
@@ -33,13 +49,16 @@ class CustomButton extends StatelessWidget {
         width: width,
         height: height,
         decoration: BoxDecoration(
-            boxShadow: [
-              shadow == true
-                  ? const BoxShadow(blurRadius: 25.0, color: Colors.black)
-                  : const BoxShadow(blurRadius: 0),
-            ],
+            border: borderWidth == 0
+                ? null
+                : Border.all(width: 1.5, color: AppColor.borderColor
+                    //                   <--- border width here
+                    ),
+            boxShadow: shadow == false
+                ? null
+                : [const BoxShadow(blurRadius: 25.0, color: Colors.black)],
             borderRadius: BorderRadius.circular(radius ?? 20),
-            color: background ?? Colors.grey[800]),
+            color: background ?? AppColor.buttonColor),
         clipBehavior: Clip.antiAlias,
         child: Center(
           child: Text(

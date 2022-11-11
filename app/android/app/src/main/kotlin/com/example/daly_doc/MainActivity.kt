@@ -1,4 +1,4 @@
-package com.example.daly_doc
+package com.dalydoc.android
 
 import io.flutter.embedding.android.FlutterActivity
 

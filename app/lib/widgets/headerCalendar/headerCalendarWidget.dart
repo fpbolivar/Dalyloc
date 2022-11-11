@@ -12,16 +12,21 @@ class HeaderCalendar extends StatelessWidget {
       this.headerDateList,
       this.onSelection,
       this.selectedDate,
-      this.onClickCalendar})
+      this.onClickCalendar,
+      this.onClickSetting,
+      this.onClickNotification})
       : super(key: key);
   Function(HeaderCalendarDatesModal)? onSelection;
   Function()? onClickCalendar;
+  Function()? onClickSetting;
+  Function()? onClickNotification;
   @override
   Widget build(BuildContext context) {
+    print(MediaQuery.of(context).size.width);
     return Container(
       height: 180,
       width: MediaQuery.of(context).size.width,
-      color: AppColor.bgcolor,
+      color: AppColor.newBgcolor,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,40 +35,47 @@ class HeaderCalendar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              IconButton(
-                  onPressed: () {
-                    Navigator.pop(
-                      context,
-                    );
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                  )),
+              // IconButton(
+              //     onPressed: () {
+              //       Navigator.pop(
+              //         context,
+              //       );
+              //     },
+              //     icon: const Icon(
+              //       Icons.arrow_back_ios,
+              //       color: Colors.black,
+              //     )),
               Spacer(),
               IconButton(
                 autofocus: false,
                 onPressed: () {
                   onClickCalendar!();
                 },
-                icon: const Icon(
-                  Icons.calendar_month,
-                  color: Colors.white,
+                icon: Image.asset(
+                  "assets/icons/ic_calendar.png",
+                  width: 20,
+                  height: 20,
                 ),
               ),
               IconButton(
                 autofocus: false,
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.notifications,
-                  color: Colors.white,
+                onPressed: () {
+                  onClickNotification!();
+                },
+                icon: Image.asset(
+                  "assets/icons/ic_bell_notification.png",
+                  width: 20,
+                  height: 20,
                 ),
               ),
               IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.settings,
-                  color: Colors.white,
+                onPressed: () {
+                  onClickSetting!();
+                },
+                icon: Image.asset(
+                  "assets/icons/ic_setting.png",
+                  width: 20,
+                  height: 20,
                 ),
               ),
             ],
@@ -78,26 +90,25 @@ class HeaderCalendar extends StatelessWidget {
                 style: const TextStyle(color: Colors.black, fontSize: 36),
                 children: <TextSpan>[
                   TextSpan(
-                      text: ("${headerDateList!.first.monthFormat}  ")
-                          .toUpperCase(),
+                      text: ("${headerDateList!.first.monthFormat}  "),
                       style: TextStyle(
-                        color: AppColor.textWhiteColor,
+                        color: AppColor.textBlackColor,
                         fontWeight: FontWeight.w600,
-                        fontSize: 25,
+                        fontSize: 23,
                       )),
                   TextSpan(
                       text: (headerDateList!.first.yyyyFormat ?? ""),
                       style: TextStyle(
-                        color: AppColor.brownYearColor,
+                        color: AppColor.textGrayBlue,
                         fontWeight: FontWeight.w700,
-                        fontSize: 25,
+                        fontSize: 23,
                       )),
                 ],
               ),
             ),
           ),
           const SizedBox(
-            height: 5,
+            height: 20,
           ),
           Container(
             height: 70,
@@ -113,13 +124,13 @@ class HeaderCalendar extends StatelessWidget {
                 return Container(
                   width: (MediaQuery.of(context).size.width / countSize) - 10,
                   height: 50,
-                  color: AppColor.bgcolor,
+                  color: AppColor.newBgcolor,
                   child: Column(
                     children: [
                       Text(
                         item.dayFormat ?? "",
                         style: TextStyle(
-                            fontSize: 17, color: AppColor.textWhiteColor),
+                            fontSize: 14, color: AppColor.textGrayBlue),
                       ),
                       const SizedBox(
                         height: 5,
@@ -134,15 +145,24 @@ class HeaderCalendar extends StatelessWidget {
                               ? BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: AppColor
-                                      .brownYearColor, // inner circle color
+                                      .buttonColor, // inner circle color
                                 )
-                              : null,
+                              : BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppColor
+                                      .halfBlueGray, // inner circle color
+                                ),
                           child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(9.0),
                             child: Text(
                               item.day ?? "",
                               style: TextStyle(
-                                  fontSize: 15, color: AppColor.textWhiteColor),
+                                  fontSize: 12,
+                                  color: (selectedDate != null &&
+                                          selectedDate!.dateTime ==
+                                              item.dateTime)
+                                      ? AppColor.textWhiteColor
+                                      : AppColor.buttonColor),
                             ),
                           ),
                         ),

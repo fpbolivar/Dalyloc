@@ -35,8 +35,24 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  path_provider: ^2.0.11
+  flutter_lints: ^2.0.0
+  http: ^0.13.4
+
   syncfusion_flutter_calendar: ^20.3.49
   syncfusion_flutter_datepicker: ^20.3.49
+  google_sign_in:
+  shared_preferences: ^2.0.15
+  connectivity:
+  firebase_messaging:
+  flutter_login_facebook:
+
+  firebase_core:
+  client_information:
+  splash_screen_view: ^3.0.0
+  animations: ^2.0.3
+  flutter_html: 2.1.5
+  sqflite: ^2.2.0+3
 
 dev_dependencies:
   flutter_test:
@@ -47,9 +63,6 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
-  add_2_calendar:
-  flutter_time_picker_spinner:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -63,10 +76,12 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-      - assets/icons/
-      - assets/images/
-
-     
+    - assets/icons/
+    - assets/images/
+    - assets/design_course/
+    - assets/fitness_app/
+    - assets/hotel/
+    - assets/introduction_animation/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -79,6 +94,20 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+  fonts:
+    - family: NotoSans
+      fonts:
+        - asset: assets/fonts/NotoSans-Light.ttf
+          weight: 300
+        - asset: assets/fonts/NotoSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/NotoSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/NotoSans-Bold.ttf
+          weight: 700
+
   # fonts:
   #   - family: Schyler
   #     fonts:
