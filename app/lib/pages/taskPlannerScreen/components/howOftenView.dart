@@ -6,20 +6,63 @@ import 'package:flutter/cupertino.dart';
 import '../../../core/colors/colors.dart';
 import '../../../utils/exportPackages.dart';
 
-enum SegmentOftebType { once, daily, weekly, monthly }
+enum SegmentOftenType { once, daily, weekly, monthly }
+
+extension SegmentOftenRawValue on SegmentOftenType {
+  String get rawValue {
+    switch (this) {
+      case SegmentOftenType.once:
+        return 'once';
+      case SegmentOftenType.daily:
+        return 'daily';
+      case SegmentOftenType.weekly:
+        return 'weekly';
+      case SegmentOftenType.monthly:
+        return 'monthly';
+    }
+  }
+}
+
+extension SegmentOftenTypeValue on String {
+  SegmentOftenType get typeValue {
+    switch (this) {
+      case "once":
+        return SegmentOftenType.once;
+      case "daily":
+        return SegmentOftenType.daily;
+      case "weekly":
+        return SegmentOftenType.weekly;
+      case "monthly":
+        return SegmentOftenType.monthly;
+      default:
+        return SegmentOftenType.once;
+    }
+  }
+}
 
 // ignore: must_be_immutable
 class HowOftenViewTask extends StatefulWidget {
-  HowOftenViewTask({
-    super.key,
-  });
-
+  HowOftenViewTask(
+      {super.key,
+      this.howOften = "",
+      this.onSelected,
+      this.selectedOften = SegmentOftenType.once});
+  String howOften = "";
+  Function(String)? onSelected;
+  SegmentOftenType selectedOften = SegmentOftenType.once;
   @override
   State<HowOftenViewTask> createState() => _HowOftenViewTaskState();
 }
 
 class _HowOftenViewTaskState extends State<HowOftenViewTask> {
-  SegmentOftebType selectedData = SegmentOftebType.once;
+  SegmentOftenType selectedData = SegmentOftenType.once;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    selectedData = widget.selectedOften;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -40,24 +83,25 @@ class _HowOftenViewTaskState extends State<HowOftenViewTask> {
             height: 20,
           ),
           Container(
-              child: CustomSlidingSegmentedControl<SegmentOftebType>(
+              child: CustomSlidingSegmentedControl<SegmentOftenType>(
             isStretch: true,
+            initialValue: selectedData,
             children: {
-              SegmentOftebType.once: Text(
+              SegmentOftenType.once: Text(
                 'Once',
-                style: normalStyle(SegmentOftebType.once),
+                style: normalStyle(SegmentOftenType.once),
               ),
-              SegmentOftebType.daily: Text(
+              SegmentOftenType.daily: Text(
                 'Daily',
-                style: normalStyle(SegmentOftebType.daily),
+                style: normalStyle(SegmentOftenType.daily),
               ),
-              SegmentOftebType.weekly: Text(
+              SegmentOftenType.weekly: Text(
                 'Weekly',
-                style: normalStyle(SegmentOftebType.weekly),
+                style: normalStyle(SegmentOftenType.weekly),
               ),
-              SegmentOftebType.monthly: Text(
+              SegmentOftenType.monthly: Text(
                 'Monthly',
-                style: normalStyle(SegmentOftebType.monthly),
+                style: normalStyle(SegmentOftenType.monthly),
               ),
             },
             innerPadding: EdgeInsets.all(3.0),
@@ -73,6 +117,8 @@ class _HowOftenViewTaskState extends State<HowOftenViewTask> {
               setState(() {
                 selectedData = v;
               });
+              widget.onSelected!(selectedData.rawValue);
+              //  selectedData
             },
           )),
         ],
@@ -80,7 +126,7 @@ class _HowOftenViewTaskState extends State<HowOftenViewTask> {
     );
   }
 
-  normalStyle(SegmentOftebType type) {
+  normalStyle(SegmentOftenType type) {
     return type == selectedData
         ? selectedStyle()
         : TextStyle(

@@ -1,3 +1,4 @@
+import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/utils/exportPackages.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
 
@@ -31,22 +32,25 @@ class LogoutApi {
 
       if (data['status'] == true) {
         dismissWaitDialog();
-        Routes.pushSimple(
-            context: LocalString.navigatorKey.currentState!.context,
-            child: IntroductionAnimationScreen());
-
-        showAlert(data['message'].toString());
-        await LocalStore().setToken("");
+        gotoMainScreen();
       } else {
         dismissWaitDialog();
-        showAlert(data['message'].toString());
+        gotoMainScreen();
       }
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
     } catch (e) {
       dismissWaitDialog();
       print(e.toString());
-      showErrorAlert(e.toString());
+      gotoMainScreen();
+      //showErrorAlert(e.toString());
     }
+  }
+
+  gotoMainScreen() async {
+    await LocalStore().setToken("");
+    Routes.pushSimpleAndReplaced(
+        context: Constant.navigatorKey.currentState!.context,
+        child: IntroductionAnimationScreen());
   }
 }

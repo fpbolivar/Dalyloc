@@ -1,3 +1,4 @@
+import 'package:daly_doc/core/constant/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:daly_doc/utils/exportPackages.dart';
 import '../../../../core/localStore/localStore.dart';
@@ -31,7 +32,7 @@ class ForgotPasswordApi {
         await LocalStore().setotp(otp);
 
         Routes.pushSimple(
-            context: LocalString.navigatorKey.currentState!.overlay!.context,
+            context: Constant.navigatorKey.currentState!.overlay!.context,
             child: OtpVerifyScreen(
               forgotPassword: true,
             ));
@@ -107,7 +108,7 @@ class ForgotPasswordApi {
 
       if (data['status'] == true) {
         Routes.pushSimple(
-            context: LocalString.navigatorKey.currentState!.context,
+            context: Constant.navigatorKey.currentState!.context,
             child: CreateNewPasswordScreen());
         dismissWaitDialog();
         showAlert(data['message'].toString());
@@ -171,7 +172,7 @@ class ForgotPasswordApi {
 
       if (data['status'] == true) {
         Routes.pushSimple(
-            context: LocalString.navigatorKey.currentState!.context,
+            context: Constant.navigatorKey.currentState!.context,
             child: LoginScreen());
         dismissWaitDialog();
         showAlert(data['message'].toString());

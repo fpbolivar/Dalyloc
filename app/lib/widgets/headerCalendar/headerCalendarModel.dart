@@ -1,3 +1,4 @@
+import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
 import 'package:intl/intl.dart';
 
 class HeaderCalendarDatesModal {
@@ -6,10 +7,12 @@ class HeaderCalendarDatesModal {
   String? monthFormat;
   String? yyyyFormat;
   String? day;
+  String? dateFormatYYYYMMDD;
   HeaderCalendarDatesModal(
       {this.dateTime,
       this.dayFormat,
       this.day,
+      this.dateFormatYYYYMMDD,
       this.monthFormat,
       this.yyyyFormat}) {}
   factory HeaderCalendarDatesModal.fromDate(DateTime dt) {
@@ -20,11 +23,14 @@ class HeaderCalendarDatesModal {
     final DateFormat formatterMMMM = DateFormat('MMMM');
     final String dayMMMM = formatterMMMM.format(dt);
     final DateFormat formatterYYYY = DateFormat('yyyy');
+    final DateFormat formatterYYYYMMDD = DateFormat('yyyy');
+    final String yyyymmdd = TaskManager().dateParseyyyyMMdd(dt);
     final String dayYYYY = formatterYYYY.format(dt);
     return HeaderCalendarDatesModal(
         dateTime: dt,
         day: dayDD,
         dayFormat: dayEEE,
+        dateFormatYYYYMMDD: yyyymmdd,
         monthFormat: dayMMMM,
         yyyyFormat: dayYYYY);
   }

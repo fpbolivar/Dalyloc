@@ -11,6 +11,7 @@ class DBIntializer {
   var TASKTABLE = "TASKTABLE";
   Future<Database> get db async {
     if (null != _db) {
+      print("DB STATUS ${_db}");
       return _db!;
     }
     _db = await initDb();
@@ -21,8 +22,26 @@ class DBIntializer {
     io.Directory documentsDirectory = await getApplicationDocumentsDirectory();
     const String DB_NAME = 'DalyDoc.db';
     String path = join(documentsDirectory.path, DB_NAME);
-    var db = await openDatabase(path, version: 1, onCreate: _onCreate);
+    print("DB path ${path}");
+    var db = await openDatabase(path,
+        version: 1, onCreate: _onCreate, onUpgrade: _onUpgrade);
     return db;
+  }
+
+  void _updateTableCompanyV1toV2(Batch batch) {
+    print("_updateTableCompanyV1toV2");
+    batch.execute(
+        'ALTER TABLE $TASKTABLE ADD ${TASK_TABLE_KEY.ISCOMPELETED} TEXT');
+  }
+
+  _onUpgrade(Database db, oldVersion, newVersion) async {
+    //createTaskTable(db);
+    // var batch = db.batch();
+    // if (oldVersion == 1) {
+    //   // We update existing table and create the new tables
+    //   _updateTableCompanyV1toV2(batch);
+    // }
+    // await batch.commit();
   }
 
   _onCreate(Database db, int version) async {
@@ -30,17 +49,26 @@ class DBIntializer {
   }
 
   createTaskTable(Database db) async {
-    const String ID = 'id';
-    const String EMAIL = 'email';
-    const String DATE = 'date';
-    const String TIME = 'time';
-    const String TASK_TIME_STAMP = 'taskTimeStamp';
-    const String CREATE_TIME_STAMP = ' createTimeStamp';
-    const String HOW_LONG = 'howLong';
-    const String HOW_OFTEN = 'howOften';
-    const String NOTE = 'note';
-    const String SUBNOTESNOTE = 'subNotes';
+    print("DB Create ");
+    // id INTEGER PRIMARY KEY AUTOINCREMENT,
     return await db.execute(
-        "CREATE TABLE $TASKTABLE ($ID integer primary key autoincrement, $EMAIL TEXT,$DATE TEXT, $TIME TEXT, $TASK_TIME_STAMP TEXT, $CREATE_TIME_STAMP TEXT, $HOW_LONG TEXT, $HOW_OFTEN TEXT,$NOTE TEXT,$SUBNOTESNOTE TEXT)");
+        "CREATE TABLE $TASKTABLE (${TASK_TABLE_KEY.ID} integer,${TASK_TABLE_KEY.SERVERID} integer, ${TASK_TABLE_KEY.EMAIL} TEXT, ${TASK_TABLE_KEY.TASK_TIME_STAMP} integer, ${TASK_TABLE_KEY.CREATE_TIME_STAMP} integer, ${TASK_TABLE_KEY.HOW_LONG} TEXT, ${TASK_TABLE_KEY.HOW_OFTEN} TEXT,${TASK_TABLE_KEY.NOTE} TEXT,${TASK_TABLE_KEY.SUBNOTESNOTE} TEXT,${TASK_TABLE_KEY.DATETEXT} TEXT,${TASK_TABLE_KEY.ENDTIME} TEXT,${TASK_TABLE_KEY.STARTTIME} TEXT,${TASK_TABLE_KEY.ISCOMPELETED} TEXT)");
   }
+}
+
+class TASK_TABLE_KEY {
+  static String ID = 'tId';
+  static String EMAIL = 'email';
+
+  static String TASK_TIME_STAMP = 'taskTimeStamp';
+  static String CREATE_TIME_STAMP = ' createTimeStamp';
+  static String HOW_LONG = 'howLong';
+  static String HOW_OFTEN = 'howOften';
+  static String NOTE = 'note';
+  static String SUBNOTESNOTE = 'subNotes';
+  static String STARTTIME = 'startTime';
+  static String ENDTIME = 'endTime';
+  static String DATETEXT = 'dateString';
+  static String ISCOMPELETED = 'isCompleted';
+  static String SERVERID = 'serverID';
 }

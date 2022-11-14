@@ -1,3 +1,4 @@
+import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:http/http.dart' as http;
 import 'package:daly_doc/utils/exportPackages.dart';
@@ -49,8 +50,8 @@ class LoginApi {
         await LocalStore().set_nameofuser(name);
         await LocalStore().setToken(token);
         Routes.pushSimpleAndReplaced(
-            context: LocalString.navigatorKey.currentState!.overlay!.context,
-            child: ScheduleCalendarScreen());
+            context: Constant.navigatorKey.currentState!.overlay!.context,
+            child: Routes.setScheduleScreen());
       } else {
         dismissWaitDialog();
         showAlert(data['message'].toString());

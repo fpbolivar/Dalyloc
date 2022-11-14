@@ -87,7 +87,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 title: LocalString.lblSignUp,
                 onTap: () {
                   //        Routes.pushSimple(
-                  // context: LocalString.navigatorKey.currentState!.context,
+                  // context: Constant.navigatorKey.currentState!.context,
                   // child: OtpVerifyScreen());
                   RegisterApis().userRegister(
                       mobileNumber: mobileTFC.text,

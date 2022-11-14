@@ -1,4 +1,6 @@
+import 'package:daly_doc/core/constant/constants.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import '../../utils/exportPackages.dart';
 
 class Routes {
@@ -19,6 +21,20 @@ class Routes {
     //     onBackPress(value);
     //   }
     // });
+  }
+
+  static Widget setScheduleScreen() {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) {
+          var taskProvider = Constant.taskProvider;
+
+          return taskProvider;
+        }),
+        // ChangeNotifierProvider(create: (_) => TaskManager()),
+      ],
+      child: ScheduleCalendarScreen(),
+    );
   }
 
   static presentSimple(
