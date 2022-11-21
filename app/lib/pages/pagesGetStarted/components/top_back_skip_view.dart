@@ -67,12 +67,11 @@ class TopBackSkipView extends StatelessWidget {
                   //   ),
                 ),
                 SlideTransition(
-                  position: _skipAnimation,
-                  child: IconButton(
-                    onPressed: onSkipClick,
-                    icon: const Text(LocalString.lblSkip),
-                  ),
-                ),
+                    position: _skipAnimation,
+                    child: InkWell(
+                      child: const Text(LocalString.lblSkip),
+                      onTap: onSkipClick,
+                    )),
               ],
             ),
           ),

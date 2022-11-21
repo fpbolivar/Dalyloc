@@ -1,7 +1,107 @@
 import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../../utils/exportPackages.dart';
+
+alertTimePicker(BuildContext context,
+    {TimeOfDay? initialTime,
+    onSelected,
+    heading = "Select time",
+    onClose}) async {
+  print("_selectDate");
+  var now = DateTime.now();
+  var today = new DateTime(now.year, now.month, now.day, now.hour, 0);
+  showCupertinoModalPopup(
+      context: context,
+      builder: (_) => Material(
+            child: Container(
+                height: 260,
+                child: Column(
+                  children: [
+                    Container(child: Text(heading), color: Colors.white),
+                    Expanded(
+                      child: Container(
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          child: CupertinoDatePicker(
+                              // minimumDate: DateTime.now().add(Duration(days: 1)),
+                              mode: CupertinoDatePickerMode.time,
+                              use24hFormat: true,
+                              minuteInterval: 10,
+                              initialDateTime: today,
+                              // minuteInterval: 30,
+                              //initialDateTime: DateTime.now().add(Duration(days: 1)),
+                              onDateTimeChanged: (picked) {
+                                onSelected(picked);
+                              })),
+                    )
+                  ],
+                )),
+          )).then((value) {
+    print("CLOSES");
+    if (onClose != null) {
+      onClose();
+    }
+  });
+  //DateTime selectedDate = DateTime.now();
+  // final TimeOfDay picked = await showTimePicker(
+  //   initialEntryMode: TimePickerEntryMode.dial,
+  //   context: context,
+  //   initialTime: initialTime,
+  //   builder: (BuildContext context, Widget child) {
+  //     return MediaQuery(
+  //       data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+  //       child: child,
+  //     );
+  //   },
+  // );
+
+  // onSelected(picked);
+}
+
+showLocationSelection(msg, context,
+    {bool pop = false, Function(String)? onSelection}) {
+  var alert = AlertDialog(
+    title: Container(
+      child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 5,
+          ),
+          TextButton(
+            child: new Text(
+              "Automatic",
+              style: TextStyle(fontSize: 17, color: Colors.black),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+              onSelection!("Automatic");
+            },
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          TextButton(
+            child: new Text(
+              "Manually",
+              style: TextStyle(fontSize: 17, color: Colors.black),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+              onSelection!("Manually");
+            },
+          ),
+        ],
+      ),
+    ),
+    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(15)),
+  );
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      });
+}
 
 showAlert(msg,
     {bool pop = false,

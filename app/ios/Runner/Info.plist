@@ -40,6 +40,7 @@
         <string>91aee301a1990cc5e9e2087ad50e2dfe</string>
         <key>FacebookDisplayName</key>
         <string>DalyDoc</string>
+
         <key>LSApplicationQueriesSchemes</key>
         <array>
             <string>fbapi</string>
@@ -58,6 +59,12 @@
             <string>fbauth2</string>
             <string>fbshareextension</string>
         </array>
+        <key>NSLocationWhenInUseUsageDescription</key>
+<string>When in use permissions</string>
+<key>NSLocationAlwaysUsageDescription</key>
+<string>always permissions</string>
+<key>NSLocationAlwaysAndWhenInUsageDescription</key>
+<string>Always and in usage permissions</string>
         <key>LSRequiresIPhoneOS</key>
         <true/>
         <key>UIApplicationSupportsIndirectInputEvents</key>

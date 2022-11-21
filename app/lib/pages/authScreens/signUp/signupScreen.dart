@@ -61,7 +61,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 height: 20,
               ),
               CustomTF(
-                  controllr: mobileTFC, placeholder: LocalString.plcMobileNo),
+                controllr: mobileTFC,
+                placeholder: LocalString.plcMobileNo,
+                keyBoardType: TextInputType.phone,
+              ),
               const SizedBox(
                 height: 20,
               ),
@@ -86,9 +89,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               CustomButton.regular(
                 title: LocalString.lblSignUp,
                 onTap: () {
-                  //        Routes.pushSimple(
-                  // context: Constant.navigatorKey.currentState!.context,
-                  // child: OtpVerifyScreen());
+                  // Routes.pushSimple(context: context, child: OtpVerifyScreen());
                   RegisterApis().userRegister(
                       mobileNumber: mobileTFC.text,
                       name: nameTFC.text,

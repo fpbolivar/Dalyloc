@@ -19,7 +19,7 @@ class MyHours extends StatelessWidget {
             txt.toString(),
             style: TextStyle(
               fontSize: hours == selectedHrs ? 24 : 20,
-              color: hours == selectedHrs ? Colors.white : Colors.black,
+              color: hours == selectedHrs ? Colors.transparent : Colors.black,
               fontWeight: FontWeight.w400,
             ),
           ),

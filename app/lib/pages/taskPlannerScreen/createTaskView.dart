@@ -18,7 +18,10 @@ class CreateTaskView extends StatefulWidget {
   String? red;
   bool? isUpdate;
   TaskModel? item;
-  CreateTaskView({Key? key, this.red, this.isUpdate = false, this.item})
+  DateTime? date;
+
+  CreateTaskView(
+      {Key? key, this.red, this.isUpdate = false, this.item, this.date})
       : super(key: key);
 
   @override
@@ -43,18 +46,27 @@ class _CreateTaskViewState extends State<CreateTaskView> {
   var howLong = "1m";
   var stime = "";
   var etime = "";
+  var stime24 = "";
+  var etime24 = "";
   var _dateYYYYMMDD = "";
+  var utcDateTime = "";
   List<SubtaskModel> subTaskdata = [];
-  TextEditingController emailTF = TextEditingController();
+  TextEditingController nameTF = TextEditingController();
   TextEditingController noteTF = TextEditingController();
   bool update = false;
   TaskModel? itemTask;
   SegmentType selectedLongData = SegmentType.first;
   SegmentOftenType selectedOftenData = SegmentOftenType.once;
+  DateTime? calenderDefaultDate;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    if (widget.date != null) {
+      calenderDefaultDate = widget.date;
+    } else {
+      calenderDefaultDate = DateTime.now();
+    }
     if (widget.isUpdate != null) {
       update = widget.isUpdate!;
       if (update) {
@@ -86,7 +98,7 @@ class _CreateTaskViewState extends State<CreateTaskView> {
 
 //If Update
   setData() {
-    emailTF.text = itemTask!.email;
+    nameTF.text = itemTask!.taskName;
     noteTF.text = itemTask!.note;
     subTaskdata = itemTask!.subTaskslist!;
 
@@ -116,7 +128,20 @@ class _CreateTaskViewState extends State<CreateTaskView> {
                 height: 20,
               ),
               EmaiViewTask(
-                controller: emailTF,
+                controller: nameTF,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              HowLongViewTask(
+                selectedData: selectedLongData,
+                howLong: (interval, rawValue) {
+                  setState(() {
+                    this.interval = interval;
+                  });
+                  howLong = rawValue;
+                  calculateTimeUseInterval();
+                },
               ),
               const SizedBox(
                 height: 20,
@@ -165,19 +190,6 @@ class _CreateTaskViewState extends State<CreateTaskView> {
               const SizedBox(
                 height: 20,
               ),
-              HowLongViewTask(
-                selectedData: selectedLongData,
-                howLong: (interval, rawValue) {
-                  setState(() {
-                    this.interval = interval;
-                  });
-                  howLong = rawValue;
-                  calculateTimeUseInterval();
-                },
-              ),
-              const SizedBox(
-                height: 20,
-              ),
               HowOftenViewTask(
                   selectedOften: selectedOftenData,
                   onSelected: (data) {
@@ -221,51 +233,92 @@ class _CreateTaskViewState extends State<CreateTaskView> {
   }
 
   validateForm() {
-    if (emailTF.text.isEmpty) {
-      ToastMessage.showMessage(msg: LocalString.msgEmail);
-    } else if (!Validator.isValidEmail(emailTF.text)) {
-      ToastMessage.showMessage(msg: LocalString.msgInValidEmail);
-    } else if (noteTF.text.isEmpty) {
+    if (nameTF.text.isEmpty) {
+      ToastMessage.showMessage(msg: LocalString.msgTaskName);
+    }
+    // else if (!Validator.isValidEmail(emailTF.text)) {
+    //   ToastMessage.showMessage(msg: LocalString.msgInValidEmail);
+    // }
+    else if (noteTF.text.isEmpty) {
       ToastMessage.showMessage(msg: LocalString.msgNotes);
     } else {
       if (update) {
         final subtasks = manager.subtaskJSON(this.subTaskdata);
         final subtasksStr = json.encode(subtasks);
+        final utcDateTimeTask =
+            manager.generateUtcDateTime(date: _dateYYYYMMDD, time: stime24);
+
         TaskModel data = TaskModel();
-        data.email = emailTF.text;
+        data.tid = itemTask!.tid;
+        data.taskName = nameTF.text;
         data.dateString = _dateYYYYMMDD;
         data.endTime = etime;
         data.startTime = stime;
         data.note = noteTF.text;
+        data.email = "";
         data.howLong = howLong;
         data.howOften = howOften;
         data.isCompleted = itemTask!.isCompleted;
         data.serverID = itemTask!.serverID;
-        data.subNotes = subtasksStr;
+        data.utcDateTime = utcDateTimeTask;
+        data.createTimeStamp = DateTime.now().microsecondsSinceEpoch;
 
+        data.subNotes = subtasksStr;
         manager.updateTaskData(data, () {});
+        // TaskApiManager().updateTaskApi(
+        //     data: data,
+        //     subTask: subtasks,
+        //     onSuccess: (value) {
+        //       // data.serverID = value;
+
+        //     });
+        if (data.serverID != 0) {
+          TaskApiManager()
+              .updateTaskApi(data: data, subTask: subtasks, isSync: true);
+        }
       } else {
         final subtasks = manager.subtaskJSON(this.subTaskdata);
         final subtasksStr = json.encode(subtasks);
+        final utcDateTimeTask =
+            manager.generateUtcDateTime(date: _dateYYYYMMDD, time: stime24);
+
         TaskModel data = TaskModel();
-        data.email = emailTF.text;
+        data.taskName = nameTF.text;
+        data.email = "";
+        data.utcDateTime = utcDateTimeTask;
         data.tid = DateTime.now().microsecondsSinceEpoch;
         data.howLong = howLong;
         data.howOften = howOften;
         data.note = noteTF.text;
         data.endTime = etime;
+        data.createTimeStamp = DateTime.now().microsecondsSinceEpoch;
         data.startTime = stime;
         data.dateString = _dateYYYYMMDD;
         data.subNotes = subtasksStr;
         data.isCompleted = "0";
         data.serverID = 0;
-        //TaskApiManager().CreateTaskData(data: data, subTask: subtasks);
         print("${subtasksStr}");
-        manager.saveTaskData(data, () {
-          noteTF.text = "";
-          emailTF.text = "";
-          setState(() {});
-        });
+        TaskApiManager().CreateTaskData(
+            data: data,
+            subTask: subtasks,
+            onSuccess: (value) {
+              data.serverID = value;
+              manager.saveTaskData(data, () {
+                noteTF.text = "";
+                nameTF.text = "";
+                setState(() {});
+              });
+              // if (value != 0) {
+
+              // }
+            });
+
+        // manager.saveTaskData(data, () {
+        //   noteTF.text = "";
+        //   nameTF.text = "";
+        //   TaskApiManager().CreateTaskData(data: data, subTask: subtasks);
+        //   setState(() {});
+        // });
       }
     }
   }
@@ -301,8 +354,8 @@ class _CreateTaskViewState extends State<CreateTaskView> {
     minController = FixedExtentScrollController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (update == false) {
-        displayDateText = manager.dateParseMMddyyyy(DateTime.now());
-        _dateYYYYMMDD = TaskManager().dateParseyyyyMMdd(DateTime.now());
+        displayDateText = manager.dateParseMMddyyyy(calenderDefaultDate!);
+        _dateYYYYMMDD = TaskManager().dateParseyyyyMMdd(calenderDefaultDate!);
         timecController.jumpToItem(8);
         minController.jumpToItem(30);
         calculateTimeUseInterval();
@@ -356,6 +409,8 @@ class _CreateTaskViewState extends State<CreateTaskView> {
     var endTime = StartTime.add(intervalTemp);
     // print(endTime);
     // print("endTime${endTime}");
+    stime24 = DateFormat("HH:mm").format(StartTime);
+    etime24 = DateFormat("HH:mm").format(endTime);
 
     stime = DateFormat("h:mm a").format(StartTime);
     etime = DateFormat("h:mm a").format(endTime);

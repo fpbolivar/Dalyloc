@@ -18,7 +18,7 @@ class MyMinutes extends StatelessWidget {
             txt.toString(),
             style: TextStyle(
               fontSize: mins == selectedMins ? 24 : 20,
-              color: mins == selectedMins ? Colors.white : Colors.black,
+              color: mins == selectedMins ? Colors.transparent : Colors.black,
               fontWeight: FontWeight.w400,
             ),
           ),

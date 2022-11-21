@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "334189646378-9vbk3iec2api9a3t622is7e2ukqlsudc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dalydoc.android",
+            "certificate_hash": "cd4f9b66356c970c9b5efab85f34aa574536fd46"
+          }
+        },
+        {
           "client_id": "334189646378-8tvgoeq6hjuk7qk75q3i7ctb331e1u5q.apps.googleusercontent.com",
           "client_type": 3
         }

@@ -44,6 +44,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
       backgroundColor: AppColor.newBgcolor,
       appBar: CustomAppBar(
         title: LocalString.lblOTPVerify,
+        icon: false,
       ),
       body: BackgroundCurveView(
           child: SafeArea(
@@ -55,59 +56,66 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
     );
   }
 
+  Future<bool> _onWillPop() async {
+    return false; //<-- SEE HERE
+  }
+
 //METHID : -   bodyDesign
   Widget bodyDesign() {
-    return SingleChildScrollView(
-      child: Center(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              Text(
-                LocalString.lblOTPVerifyDescription,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 15,
-                    color: AppColor.textBlackColor),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              otpTF(),
-              const SizedBox(
-                height: 10,
-              ),
-              resendWidget(),
-              const SizedBox(
-                height: 50,
-              ),
-              CustomButton.regular(
-                title: LocalString.lblVerify,
-                onTap: () {
-                  widget.forgotPassword == false
-                      ? RegisterApis().otpApi(otp: otpTFC.text)
-                      : ForgotPasswordApi().otpApi(otp: otpTFC.text);
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Text(
-                  "Your six digit Otp is $userOTP",
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: SingleChildScrollView(
+        child: Center(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  LocalString.lblOTPVerifyDescription,
                   textAlign: TextAlign.left,
                   style: TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 15,
-                      color: AppColor.subTitleColor),
+                      color: AppColor.textBlackColor),
                 ),
-              ),
-              const SizedBox(
-                height: 100,
-              ),
-            ]),
+                const SizedBox(
+                  height: 20,
+                ),
+                otpTF(),
+                const SizedBox(
+                  height: 10,
+                ),
+                resendWidget(),
+                const SizedBox(
+                  height: 50,
+                ),
+                CustomButton.regular(
+                  title: LocalString.lblVerify,
+                  onTap: () {
+                    widget.forgotPassword == false
+                        ? RegisterApis().otpApi(otp: otpTFC.text)
+                        : ForgotPasswordApi().otpApi(otp: otpTFC.text);
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Text(
+                    "Your OTP Code is $userOTP",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 15,
+                        color: AppColor.subTitleColor),
+                  ),
+                ),
+                const SizedBox(
+                  height: 100,
+                ),
+              ]),
+        ),
       ),
     );
   }
@@ -172,6 +180,8 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
           const Spacer(),
           InkWell(
             onTap: () {
+              otpTFC.text = "";
+              setState(() {});
               widget.forgotPassword == false
                   ? RegisterApis().resendOtp()
                   : ForgotPasswordApi().resendOtp();

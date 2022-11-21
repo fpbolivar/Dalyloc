@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:daly_doc/core/LocalString/localString.dart';
 import 'package:daly_doc/core/Sql/createTaskHelper.dart';
+import 'package:daly_doc/core/localStore/localStore.dart';
+import 'package:daly_doc/main.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/manager/ApisManager/Apis.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/model/GroupTaskItemModel.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/model/TaskModel.dart';
 import 'package:daly_doc/widgets/ToastBar/toastMessage.dart';
@@ -13,18 +16,27 @@ import '../model/subtaskModel.dart';
 
 class TaskManager with ChangeNotifier {
   List<GroupTaskItemModel> taskGroupData = [];
-  saveTaskData(data, onSuccess) async {
+  bool isSyncing = false;
+  saveTaskData(data, onSuccess, {needAlert = true}) async {
     await CreateTaskHelper.createTask(data);
     Constant.taskProvider.startTaskFetchFromDB();
-    onSuccess();
-    ToastMessage.showSuccessMessage(msg: LocalString.msgCreatedTask);
+    // onSuccess();
+    if (needAlert) {
+      ToastMessage.showSuccessMessage(msg: LocalString.msgCreatedTask);
+    }
   }
 
-  updateTaskData(data, onSuccess) async {
+  updateTaskData(data, onSuccess, {needAlert = true}) async {
     await CreateTaskHelper.updateTask(data);
     Constant.taskProvider.startTaskFetchFromDB();
     onSuccess();
-    ToastMessage.showSuccessMessage(msg: LocalString.msgUpdateTask);
+    if (needAlert) {
+      ToastMessage.showSuccessMessage(msg: LocalString.msgUpdateTask);
+    }
+  }
+
+  Future<int> updateServerID(data) async {
+    return await CreateTaskHelper.updateServerID(data);
   }
 
   Future<int> makeTaskIsCompleted(String data, int tid) async {
@@ -35,11 +47,45 @@ class TaskManager with ChangeNotifier {
     return await CreateTaskHelper.taskDelete(tid);
   }
 
+  storeDeletedID(int tid) async {
+    List<int> ids = [];
+    String storedValue = await LocalStore().getDeletedIDS();
+    if (storedValue == "") {
+      ids.add(tid);
+      String newList = json.encode(ids);
+      await LocalStore().setIDSDeleted(newList);
+    } else {
+      var idsTemp = jsonDecode(storedValue);
+      idsTemp.add(tid);
+      String newList = json.encode(idsTemp);
+      await LocalStore().setIDSDeleted(newList);
+    }
+  }
+
+  Future<List<String>> getDeletedID() async {
+    String storedValue = await LocalStore().getDeletedIDS();
+    if (storedValue == "") {
+      return [];
+    } else {
+      var idsTemp = jsonDecode(storedValue);
+      var idsList = idsTemp as List;
+      List<String> newList = [];
+      idsList.forEach((element) {
+        newList.add(element.toString());
+      });
+      return newList;
+    }
+  }
+
+  Future<void> truncateTaskTable() async {
+    return await CreateTaskHelper.truncate();
+  }
+
   startTaskFetchFromDB() async {
     List<TaskModel> list = await getAllTask();
     list.forEach(
       (element) {
-        print(element.startTime);
+        print("element.serverID ${element.serverID}");
       },
     );
     taskGroupData = convertGroupTaskByTime(list);
@@ -48,6 +94,20 @@ class TaskManager with ChangeNotifier {
 
   Future<List<TaskModel>> getAllTask() async {
     var data = await CreateTaskHelper.getAllTask();
+    List<TaskModel> list = [];
+    list = data.map((e) => TaskModel.fromJson(e)).toList();
+    return list;
+  }
+
+  Future<List<TaskModel>> getTaskByTID(id) async {
+    var data = await CreateTaskHelper.getTaskByTID(id);
+    List<TaskModel> list = [];
+    list = data.map((e) => TaskModel.fromJson(e)).toList();
+    return list;
+  }
+
+  Future<List<TaskModel>> getTaskServerID(id) async {
+    var data = await CreateTaskHelper.getTaskByServerID(id);
     List<TaskModel> list = [];
     list = data.map((e) => TaskModel.fromJson(e)).toList();
     return list;
@@ -137,10 +197,149 @@ class TaskManager with ChangeNotifier {
     return jsonArray;
   }
 
+  String generateUtcDateTime({date = "", time = ""}) {
+    print(date);
+    print(time);
+    final dateComponent = date.split("-");
+    print(dateComponent);
+    final timeComponent = time.split(":");
+    print(timeComponent);
+    if (dateComponent.length > 0) {
+      final year = int.tryParse(dateComponent[0]) ?? 0;
+      final month = int.tryParse(dateComponent[1]) ?? 0;
+      final day = int.tryParse(dateComponent[2]) ?? 0;
+      if (timeComponent.length > 0) {
+        final hr = int.tryParse(timeComponent[0]) ?? 0;
+        final min = int.tryParse(timeComponent[1]) ?? 0;
+        DateTime dateTime = DateTime(year, month, day, hr, min);
+        final utc = dateTime.toUtc();
+        String formattedDate = DateFormat('yyyy-MM-dd HH:mm').format(utc);
+        print("UTC DATE TIME ${formattedDate}");
+        return formattedDate;
+      }
+    }
+    return "";
+  }
+
   completeMarkSubtaskTaskData(TaskModel task) async {
     final subtasks = subtaskJSON(task.subTaskslist!);
     final subtasksStr = json.encode(subtasks);
     await CreateTaskHelper.updateSubTaskTaskIsCompleted(subtasksStr, task.tid);
     Constant.taskProvider.notifyListeners();
+  }
+
+  Future<int> syncAllTask(List<TaskModel> data) async {
+    await Future.forEach(data, (item) async {
+      TaskModel itemTemp = item;
+      if (itemTemp.subTaskslist!.length > 0) {
+        final subtasks = subtaskJSON(itemTemp.subTaskslist!);
+        final subtasksStr = json.encode(subtasks);
+        itemTemp.subNotes = subtasksStr;
+      } else {
+        itemTemp.subNotes = "";
+      }
+
+      List<TaskModel> foundData = await getTaskByTID(item.tid);
+      if (foundData.length > 0) {
+        //update to db
+        print("update to db ${foundData.first.taskName}");
+        updateTaskViaSync(foundData.first, item);
+      } else {
+        saveTaskData(item, (status) {}, needAlert: false);
+        //Insert To DB
+      }
+    });
+    List<TaskModel> taskList = [];
+    taskList = await getTaskServerID(0);
+    await insertTaskViaSync(taskList, currentCount: 0);
+    await deleteDataFromLocal(data);
+    return 0;
+  }
+
+  updateTaskViaSync(TaskModel updateData, TaskModel serverObj) async {
+    //PUSH TO LOCAL
+    if (updateData.createTimeStamp < serverObj.createTimeStamp) {
+      updateTaskData(serverObj, (status) {}, needAlert: false);
+      await updateServerID(serverObj);
+    }
+    //PUSH TO SERVER
+    if (updateData.createTimeStamp > serverObj.createTimeStamp) {
+      await updateServerID(serverObj);
+      updateData.serverID = serverObj.serverID;
+      final subtasks = subtaskJSON(updateData.subTaskslist!);
+      TaskApiManager()
+          .updateTaskApi(data: updateData, subTask: subtasks, isSync: true);
+    }
+  }
+
+  Future<void> insertTaskViaSync(List<TaskModel> taskList,
+      {currentCount = 0}) async {
+    //PUSH TO SERVER
+    if (currentCount < taskList.length) {
+      int currentCountTemp = currentCount;
+      TaskModel item = taskList[currentCountTemp];
+      final subtasks = subtaskJSON(item.subTaskslist!);
+      await TaskApiManager().CreateTaskData(
+          data: item,
+          subTask: subtasks,
+          isSync: true,
+          onSuccess: (value) async {
+            item.serverID = value;
+            await updateServerID(item);
+            currentCountTemp++;
+            insertTaskViaSync(taskList, currentCount: currentCountTemp);
+          });
+    } else {
+      Constant.taskProvider.startTaskFetchFromDB();
+      return;
+    }
+  }
+
+  Future<void> deleteDataFromServer() async {
+    List<String> ids = await getDeletedID();
+    print("DELETED IDS$ids}");
+    await Future.forEach(ids, (item) async {
+      await TaskApiManager().deleteTask(id: item, isSync: true);
+    });
+    await LocalStore().setIDSDeleted("");
+    return;
+  }
+
+  Future<void> deleteDataFromLocal(List<TaskModel> serverList) async {
+    if (serverList.length == 0) {
+      return;
+    }
+    List<TaskModel> localData = await getAllTask();
+    List<TaskModel> keepLocalID = [];
+    Set<int> removeLocalID = Set<int>();
+    if (localData.length >= serverList.length) {
+      await Future.forEach(localData, (itemL) async {
+        await Future.forEach(serverList, (itemS) async {
+          if (itemL.tid == itemS.tid && itemL.serverID != 0) {
+            keepLocalID.add(itemL);
+          }
+        });
+      });
+    }
+    if (localData.length < serverList.length) {
+      await Future.forEach(serverList, (itemS) async {
+        await Future.forEach(localData, (itemL) async {
+          if (itemL.tid == itemS.tid && itemL.serverID != 0) {
+            keepLocalID.add(itemL);
+          }
+        });
+      });
+    }
+
+    await Future.forEach(keepLocalID, (Lid) async {
+      localData.removeWhere((element) => element.tid == Lid.tid);
+    });
+    removeLocalID = localData.map((e) => e.tid).toList().toSet();
+
+    print("removeLocalID$removeLocalID");
+    await Future.forEach(removeLocalID, (tid) async {
+      await taskDelete(tid);
+    });
+    return;
   }
 }

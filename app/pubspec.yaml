@@ -46,13 +46,17 @@ dependencies:
   connectivity:
   firebase_messaging:
   flutter_login_facebook:
-
+  dotted_border: 
   firebase_core:
   client_information:
   splash_screen_view: ^3.0.0
   animations: ^2.0.3
   flutter_html: 2.1.5
   sqflite: ^2.2.0+3
+  geocoding:
+  google_maps_webservice:
+  location:
+  flutter_google_places:
   provider: ^6.0.4
 
 dev_dependencies:

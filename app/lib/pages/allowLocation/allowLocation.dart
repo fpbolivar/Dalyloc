@@ -35,50 +35,57 @@ class _AllowLocationScreenState extends State<AllowLocationScreen> {
     );
   }
 
+  Future<bool> _onWillPop() async {
+    return false; //<-- SEE HERE
+  }
+
 //METHID : -   bodyDesign
   Widget bodyDesign() {
-    return Center(
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(
-              height: 10,
-            ),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.5,
-              child: Image.asset(
-                'assets/icons/ic_allowLocation.png',
-                fit: BoxFit.contain,
-                // height: 170,
-                width: MediaQuery.of(context).size.width - 100,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Center(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(
+                height: 10,
               ),
-            ),
-            Spacer(),
-            CustomButton.regular(
-              title: "Allow",
-              onTap: () {
-                Routes.pushSimple(
-                    context: context, child: WakeUpTimeViewScreen());
-              },
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            CustomButton.regular(
-              title: "Skip",
-              onTap: () {
-                Routes.pushSimple(
-                    context: context, child: WakeUpTimeViewScreen());
-              },
-              titleColor: AppColor.theme,
-              background: Colors.transparent,
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            //
-          ]),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.5,
+                child: Image.asset(
+                  'assets/icons/ic_allowLocation.png',
+                  fit: BoxFit.contain,
+                  // height: 170,
+                  width: MediaQuery.of(context).size.width - 100,
+                ),
+              ),
+              Spacer(),
+              CustomButton.regular(
+                title: "Allow",
+                onTap: () {
+                  Routes.pushSimple(
+                      context: context, child: WakeUpTimeViewScreen());
+                },
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              CustomButton.regular(
+                title: "Skip",
+                onTap: () {
+                  Routes.pushSimple(
+                      context: context, child: WakeUpTimeViewScreen());
+                },
+                titleColor: AppColor.theme,
+                background: Colors.transparent,
+              ),
+              const SizedBox(
+                height: 50,
+              ),
+              //
+            ]),
+      ),
     );
   }
 }

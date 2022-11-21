@@ -7,7 +7,7 @@ class SettingItemView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(20, 10, 10, 10),
+      padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
       child: Row(
         children: [
           Text(
@@ -19,7 +19,17 @@ class SettingItemView extends StatelessWidget {
                 fontWeight: FontWeight.w500),
           ),
           const Spacer(),
-          if (itemData!.type! != SettingType.logout)
+          if (itemData!.type! == SettingType.loading &&
+              itemData!.type! != SettingType.refresh)
+            const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 1,
+                )),
+          if (itemData!.type! != SettingType.logout &&
+              itemData!.type! != SettingType.loading &&
+              itemData!.type! != SettingType.refresh)
             Image.asset(
               'assets/icons/ic_arrow.png',
               fit: BoxFit.contain,

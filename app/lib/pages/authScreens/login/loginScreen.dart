@@ -64,7 +64,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 40,
               ),
               CustomTF(
-                  controllr: mobileTFC, placeholder: LocalString.plcMobileNo),
+                controllr: mobileTFC,
+                keyBoardType: TextInputType.phone,
+                placeholder: LocalString.plcMobileNo,
+              ),
               const SizedBox(
                 height: 20,
               ),
@@ -85,7 +88,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 title: LocalString.lblSignIn,
                 onTap: () {
                   LoginApi().userLogin(
-                      mobileNumber: mobileTFC.text, password: passwordTFC.text);
+                    mobileNumber: mobileTFC.text,
+                    password: passwordTFC.text,
+                  );
                 },
               ),
               const SizedBox(

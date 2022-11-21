@@ -9,6 +9,7 @@ import 'package:daly_doc/utils/exportWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/exportPackages.dart';
+import 'core/Sql/DBIntializer.dart';
 import 'pages/onboardingScreen.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
 
@@ -32,6 +33,7 @@ class _DalyDocAppState extends State<DalyDocApp> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    //DBIntializer.sharedInstance.initDb();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       token = await LocalStore().getToken();
       setState(() {});
@@ -40,25 +42,35 @@ class _DalyDocAppState extends State<DalyDocApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'DalyDoc',
-        navigatorKey: Constant.navigatorKey,
-        theme: ThemeData(
-          fontFamily: "NotoSans",
-          primarySwatch: Colors.blue,
-        ),
-        home: SplashScreenView(
-          navigateRoute: token != ""
-              ? Routes.setScheduleScreen()
-              : IntroductionAnimationScreen(),
-          duration: 3000,
-          imageSize: 30,
-          imageSrc: "assets/icons/logo.png",
-          backgroundColor: AppColor.newBgcolor,
-        )
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) {
+          var taskProvider = Constant.taskProvider;
 
-        //IntroductionAnimationScreen(),
-        );
+          return taskProvider;
+        }),
+        // ChangeNotifierProvider(create: (_) => TaskManager()),
+      ],
+      child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'DalyDoc',
+          navigatorKey: Constant.navigatorKey,
+          theme: ThemeData(
+            fontFamily: "NotoSans",
+            primarySwatch: Colors.blue,
+          ),
+          home: SplashScreenView(
+            navigateRoute: token != ""
+                ? Routes.setScheduleScreen()
+                : IntroductionAnimationScreen(),
+            duration: 3000,
+            imageSize: 30,
+            imageSrc: "assets/icons/logo.png",
+            backgroundColor: AppColor.newBgcolor,
+          )
+
+          //IntroductionAnimationScreen(),
+          ),
+    );
   }
 }

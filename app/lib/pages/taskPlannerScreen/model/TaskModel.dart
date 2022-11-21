@@ -14,10 +14,14 @@ class TaskModel {
   String endTime = "";
   String dateString = "";
   String isCompleted = "";
+  String isDeleted = "";
+  String utcDateTime = "";
+  String user_id = "";
+
   int createTimeStamp = 0;
   int serverID = 0;
   int tid = 0;
-  int id = 0;
+  String taskName = "";
 
   List<SubtaskModel>? subTaskslist = [];
   TaskModel(
@@ -34,8 +38,49 @@ class TaskModel {
       this.subTaskslist,
       this.createTimeStamp = 0,
       this.serverID = 0,
+      this.taskName = "",
       this.isCompleted = "0",
-      this.id = 0});
+      this.utcDateTime = "",
+      this.isDeleted = "0"});
+  factory TaskModel.fromServerJson(Map<String, dynamic> json) {
+    var subStr = json["subNotes"].toString();
+    List<SubtaskModel>? subTaskslist = [];
+    if (subStr != "" && subStr != "null") {
+      print("subStr$subStr");
+      var jsonSubTask = jsonDecode(subStr);
+      var data = jsonSubTask as List;
+      data.forEach(
+        (element) {
+          subTaskslist.add(SubtaskModel(
+              description: element["description"].toString(),
+              id: element["s_id"],
+              isCompleted:
+                  element["is_completed"].toString() == "1" ? true : false));
+        },
+      );
+    }
+    print("subTaskslist${subTaskslist.length}");
+    return TaskModel(
+        subTaskslist: subTaskslist,
+        email: json["email"].toString(),
+        howOften: json["how_often"].toString(),
+        howLong: json["how_long"].toString(),
+        note: json["note"].toString(),
+        subNotes: json["subNotes"].toString(),
+        startTime: json["start_task_time"].toString(),
+        dateString: json["date_format"].toString(),
+        endTime: json["end_task_time"].toString(),
+        createTimeStamp: json["create_time_stamp"] ?? 0,
+        tid: json["t_id"] ?? 0,
+        taskName: json["task_name"] ?? "",
+        serverID: json["id"] ?? 0,
+        utcDateTime: json["utc_date_time"] ?? "",
+        isDeleted: json["isDeleted"] ?? "0",
+        taskTimeStamp: json["task_time_stamp"] ?? 0,
+        isCompleted: json["is_completed"] == null
+            ? "0"
+            : json["is_completed"].toString());
+  }
   factory TaskModel.fromJson(Map<String, dynamic> json) {
     var subStr = json["subNotes"].toString();
     List<SubtaskModel>? subTaskslist = [];
@@ -64,10 +109,13 @@ class TaskModel {
         startTime: json["startTime"].toString(),
         dateString: json["dateString"].toString(),
         endTime: json["endTime"].toString(),
+        serverID: json["serverID"] ?? 0,
         createTimeStamp: json["createTimeStamp"],
         tid: json["tId"],
-        id: json["id"] == null ? 0 : json["id"],
         taskTimeStamp: json["taskTimeStamp"],
+        utcDateTime: json["utcDateTime"] ?? "",
+        isDeleted: json["isDeleted"] ?? "0",
+        taskName: json["taskName"] ?? "",
         isCompleted:
             json["isCompleted"] == null ? "0" : json["isCompleted"].toString());
   }
@@ -97,6 +145,9 @@ class TaskModel {
       TASK_TABLE_KEY.DATETEXT: dateString,
       TASK_TABLE_KEY.ISCOMPELETED: isCompleted,
       TASK_TABLE_KEY.SERVERID: serverID,
+      TASK_TABLE_KEY.TASKNAME: taskName,
+      TASK_TABLE_KEY.UTCDATETIME: utcDateTime,
+      TASK_TABLE_KEY.ISDELETED: isDeleted,
     };
   }
 
@@ -114,6 +165,9 @@ class TaskModel {
       TASK_TABLE_KEY.DATETEXT: dateString,
       TASK_TABLE_KEY.ISCOMPELETED: isCompleted,
       TASK_TABLE_KEY.SERVERID: serverID,
+      TASK_TABLE_KEY.TASKNAME: taskName,
+      TASK_TABLE_KEY.UTCDATETIME: utcDateTime,
+      TASK_TABLE_KEY.ISDELETED: isDeleted,
     };
   }
 }

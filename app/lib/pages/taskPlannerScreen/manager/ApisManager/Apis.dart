@@ -11,16 +11,19 @@ import '../../../../core/routes/routes.dart';
 import '../../model/TaskModel.dart';
 
 class TaskApiManager {
-  CreateTaskData({
-    required TaskModel data,
-    required List<Map<String, dynamic>> subTask,
-  }) async {
+  Future<void> CreateTaskData(
+      {required TaskModel data,
+      required List<Map<String, dynamic>> subTask,
+      onSuccess,
+      isSync = false}) async {
     if (await internetCheck() == false) {
-      showAlert(LocalString.internetNot);
-
+      //showAlert(LocalString.internetNot);
+      onSuccess(0);
       return;
     }
-    waitDialog();
+    if (isSync == false) {
+      waitDialog();
+    }
     var token = await LocalStore().getToken();
     var headers2 = {"Authorization": token, 'Content-Type': 'application/json'};
     bool isCom = data.isCompleted == "0" ? false : true;
@@ -34,10 +37,12 @@ class TaskApiManager {
         "howLong": data.howLong,
         "howOften": data.howOften,
         "note": data.note,
+        "taskName": data.taskName,
         "isCompleted": isCom,
         "subNotes": subTask,
         "dateString": data.dateString,
         "startTime": data.startTime,
+        "utcDateTime": data.utcDateTime,
         "endTime": data.endTime
       });
       print(params);
@@ -54,98 +59,209 @@ class TaskApiManager {
       var responceData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        dismissWaitDialog();
-
+        if (isSync == false) {
+          dismissWaitDialog();
+        }
         var data = jsonDecode(response.body);
         print(data);
-        showAlert(data['message']);
-        Navigator.pop(Constant.navigatorKey.currentState!.overlay!.context);
+        onSuccess(data["task_id"]);
+        return;
+        // showAlert(data['message']);
+        //Navigator.pop(Constant.navigatorKey.currentState!.overlay!.context);
       } else {
-        dismissWaitDialog();
+        if (isSync == false) {
+          dismissWaitDialog();
+        }
         print(response.reasonPhrase);
+        return;
       }
     } catch (e) {
-      dismissWaitDialog();
       print(e.toString());
-      showErrorAlert(e.toString());
+      if (isSync == false) {
+        dismissWaitDialog();
+
+        showErrorAlert(e.toString());
+      }
+      return;
     }
   }
 
-  getAllTaskData({required String date}) async {
+  updateTaskApi(
+      {required TaskModel data,
+      required List<Map<String, dynamic>> subTask,
+      onSuccess,
+      isSync = false}) async {
     if (await internetCheck() == false) {
-      showAlert(LocalString.internetNot);
-
+      if (isSync == false) {
+        showAlert(LocalString.internetNot);
+      }
+      onSuccess(0);
       return;
     }
-    waitDialog();
+    if (isSync == false) {
+      waitDialog();
+    }
+    var token = await LocalStore().getToken();
+    var headers2 = {"Authorization": token, 'Content-Type': 'application/json'};
+    bool isCom = data.isCompleted == "0" ? false : true;
+
+    try {
+      var params = json.encode({
+        'tId': data.tid,
+        "email": data.email,
+        "taskTimeStamp": data.taskTimeStamp.toString(),
+        "createTimeStamp": data.createTimeStamp,
+        "howLong": data.howLong,
+        "howOften": data.howOften,
+        "taskName": data.taskName,
+        "note": data.note,
+        "isCompleted": isCom,
+        "subNotes": subTask,
+        "dateString": data.dateString,
+        "startTime": data.startTime,
+        "endTime": data.endTime,
+        "utcDateTime": data.utcDateTime,
+      });
+      print(params);
+      final url = HttpUrls.WS_EDITTASK + data.serverID.toString();
+      print(url);
+      // request.headers.addAll(headers2);
+
+      // http.StreamedResponse response = await request.send();
+      Response response = await post(
+          Uri.parse(
+            url,
+          ),
+          body: params,
+          headers: headers2);
+
+      var responceData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        if (isSync == false) {
+          dismissWaitDialog();
+        }
+        var data = jsonDecode(response.body);
+        print(data);
+        onSuccess(1);
+        // showAlert(data['message']);
+        //Navigator.pop(Constant.navigatorKey.currentState!.overlay!.context);
+      } else {
+        if (isSync == false) {
+          dismissWaitDialog();
+        }
+        print(response.reasonPhrase);
+      }
+    } catch (e) {
+      if (isSync == false) {
+        dismissWaitDialog();
+
+        showErrorAlert(e.toString());
+      }
+      print(e.toString());
+    }
+  }
+
+  getAllTaskData({required String date, onSuccess}) async {
+    if (await internetCheck() == false) {
+      //showAlert(LocalString.internetNot);
+      List<TaskModel> tasks = [];
+      onSuccess(tasks);
+      return;
+    }
+
+    //waitDialog();
     var token = await LocalStore().getToken();
     var headers2 = {"Authorization": token, 'Content-Type': 'application/json'};
 
     try {
       var params = json.encode({"dateString": date});
       print(params);
-
+      var url = HttpUrls.WS_GETALLTASK + date;
+      print(url);
       Response response = await get(
           Uri.parse(
-            HttpUrls.WS_GETALLTASK,
+            url,
           ),
           headers: headers2);
 
       var responceData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        dismissWaitDialog();
+        // dismissWaitDialog();
 
         var data = jsonDecode(response.body);
         print(data);
-        showAlert(data['message']);
-        Navigator.pop(Constant.navigatorKey.currentState!.overlay!.context);
+        if (data["status_code"] == true) {
+          var allTask = data["allTask"] as List;
+          if (allTask.length > 0) {
+            List<TaskModel> tasks =
+                allTask.map((e) => TaskModel.fromServerJson(e)).toList();
+
+            onSuccess(tasks);
+          } else {
+            List<TaskModel> tasks = [];
+            onSuccess(tasks);
+          }
+        } else {
+          if (data["auth_code"] != null || token == null) {
+            showAlert(LocalString.msgSessionExpired, onTap: () {
+              Routes.gotoMainScreen();
+            });
+          }
+        }
       } else {
-        dismissWaitDialog();
+        //dismissWaitDialog();
         print(response.reasonPhrase);
       }
     } catch (e) {
-      dismissWaitDialog();
+      //dismissWaitDialog();
       print(e.toString());
       showErrorAlert(e.toString());
     }
   }
 
-  deleteTask({
-    required String id,
-  }) async {
+  Future<void> deleteTask({required String id, isSync = false}) async {
     if (await internetCheck() == false) {
-      showAlert(LocalString.internetNot);
+      ///showAlert(LocalString.internetNot);
 
       return;
     }
-    waitDialog();
+    if (isSync == false) {
+      waitDialog();
+    }
     var token = await LocalStore().getToken();
     var header = {"Authorization": token, 'Content-Type': 'application/json'};
-
+    var url = HttpUrls.WS_DELETETASK + id;
+    print(url);
     try {
-      Response response = await get(
-          Uri.parse(
-            HttpUrls.WS_DELETETASK + id,
-          ),
-          headers: header);
+      Response response = await get(Uri.parse(url), headers: header);
 
       var responceData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        dismissWaitDialog();
+        if (isSync == false) {
+          dismissWaitDialog();
+        }
 
         var data = jsonDecode(response.body);
         print(data);
-        showAlert(data['message']);
+        // showAlert(data['message']);
+        return;
       } else {
-        dismissWaitDialog();
+        if (isSync == false) {
+          dismissWaitDialog();
+        }
         print(response.reasonPhrase);
+        return;
       }
     } catch (e) {
-      dismissWaitDialog();
+      if (isSync == false) {
+        dismissWaitDialog();
+      }
       print(e.toString());
-      showErrorAlert(e.toString());
+      //showErrorAlert(e.toString());
+      return;
     }
   }
 }

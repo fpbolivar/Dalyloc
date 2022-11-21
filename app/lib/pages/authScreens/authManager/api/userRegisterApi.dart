@@ -26,6 +26,10 @@ class RegisterApis {
       showAlert("Enter Phone No.");
       print("Enter Phone No.");
       return;
+    } else if (mobileNumber.length < 10) {
+      showAlert("Enter 10 digit Phone No.");
+      print("Enter 10 digit Phone No.");
+      return;
     } else if (password.toString().isEmpty) {
       print("pass enter");
       showAlert("Enter Password");
@@ -145,6 +149,11 @@ class RegisterApis {
       print('${data}');
 
       if (data['status'] == true) {
+        showAlert(data['message'].toString());
+        print("Bearer Token== ${data["access_token"]}");
+        var token = data["access_token"];
+
+        await LocalStore().setToken(token);
         Routes.pushSimple(
             context: Constant.navigatorKey.currentState!.context,
             child: AllowLocationScreen());

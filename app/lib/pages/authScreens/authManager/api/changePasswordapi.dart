@@ -33,11 +33,16 @@ class ChangePasswordApi {
       print("Enter Confirm Password Correctly");
       return;
     }
+    var token = await LocalStore().getToken();
     if (await internetCheck() == false) {
       showAlert(LocalString.internetNot);
 
       return;
     }
+    print(token);
+    var header = {
+      "Authorization": token,
+    };
 
     var param = {
       "old_password": oldPassword,
@@ -50,17 +55,18 @@ class ChangePasswordApi {
           Uri.parse(
             HttpUrls.WS_CHANGEPASSWORD,
           ),
+          headers: header,
           body: param);
 
       var data = jsonDecode(response.body);
       print('${data}');
 
       if (data['status'] == true) {
+        showAlert(data['message'].toString());
+        dismissWaitDialog();
         Routes.pushSimple(
             context: Constant.navigatorKey.currentState!.context,
             child: Routes.setScheduleScreen());
-        dismissWaitDialog();
-        showAlert(data['message'].toString());
       } else {
         dismissWaitDialog();
         showAlert(data['message'].toString());

@@ -3,6 +3,7 @@ import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/pages/notificationScreen/model/rowItemModel.dart';
 import 'package:daly_doc/pages/subscriptionPlansScreen/model/PlanInfoModel.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/createTaskView.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/manager/ApisManager/Apis.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/model/TaskModel.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/model/subtaskModel.dart';
@@ -45,7 +46,16 @@ class ViewTaskDetail extends StatelessWidget {
                   SizedBox(
                     height: 5,
                   ),
-                  Text('usalog@com.org'),
+                  Text(
+                    'Name',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    item.taskName.toString() == ""
+                        ? "No Name"
+                        : item.taskName.toString(),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                  ),
                   SizedBox(
                     height: 5,
                   ),
@@ -53,9 +63,9 @@ class ViewTaskDetail extends StatelessWidget {
                     'Note',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                   ),
-                  Text(
-                    item.note,
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                  Text(item.note.toString()),
+                  SizedBox(
+                    height: 5,
                   ),
                   SizedBox(
                     height: 15,
@@ -176,9 +186,17 @@ class ViewTaskDetail extends StatelessWidget {
                     ToastMessage.deletedTaskToast(
                         msg: LocalString.msgDeleteTask,
                         OnTap: () async {
+                          print("item.serverID ${item.serverID}");
+
+                          if (item.serverID != 0) {
+                            TaskManager().storeDeletedID(item.serverID);
+                            await TaskApiManager().deleteTask(
+                                id: item.serverID.toString(), isSync: true);
+                          }
+
                           print(item.tid);
-                          //await TaskManager().taskDelete(item.tid);
-                          Navigator.of(context).pop();
+                          await TaskManager().taskDelete(item.tid);
+                          //Navigator.of(context).pop();
                           Constant.taskProvider.startTaskFetchFromDB();
                           Navigator.of(context).pop();
                         });
@@ -203,6 +221,7 @@ class ViewTaskDetail extends StatelessWidget {
                     } else {
                       item.isCompleted = "0";
                     }
+
                     await TaskManager()
                         .makeTaskIsCompleted(item.isCompleted, item.tid);
                     Constant.taskProvider.notifyListeners();

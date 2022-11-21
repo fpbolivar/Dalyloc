@@ -50,6 +50,9 @@ class SocialLoginManager {
 
   googleSignIn(BuildContext context) async {
     try {
+      GoogleSignIn _googleSignIn =
+          GoogleSignIn(scopes: <String>['email', 'profile']);
+      _googleSignIn.signOut();
       googleUser = await _googleSignIn.signIn();
 
       googleAuth = await googleUser!.authentication;

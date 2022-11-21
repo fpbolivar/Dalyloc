@@ -8,11 +8,26 @@ class LocalStore {
   final String _MobileNumberOfUser = "_MobileNumberOfUser";
   final String _user_id = "1";
   final String _fcmToken = "_fcmToken";
+  final String _lat = "_lat";
 
+  final String _address = "_address";
+
+  final String countryCode = "_countryCode";
+  final String _long = "_long";
+  final String _userlat = "_userlat";
+  final String _useraddress = "_useraddress";
+  final String _userlong = "_userlong";
+
+  final String _userCountry = "_userCountry";
+  final String _userCity = "_userCity";
+  final String _userState = "_userState";
+
+  final String _userPincode = "_userPincode";
   final String _age = "_age";
   final String _feet = "_feet";
   final String _inch = "_inch";
   final String _weight = "_weight";
+  final String _deletedIDS = "_deletedIDS";
   Future<bool> set_MobileNumberOfUser(String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     print("set_MobileNumberOfUser");
@@ -27,6 +42,134 @@ class LocalStore {
     print("GET _MobileNumberOfUser");
     print(value);
     return value;
+  }
+
+  Future<bool> setUserCountry(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return (prefs.setString(_userCountry, value));
+  }
+
+  Future<bool> setUserCity(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return (prefs.setString(_userCity, value));
+  }
+
+  Future<bool> setaddress(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return prefs.setString(_address, value.toString());
+  }
+
+  Future<String> getaddress() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return prefs.getString(_address) ?? '';
+  }
+
+  Future<bool> setCuntrycode(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return prefs.setString(countryCode, value.toString());
+  }
+
+  Future<String> getCuntrycode() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return prefs.getString(countryCode) ?? '';
+  }
+
+  Future<bool> setUserState(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return (prefs.setString(_userState, value));
+  }
+
+  Future<bool> setUserPincode(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return (prefs.setString(_userPincode, value));
+  }
+
+  Future<String> getUserCountry() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return (prefs.getString(_userCountry) ?? '');
+  }
+
+  Future<String> getUserCity() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return (prefs.getString(_userCity) ?? '');
+  }
+
+  Future<String> getUserState() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return (prefs.getString(_userState) ?? '');
+  }
+
+  Future<String> getUserPincode() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return (prefs.getString(_userPincode) ?? '');
+  }
+
+  Future<bool> removeAll() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.remove(_userlat);
+    prefs.remove(_userlong);
+    prefs.remove(_useraddress);
+    prefs.remove(_userCity);
+    prefs.remove(_userCountry);
+    prefs.remove(_userPincode);
+    prefs.remove(_userState);
+
+    return prefs.remove(_userState);
+  }
+
+  Future<bool> setLat(lat, long) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setString(_long, long.toString());
+    return prefs.setString(_lat, lat.toString());
+  }
+
+  Future<bool> setUserLat(lat, long) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setString(_userlong, long.toString());
+    return prefs.setString(_userlat, lat.toString());
+  }
+
+  Future<List<String>> getLatLong() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var lat = prefs.getString(_lat) ?? '00';
+    var long = prefs.getString(_long) ?? '00';
+
+    return [lat, long];
+  }
+
+  Future<List<String>> getUserLatLong() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var lat = prefs.getString(_userlat) ?? '00';
+    var long = prefs.getString(_userlong) ?? '00';
+
+    return [lat, long];
+  }
+
+  Future<bool> setUseraddress(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return prefs.setString(_useraddress, value.toString());
+  }
+
+  Future<String> getUseraddress() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return prefs.getString(_useraddress) ?? '';
   }
 
   Future<bool> set_nameofuser(String value) async {
@@ -169,6 +312,21 @@ class LocalStore {
     var value = prefs.getString(_token) ?? '';
 
     print("GET TOKEN");
+    print(value);
+    return value;
+  }
+
+  Future<bool> setIDSDeleted(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("SET setIDSDeleted");
+    print(value);
+    return (prefs.setString(_deletedIDS, value));
+  }
+
+  Future<String> getDeletedIDS() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var value = prefs.getString(_deletedIDS) ?? '';
+    print("GET getDeletedIDS");
     print(value);
     return value;
   }

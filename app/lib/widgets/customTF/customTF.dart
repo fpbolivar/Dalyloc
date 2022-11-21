@@ -6,7 +6,7 @@ class CustomTF extends StatefulWidget {
   double height = 50;
   var controllr = TextEditingController();
   String placeholder = "";
-
+  // int maxLength;
   //Color background;
   // Color titleColor;
   bool obscureText;
@@ -22,6 +22,7 @@ class CustomTF extends StatefulWidget {
       this.keyBoardType = TextInputType.text,
       this.height = 50,
       this.placeholder = "",
+
       // this.background,
       // this.titleColor,
       this.obscureText = false,

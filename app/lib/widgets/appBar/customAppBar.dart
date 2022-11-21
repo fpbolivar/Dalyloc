@@ -2,8 +2,10 @@ import '../../utils/exportPackages.dart';
 import '../../utils/exportWidgets.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  String title = "";
-  CustomAppBar({super.key, this.title = ""});
+  String title;
+  bool icon;
+  Function()? onTap;
+  CustomAppBar({super.key, this.title = "", this.icon = true, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -13,19 +15,27 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: IconButton(
-                // ignore: prefer_const_constructors
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.black,
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ),
+            icon == true
+                ? Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: IconButton(
+                      // ignore: prefer_const_constructors
+                      icon: Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        if (onTap == null) {
+                          Navigator.of(context).pop();
+                        } else {
+                          onTap!();
+                        }
+                      },
+                    ),
+                  )
+                : SizedBox(
+                    width: 20,
+                  ),
             const SizedBox(
               height: 10,
             ),
@@ -67,7 +77,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 class CustomAppBarWithBackButton extends StatelessWidget
     implements PreferredSizeWidget {
   String title = "";
-  CustomAppBarWithBackButton({super.key, this.title = ""});
+  bool iconButton;
+  CustomAppBarWithBackButton(
+      {super.key, this.title = "", this.iconButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -78,18 +90,22 @@ class CustomAppBarWithBackButton extends StatelessWidget
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: InkWell(
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.black,
-                ),
-              ),
-            ),
+            iconButton == true
+                ? Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.black,
+                      ),
+                    ),
+                  )
+                : SizedBox(
+                    width: 20,
+                  ),
             Padding(
               padding: const EdgeInsets.only(left: 10, top: 0),
               child: Text(
@@ -163,6 +179,18 @@ class CustomAppBarPresentCloseButton extends StatelessWidget
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
+                padding: const EdgeInsets.only(left: 0, top: 7),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              Padding(
                   padding: const EdgeInsets.only(left: 10, top: 0),
                   child: Row(
                     children: [
@@ -189,19 +217,19 @@ class CustomAppBarPresentCloseButton extends StatelessWidget
                     ],
                   )),
               Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(left: 10, top: 5),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Image.asset(
-                    "assets/icons/ic_close.png",
-                    width: 25,
-                    height: 25,
-                  ),
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.only(left: 10, top: 5),
+              //   child: InkWell(
+              //     onTap: () {
+              //       Navigator.of(context).pop();
+              //     },
+              //     child: Image.asset(
+              //       "assets/icons/ic_close.png",
+              //       width: 25,
+              //       height: 25,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),

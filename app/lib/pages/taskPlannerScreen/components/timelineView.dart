@@ -242,19 +242,26 @@ class TimelineView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    item.note.toString(),
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        decorationThickness: 1,
-                        decorationColor: Colors.black,
-                        decoration: item.isCompleted == "0"
-                            ? null
-                            : TextDecoration.combine(
-                                [TextDecoration.lineThrough]),
-                        fontWeight: FontWeight.w500,
-                        fontSize: 15,
-                        color: AppColor.theme),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 30),
+                    child: Text(
+                      item.taskName.toString() == ""
+                          ? "No Name"
+                          : item.taskName.toString(),
+                      textAlign: TextAlign.left,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          decorationThickness: 1,
+                          decorationColor: Colors.black,
+                          decoration: item.isCompleted == "0"
+                              ? null
+                              : TextDecoration.combine(
+                                  [TextDecoration.lineThrough]),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                          color: AppColor.theme),
+                    ),
                   ),
                   SizedBox(
                     height: 5,

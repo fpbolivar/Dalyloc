@@ -1,5 +1,6 @@
 import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/pages/authScreens/authManager/api/logoutApi.dart';
+import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/createNewBusiness.dart';
 import 'package:daly_doc/pages/smartScheduleScreens/smartScheduleView.dart';
 import 'package:daly_doc/widgets/socialLoginButton/socialLoginButton.dart';
 import '../../../utils/exportPackages.dart';
@@ -11,8 +12,10 @@ import '../changePassword/changePasswordView.dart';
 import '../subscriptionPlansScreen/activePlanView.dart';
 import '../subscriptionPlansScreen/planMonthlyYearlyView.dart';
 import '../userProfile/userProfile.dart';
+import 'ApiManager/AllPlansApiManager.dart';
 import 'components/sectionRowListView.dart';
 import 'model/SettingOption.dart';
+import 'model/allPlanMode.dart';
 
 class SettingScreen extends StatefulWidget {
   String? red;
@@ -23,6 +26,16 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
+  bool getData = false;
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getplanList();
+    });
+  }
+
   List<SettingOption> accountOption = [
     SettingOption(title: "My Profile", section: 0),
     SettingOption(title: "Change Password", section: 0),
@@ -31,14 +44,24 @@ class _SettingScreenState extends State<SettingScreen> {
     SettingOption(title: "Active Plan", section: 1),
   ];
 
+  // List<SettingOption> planOption = [
+  //   SettingOption(title: "Meal Plan", section: 2),
+  //   SettingOption(title: "Exercise Plan", section: 2),
+  //   SettingOption(title: "Daily Devontional Plan", section: 2),
+  //   SettingOption(title: "Business Pro", section: 2),
+  // ];
   List<SettingOption> planOption = [
-    SettingOption(title: "Meal Plan", section: 2),
-    SettingOption(title: "Exercise Plan", section: 2),
-    SettingOption(title: "Daily Devontional Plan", section: 2),
-    SettingOption(title: "Business Pro", section: 2),
+    SettingOption(
+      title: "Loading..",
+      section: 2,
+      type: SettingType.loading,
+    ),
   ];
   List<SettingOption> smartOption = [
     SettingOption(title: "Smart Scheduling", section: 3),
+  ];
+  List<SettingOption> businessOption = [
+    SettingOption(title: "Create New Business ", section: 3),
   ];
   List<SettingOption> logoutOption = [
     SettingOption(
@@ -64,9 +87,64 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
+  addWidgetRefresh() {
+    planOption = [];
+    planOption.add(SettingOption(
+      title: "Tap to refresh",
+      section: 2,
+      type: SettingType.refresh,
+    ));
+    setState(() {});
+  }
+
+  addWidgetLoading() {
+    planOption = [];
+    planOption.add(SettingOption(
+      title: "Loading..",
+      section: 2,
+      type: SettingType.loading,
+    ));
+    setState(() {});
+  }
+
+  getplanList() {
+    AllPlansApiManager().getAllPlans(onSuccess: (List<GetAllPlansModel> data) {
+      planOption = [];
+
+      data.forEach((element) {
+        print(element.title);
+        final title = element.title;
+        var obj = SettingOption(
+            title: title,
+            section: 2,
+            subscriptionSubPlans: element.subscriptionSubPlans);
+        planOption.add(obj);
+      });
+
+      getData = true;
+
+      setState(() {});
+    }, onError: () {
+      addWidgetRefresh();
+    });
+  }
+
 //METHID : -   bodyDesign
   Widget bodyDesign() {
-    return SingleChildScrollView(
+    return
+        // getData == false
+        //     ? Center(
+        //         child: Container(
+        //             margin: EdgeInsets.all(10),
+        //             child: Center(
+        //               child: CircularProgressIndicator(
+        //                 strokeWidth: 2,
+        //                 color: Colors.black,
+        //               ),
+        //             )),
+        //       )
+        //     :
+        SingleChildScrollView(
       child: Center(
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -101,13 +179,26 @@ class _SettingScreenState extends State<SettingScreen> {
               SectionRowListView(
                   itemList: planOption,
                   onTap: (sectionIndex, rowIndex) {
+                    if (planOption[rowIndex].type == SettingType.refresh) {
+                      addWidgetLoading();
+                      getplanList();
+                      return;
+                    }
+                    if (planOption[rowIndex].type == SettingType.loading) {
+                      return;
+                    }
                     var t = planOption[rowIndex].title.toString();
-                    var d = t.replaceAll("Plan", "");
+
+                    var d = t;
+                    //.replaceAll("Plan", "");
                     d = d.trim();
+                    var data = planOption[rowIndex].subscriptionSubPlans;
+
                     Routes.pushSimple(
                         context: context,
                         child: PlanMonthlyYearlyView(
                           title: d,
+                          subscriptionSubPlans: data,
                         ));
                   }),
               const SizedBox(
@@ -123,8 +214,19 @@ class _SettingScreenState extends State<SettingScreen> {
                 height: 20,
               ),
               SectionRowListView(
+                  itemList: businessOption,
+                  onTap: (sectionIndex, rowIndex) {
+                    Routes.pushSimple(
+                        context: context, child: CreateNewBusinessScreen());
+                  }),
+              const SizedBox(
+                height: 20,
+              ),
+              SectionRowListView(
                   itemList: logoutOption,
                   onTap: (sectionIndex, rowIndex) async {
+                    await LogoutApi().syncingBeforLogout();
+                    print("SYNCED ALLL");
                     LogoutApi().logout();
                   })
             ]),

@@ -165,7 +165,7 @@ class DateHelper {
       arrayDates.add(dateCurrent.add(Duration(days: i)));
     }
 
-    print(arrayDates);
+    // print(arrayDates);
     return arrayDates;
   }
 

@@ -103,6 +103,32 @@ class CustomTimePicker extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        IgnorePointer(
+          ignoring: true,
+          child: Padding(
+            padding: EdgeInsets.only(top: 5),
+            child: Center(
+              child: Container(
+                height: 44,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: AppColor.segmentBarSelectedColor,
+                ),
+                child: Center(
+                  child: Text(
+                    displayTimeText.toString(),
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -208,32 +234,6 @@ class CustomTimePicker extends StatelessWidget {
             //   ),
             // ),
           ],
-        ),
-        IgnorePointer(
-          ignoring: true,
-          child: Padding(
-            padding: EdgeInsets.only(top: 5),
-            child: Center(
-              child: Container(
-                height: 44,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: AppColor.segmentBarSelectedColor,
-                ),
-                child: Center(
-                  child: Text(
-                    displayTimeText.toString(),
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
         ),
       ],
     );

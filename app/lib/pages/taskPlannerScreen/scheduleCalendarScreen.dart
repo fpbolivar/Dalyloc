@@ -1,9 +1,12 @@
+import 'package:daly_doc/core/Sql/DBIntializer.dart';
 import 'package:daly_doc/pages/notificationScreen/notificationScreen.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/components/viewDetailTask.dart';
 
 import 'package:daly_doc/pages/taskPlannerScreen/createTaskView.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/manager/ApisManager/Apis.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/sqlite_api.dart';
 
 import '../../core/constant/constants.dart';
 import '../../core/helpersUtil/dateHelper.dart';
@@ -14,6 +17,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import '../../utils/exportPackages.dart';
+import '../../widgets/syncingView/syncingView.dart';
 import 'components/timelineView.dart';
 import 'model/GroupTaskItemModel.dart';
 import 'model/TaskModel.dart';
@@ -46,18 +50,34 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
     return Scaffold(
       backgroundColor: AppColor.newBgcolor,
       // ignore: unnecessary_new
-      floatingActionButton: FloatingActionButton(
-          elevation: 0.0,
-          backgroundColor: AppColor.theme,
-          onPressed: () {
-            Routes.presentSimple(
-                context: context,
-                child: CreateTaskView(
-                  isUpdate: false,
-                ));
-          },
-          child: const Icon(Icons.add)),
-      body: SafeArea(child: bodyView()),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 20, right: 10),
+        child: FloatingActionButton(
+            elevation: 0.0,
+            backgroundColor: AppColor.theme,
+            onPressed: () {
+              Routes.presentSimple(
+                  context: context,
+                  child: CreateTaskView(
+                    isUpdate: false,
+                    date: selectedDate!.dateTime!,
+                  ));
+            },
+            child: const Icon(Icons.add)),
+      ),
+      body: SafeArea(
+          child: Stack(
+        children: [
+          bodyView(),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Consumer<TaskManager>(builder: (context, object, child) {
+              return manager.isSyncing ? SyncingView() : Container();
+            }),
+          )
+        ],
+      )),
     );
   }
 
@@ -72,7 +92,29 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
   }
 
   getTaskList() async {
+    manager.isSyncing = true;
+    Constant.taskProvider.notifyListeners();
+    Database db = await DBIntializer.sharedInstance.db;
+    print("db statusss ${db.isOpen}");
+
     manager.startTaskFetchFromDB();
+
+    await manager.deleteDataFromServer();
+    TaskApiManager().getAllTaskData(
+        date: selectedDate!.dateFormatYYYYMMDD.toString(),
+        onSuccess: (list) async {
+          int value = await manager.syncAllTask(list);
+          print("FRESHER $value");
+          manager.startTaskFetchFromDB();
+          manager.isSyncing = false;
+          Constant.taskProvider.notifyListeners();
+          // manager.taskGroupData = manager.convertGroupTaskByTime(list);
+
+          //setState(() {});
+        });
+    Future.delayed(Duration(seconds: 5), () async {});
+
+    // manager.startTaskFetchFromDB();
     // print("list${list.length}");
   }
 
@@ -140,6 +182,8 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                             isCompleted == "0" ? "1" : "0";
                         isCompleted = manager
                             .taskGroupData[section].task![row].isCompleted;
+                        //   data.createTimeStamp =
+                        DateTime.now().microsecondsSinceEpoch;
                         await manager.makeTaskIsCompleted(isCompleted, id);
                         setState(() {});
                       },

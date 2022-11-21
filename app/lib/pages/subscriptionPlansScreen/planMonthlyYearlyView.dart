@@ -1,3 +1,5 @@
+import 'package:daly_doc/pages/settingsScreen/ApiManager/AllPlansApiManager.dart';
+import 'package:daly_doc/widgets/ToastBar/toastMessage.dart';
 import 'package:daly_doc/widgets/htmlRender/htmlRender.dart';
 
 import 'package:daly_doc/widgets/socialLoginButton/socialLoginButton.dart';
@@ -7,11 +9,14 @@ import '../../../utils/exportWidgets.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../widgets/carousel/carousel_slider.dart';
+import '../settingsScreen/model/allPlanMode.dart';
 import 'model/PlanInfoModel.dart';
 
 class PlanMonthlyYearlyView extends StatefulWidget {
   String? title;
-  PlanMonthlyYearlyView({Key? key, this.title}) : super(key: key);
+  List<SubscriptionSubPlansModel>? subscriptionSubPlans;
+  PlanMonthlyYearlyView({Key? key, this.title, this.subscriptionSubPlans})
+      : super(key: key);
 
   @override
   State<PlanMonthlyYearlyView> createState() => _PlanMonthlyYearlyViewState();
@@ -37,20 +42,89 @@ class _PlanMonthlyYearlyViewState extends State<PlanMonthlyYearlyView> {
         periodDuration: PlanType.yearly,
         image: ""),
   ];
+  SubscriptionSubPlansModel? selectedItem;
+  var title = "";
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    if (widget.subscriptionSubPlans != null)
+      selectedItem = widget.subscriptionSubPlans!.first;
+    title = widget.title ?? "";
+    print(title);
+    title = title.replaceAll("Plans", "");
+    title = title.replaceAll("plans", "");
+    title = title.replaceAll("plan", "");
+    title = title.replaceAll("Plan", "");
+    title = title.trim();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.newBgcolor,
       appBar: CustomAppBarPresentCloseButton(
-          title: widget.title ?? "",
-          subtitle: "Plan",
-          subtitleColor: AppColor.textGrayBlue),
+          title: title, subtitle: "Plan", subtitleColor: AppColor.textGrayBlue),
       body: BackgroundCurveView(
-          child: SafeArea(
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: bodyDesign()),
-      )),
+        child: SafeArea(
+          child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: bodyDesign()),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: InkWell(
+          onTap: () {
+            ToastMessage.confrimationToast(
+                msg: LocalString.msgWantBuyPlanTask,
+                OnTap: () {
+                  print(selectedItem!.type.toString());
+                  AllPlansApiManager().planSubcribe(
+                    planId: selectedItem!.subscriptionPlanId.toString(),
+                    type: selectedItem!.type.toString(),
+                  );
+                });
+          },
+          child: Container(
+            height: 60,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Container(
+                      height: 50,
+                      color: AppColor.theme,
+                      // ignore: prefer_const_constructors
+                      child: Center(
+                        child: const Text("Proceed",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20,
+                                color: Colors.white)),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 60,
+                  color: AppColor.segmentBarSelectedColor,
+                  child: Center(
+                      child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text("\$ ${selectedItem?.price}",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                            color: Colors.white)),
+                  )),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -99,55 +173,83 @@ class _PlanMonthlyYearlyViewState extends State<PlanMonthlyYearlyView> {
   }
 
   List<Widget> itemCarousel() {
-    return data
+    return widget.subscriptionSubPlans!
         .map((item) => Container(
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-                child: ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                    child: Container(
-                      child: SingleChildScrollView(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(width: 1.5, color: AppColor.theme
-                                //                   <--- border width here
+              child: InkWell(
+                onTap: () {
+                  print("d");
+                  setState(() {
+                    selectedItem = item;
+                    //selectedID = item.id ?? 0;
+                  });
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+                  child: ClipRRect(
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(15.0)),
+                      child: Container(
+                        child: SingleChildScrollView(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                  width: 1.5, color: AppColor.theme
+                                  //                   <--- border width here
+                                  ),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Stack(
+                              children: [
+                                Column(
+                                  children: <Widget>[
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                    Text(
+                                      item.type.toString().toUpperCase(),
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 20,
+                                          color: AppColor.textBlackColor),
+                                    ),
+                                    HTMLRender(
+                                      data: item.description.toString(),
+                                    ),
+                                    IgnorePointer(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 40, vertical: 20),
+                                        child: CustomButton.regular(
+                                          fontSize: 23,
+                                          fontweight: FontWeight.w600,
+                                          title: "\$ ${item.price}.00",
+                                          height: 40,
+                                          onTap: () {},
+                                        ),
+                                      ),
+                                    ),
+                                    indicator(),
+                                  ],
                                 ),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Column(
-                            children: <Widget>[
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                item.periodDuration.toString(),
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 20,
-                                    color: AppColor.textBlackColor),
-                              ),
-                              HTMLRender(
-                                data: item.description.toString(),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 40, vertical: 20),
-                                child: CustomButton.regular(
-                                  fontSize: 23,
-                                  fontweight: FontWeight.w600,
-                                  title: item.price.toString(),
-                                  height: 40,
-                                ),
-                              ),
-                              indicator(),
-                            ],
+                                if (selectedItem != null)
+                                  if (selectedItem?.id == item.id)
+                                    Positioned(
+                                        top: 5,
+                                        right: 10,
+                                        child: Container(
+                                          width: 20,
+                                          height: 20,
+                                          child: Icon(Icons.check_circle),
+                                        ))
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    )),
+                      )),
+                ),
               ),
             ))
         .toList();

@@ -1,12 +1,14 @@
 import 'package:daly_doc/pages/notificationScreen/components/sectionRowlistView.dart';
 import 'package:daly_doc/pages/notificationScreen/model/SectionItemModel.dart';
 import 'package:daly_doc/pages/notificationScreen/model/rowItemModel.dart';
+import 'package:daly_doc/pages/settingsScreen/ApiManager/AllPlansApiManager.dart';
 import 'package:daly_doc/widgets/socialLoginButton/socialLoginButton.dart';
 import '../../../utils/exportPackages.dart';
 import '../../../utils/exportScreens.dart';
 import '../../../utils/exportWidgets.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../../widgets/ToastBar/toastMessage.dart';
 import '../../widgets/htmlRender/htmlRender.dart';
 import 'components/planItemView.dart';
 import 'model/PlanInfoModel.dart';
@@ -27,7 +29,7 @@ class _PlanDetailViewState extends State<PlanDetailView> {
       backgroundColor: AppColor.newBgcolor,
       appBar: CustomAppBarPresentCloseButton(
           title: widget.data!.title,
-          subtitle: "",
+          subtitle: "Plan",
           subtitleColor: AppColor.textGrayBlue),
       body: BackgroundCurveView(
           child: SafeArea(
@@ -50,9 +52,13 @@ class _PlanDetailViewState extends State<PlanDetailView> {
               height: 20,
             ),
             headerTitle("Features"),
-            HTMLRender(
-              data: widget.data!.description.toString(),
-            ),
+            widget.data!.periodDuration == PlanType.free
+                ? HTMLRender(
+                    data: widget.data!.description.toString(),
+                  )
+                : HTMLRender(
+                    data: widget.data!.planList?.first.description ?? "",
+                  ),
 
             widget.data!.periodDuration == PlanType.free
                 ? freePlanView()
@@ -86,7 +92,7 @@ class _PlanDetailViewState extends State<PlanDetailView> {
           ),
           headerTitle("Subscription Detail"),
           Text(
-            "Renew on Dec 12, 2022",
+            "Renew on ${widget.data!.end_dateFormat}",
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontWeight: FontWeight.w400,
@@ -102,6 +108,14 @@ class _PlanDetailViewState extends State<PlanDetailView> {
             height: 40,
             fontSize: 15,
             radius: 4,
+            onTap: () {
+              ToastMessage.confrimationToast(
+                  msg: LocalString.msgCancelPlan,
+                  OnTap: () {
+                    AllPlansApiManager()
+                        .cancelPlan(planId: widget.data!.plan_id.toString());
+                  });
+            },
           ),
         ]);
   }

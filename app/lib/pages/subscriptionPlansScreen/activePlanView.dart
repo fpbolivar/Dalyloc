@@ -10,6 +10,8 @@ import '../../../utils/exportScreens.dart';
 import '../../../utils/exportWidgets.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../settingsScreen/ApiManager/AllPlansApiManager.dart';
+import 'components/freeItemView.dart';
 import 'components/planItemView.dart';
 import 'model/PlanInfoModel.dart';
 
@@ -22,26 +24,16 @@ class ActivePlanView extends StatefulWidget {
 }
 
 class _ActivePlanViewState extends State<ActivePlanView> {
-  List<PlanInfoModel> data = [
-    PlanInfoModel(
-        title: "Devotional Plan",
-        price: "\$12.99",
-        description:
-            "<ul><li>Upload Video with HD Resolution</li><li>Attachment &amp; Post Scheduling</li><li>Set your rates</li><li>Offers on Supplyments</li><li>Free booster drinks</li><li>No charge to join health community.</li><li>Exclusive Deals</li></ul>",
-        btnTitle: "Manage Subscription",
-        periodDuration: PlanType.monthly,
-        contextType: ContentType.choice,
-        image: "ic_devotional.png"),
-    PlanInfoModel(
-        title: "Meal Plan",
-        price: "\$32.99",
-        description:
-            "<ul><li>Upload Video with HD Resolution</li><li>Attachment &amp; Post Scheduling</li><li>Set your rates</li><li>Offers on Supplyments</li><li>Free booster drinks</li><li>No charge to join health community.</li><li>Exclusive Deals</li></ul>",
-        btnTitle: "Manage Subscription",
-        periodDuration: PlanType.yearly,
-        contextType: ContentType.text,
-        image: "ic_meal.png"),
-  ];
+  // PlanInfoModel(
+  //   title: "Devotional Plan",
+  //   price: "\$12.99",
+  //   description:
+  //       "<ul><li>Upload Video with HD Resolution</li><li>Attachment &amp; Post Scheduling</li><li>Set your rates</li><li>Offers on Supplyments</li><li>Free booster drinks</li><li>No charge to join health community.</li><li>Exclusive Deals</li></ul>",
+  //   btnTitle: "Manage Subscription",
+  //   periodDuration: PlanType.monthly,
+  //   contextType: ContentType.choice,
+  //   image: "ic_devotional.png"),
+  List<PlanInfoModel> data = [];
   List<PlanInfoModel> freePlan = [
     PlanInfoModel(
         title: "Basic Plan",
@@ -51,6 +43,21 @@ class _ActivePlanViewState extends State<ActivePlanView> {
         contextType: ContentType.text,
         image: "ic_free.png"),
   ];
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getActivePlan();
+    });
+  }
+
+  getActivePlan() {
+    AllPlansApiManager().getActivePlan(onSuccess: (List<PlanInfoModel> list) {
+      data = list;
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,7 +99,16 @@ class _ActivePlanViewState extends State<ActivePlanView> {
               const SizedBox(
                 height: 10,
               ),
-              listView(),
+              if (data.isNotEmpty) listView(),
+              if (data.isEmpty)
+                Column(
+                  children: [
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Center(child: Text("No Plan subscribed yet"))
+                  ],
+                ),
               //
             ]),
       ),
@@ -126,7 +142,7 @@ class _ActivePlanViewState extends State<ActivePlanView> {
                   ));
               //onTap!(itemList[index].section ?? 0, index);
             },
-            child: PlanItemView(itemData: freePlan[index]));
+            child: FreeItemView(itemData: freePlan[index]));
       },
       separatorBuilder: (BuildContext context, int index) {
         // ignore: prefer_const_constructors
@@ -150,7 +166,12 @@ class _ActivePlanViewState extends State<ActivePlanView> {
                   context: context,
                   child: PlanDetailView(
                     data: data[index],
-                  ));
+                  ),
+                  onBackPress: (value) {
+                    if (value.toString() == true.toString()) {
+                      getActivePlan();
+                    }
+                  });
             },
             child: PlanItemView(itemData: data[index]));
       },

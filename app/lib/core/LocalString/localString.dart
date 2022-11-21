@@ -18,8 +18,10 @@ class LocalString {
   static const lblCopyLink = "Copy link";
   static const lblBookInterView = "Book a interview";
   static const lblSend = "Send";
+  static const lblSave = "Save";
   static const lblSubmit = "Submit";
-  static const lblNotification = "Notification";
+  static const lblUpload = "Upload";
+  static const lblNotification = "Notifications";
   static const lblSubscription = "Subscription";
 
   static const lblActive = "Active";
@@ -55,7 +57,12 @@ class LocalString {
   static const lblVerify = "Verify";
   static const lblSignUpDescription =
       "To manage daily plans, getting reminder about tasks, events create an account. ";
+  static const lblBusinessDescription =
+      "To manage daily plans, getting reminder about tasks, events create an business. ";
   static const lblCreateAnAccount = "Create an account";
+  static const lblCreateAnBusiness = "Create Business";
+  static const lblBusinessTiming = "Business Timing ";
+  static const lblBusinessDetails = "Business Details";
   static const lblChangePassword = "Change Password";
   static const lblForgotPasswordNavTitle = "Forgot\nPassword?";
   static const lblForgotPasswordDescription =
@@ -73,15 +80,22 @@ class LocalString {
   static const plcEnterMobileNo = "Enter Mobile No";
   static const plcPassword = "Passsword";
   static const plcCurrentPassword = "Current Passsword";
-  static const plcName = "Name";
+
   static const plcOTP = "Six digits OTP Code";
+  static const plcAddress = "Address";
   static const plcCNFPassword = "Confirm Passsword";
+  static const plcLongLat = "Longitude/Latitude";
   static const plcEmail = "Email";
+  static const plcName = "Name";
+  static const plcBusinessEmail = "Business Email";
+  static const plcBusinessName = "Business Name";
 
   //MESSAGES
   static const msgEmail = "Enter email";
+  static const msgTaskName = "Enter Task Name";
   static const msgInValidEmail = "Invalid email format";
   static const msgNotes = "Enter Notes";
+  static const msgSessionExpired = "Session expired";
   static const msgUpdateTask = "Successfully,Task has been Update.";
   static const msgCreatedTask = "Successfully,Task has been created.";
   static const msgSelectTime = "Select Time";
@@ -89,6 +103,12 @@ class LocalString {
   static const msgSelectHowLong = "Select HowLong option";
   static const msgSelectHowOften = "Select HowOften option";
   static const msgDeleteTask = "Do you want to delete task?";
+  static const msgSyncAndLogout = "  Syncing & Sign Out";
+  static const msgWantBuyPlanTask =
+      "Would you like to buy a subscription plan?";
+  static const msgCancelPlan = "Would you like to cancel a subscription plan?";
+  static const msgCancelSubscription =
+      "Successfully, cancelled your  subscription.";
   getFCMToken() {}
 
   // Future<String?> _getId() async {

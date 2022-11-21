@@ -107,11 +107,11 @@ class ForgotPasswordApi {
       print('${data}');
 
       if (data['status'] == true) {
+        dismissWaitDialog();
+        showAlert(data['message'].toString());
         Routes.pushSimple(
             context: Constant.navigatorKey.currentState!.context,
             child: CreateNewPasswordScreen());
-        dismissWaitDialog();
-        showAlert(data['message'].toString());
       } else {
         dismissWaitDialog();
         showAlert(data['message'].toString());
@@ -171,11 +171,18 @@ class ForgotPasswordApi {
       print('${data}');
 
       if (data['status'] == true) {
+        dismissWaitDialog();
+        showAlert(
+          data['message'].toString(),
+          // onTap: () {
+          //   Routes.pushSimple(
+          //       context: Constant.navigatorKey.currentState!.context,
+          //       child: LoginScreen());
+          // },
+        );
         Routes.pushSimple(
             context: Constant.navigatorKey.currentState!.context,
             child: LoginScreen());
-        dismissWaitDialog();
-        showAlert(data['message'].toString());
       } else {
         dismissWaitDialog();
         showAlert(data['message'].toString());
