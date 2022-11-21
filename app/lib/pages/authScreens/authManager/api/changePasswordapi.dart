@@ -1,3 +1,4 @@
+import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/utils/exportPackages.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
@@ -56,8 +57,8 @@ class ChangePasswordApi {
 
       if (data['status'] == true) {
         Routes.pushSimple(
-            context: LocalString.navigatorKey.currentState!.context,
-            child: ScheduleCalendarScreen());
+            context: Constant.navigatorKey.currentState!.context,
+            child: Routes.setScheduleScreen());
         dismissWaitDialog();
         showAlert(data['message'].toString());
       } else {

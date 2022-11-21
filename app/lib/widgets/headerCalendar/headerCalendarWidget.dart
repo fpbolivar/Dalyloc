@@ -23,6 +23,7 @@ class HeaderCalendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print(MediaQuery.of(context).size.width);
+    print(selectedDate!.monthFormat ?? "");
     return Container(
       height: 180,
       width: MediaQuery.of(context).size.width,
@@ -90,14 +91,14 @@ class HeaderCalendar extends StatelessWidget {
                 style: const TextStyle(color: Colors.black, fontSize: 36),
                 children: <TextSpan>[
                   TextSpan(
-                      text: ("${headerDateList!.first.monthFormat}  "),
+                      text: ("${selectedDate!.monthFormat ?? ""}  "),
                       style: TextStyle(
                         color: AppColor.textBlackColor,
                         fontWeight: FontWeight.w600,
                         fontSize: 23,
                       )),
                   TextSpan(
-                      text: (headerDateList!.first.yyyyFormat ?? ""),
+                      text: (selectedDate!.yyyyFormat ?? ""),
                       style: TextStyle(
                         color: AppColor.textGrayBlue,
                         fontWeight: FontWeight.w700,
@@ -137,6 +138,7 @@ class HeaderCalendar extends StatelessWidget {
                       ),
                       InkWell(
                         onTap: () {
+                          print(item.dateTime);
                           onSelection!(item);
                         },
                         child: Container(

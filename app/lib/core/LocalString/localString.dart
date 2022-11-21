@@ -1,5 +1,3 @@
-import 'package:daly_doc/utils/exportPackages.dart';
-
 class LocalString {
   static const lblDalyDoc = "Daly Doc";
   static String userName = "User";
@@ -7,7 +5,7 @@ class LocalString {
 
   static bool isRunningLoader = false;
   static const internetNot = "Connection lost.Check your internet connection.";
-  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
   static const lblChosseOne = "Choose one.";
   static const lblPersonal = "Personal";
   static const lblBusiness = "Business";
@@ -26,6 +24,7 @@ class LocalString {
 
   static const lblActive = "Active";
   static const lblCreate = "Create";
+  static const lblUpdate = "Update";
   static const lblPlan = "Plan";
 
   static const lblPlaceReminder = "A place to keep your reminder";
@@ -78,6 +77,18 @@ class LocalString {
   static const plcOTP = "Six digits OTP Code";
   static const plcCNFPassword = "Confirm Passsword";
   static const plcEmail = "Email";
+
+  //MESSAGES
+  static const msgEmail = "Enter email";
+  static const msgInValidEmail = "Invalid email format";
+  static const msgNotes = "Enter Notes";
+  static const msgUpdateTask = "Successfully,Task has been Update.";
+  static const msgCreatedTask = "Successfully,Task has been created.";
+  static const msgSelectTime = "Select Time";
+  static const msgSelectDate = "Select Date";
+  static const msgSelectHowLong = "Select HowLong option";
+  static const msgSelectHowOften = "Select HowOften option";
+  static const msgDeleteTask = "Do you want to delete task?";
   getFCMToken() {}
 
   // Future<String?> _getId() async {

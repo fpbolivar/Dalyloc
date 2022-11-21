@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:daly_doc/core/colors/colors.dart';
+import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/pages/pagesGetStarted/introduction_animation_screen.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../utils/exportPackages.dart';
 import 'pages/onboardingScreen.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
@@ -38,14 +43,14 @@ class _DalyDocAppState extends State<DalyDocApp> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'DalyDoc',
-        navigatorKey: LocalString.navigatorKey,
+        navigatorKey: Constant.navigatorKey,
         theme: ThemeData(
           fontFamily: "NotoSans",
           primarySwatch: Colors.blue,
         ),
         home: SplashScreenView(
           navigateRoute: token != ""
-              ? ScheduleCalendarScreen()
+              ? Routes.setScheduleScreen()
               : IntroductionAnimationScreen(),
           duration: 3000,
           imageSize: 30,

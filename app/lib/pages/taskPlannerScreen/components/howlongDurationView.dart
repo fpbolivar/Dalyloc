@@ -10,11 +10,69 @@ enum SegmentType { first, second, third, fourth, fifth, sixth }
 
 enum TestType { segmentation, max, news }
 
+extension SegmentTypeRawValue on SegmentType {
+  String get rawValue {
+    switch (this) {
+      case SegmentType.first:
+        return '1m';
+      case SegmentType.second:
+        return '15m';
+      case SegmentType.third:
+        return '30m';
+      case SegmentType.fourth:
+        return '45m';
+      case SegmentType.fifth:
+        return '1h';
+      case SegmentType.sixth:
+        return '1.5h';
+    }
+  }
+
+  int get interval {
+    switch (this) {
+      case SegmentType.first:
+        return 1;
+      case SegmentType.second:
+        return 15;
+      case SegmentType.third:
+        return 30;
+      case SegmentType.fourth:
+        return 45;
+      case SegmentType.fifth:
+        return 60;
+      case SegmentType.sixth:
+        return 90;
+    }
+  }
+}
+
+extension SegmentTypeValue on String {
+  SegmentType get segmenttype {
+    switch (this) {
+      case "1m":
+        return SegmentType.first;
+      case "15m":
+        return SegmentType.second;
+      case "30m":
+        return SegmentType.third;
+      case "45m":
+        return SegmentType.fourth;
+      case "1h":
+        return SegmentType.fifth;
+      case "1.5h":
+        return SegmentType.sixth;
+      default:
+        return SegmentType.first;
+    }
+  }
+}
+
 // ignore: must_be_immutable
 class HowLongViewTask extends StatefulWidget {
-  HowLongViewTask({
-    super.key,
-  });
+  Function(int, String)? howLong;
+  SegmentType selectedData = SegmentType.first;
+  HowLongViewTask(
+      {super.key, this.howLong, this.selectedData = SegmentType.first});
 
   @override
   State<HowLongViewTask> createState() => _HowLongViewTaskState();
@@ -22,6 +80,13 @@ class HowLongViewTask extends StatefulWidget {
 
 class _HowLongViewTaskState extends State<HowLongViewTask> {
   SegmentType selectedData = SegmentType.first;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    selectedData = widget.selectedData;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -44,6 +109,7 @@ class _HowLongViewTaskState extends State<HowLongViewTask> {
           Container(
               child: CustomSlidingSegmentedControl<SegmentType>(
             isStretch: true,
+            initialValue: selectedData,
             children: {
               SegmentType.first: Text(
                 '1m',
@@ -83,6 +149,28 @@ class _HowLongViewTaskState extends State<HowLongViewTask> {
               setState(() {
                 selectedData = v;
               });
+              widget.howLong!(selectedData.interval, selectedData.rawValue);
+              // switch (selectedData) {
+              //   case SegmentType.first:
+              //     widget.howLong!(1);
+              //     break;
+              //   case SegmentType.second:
+              //     widget.howLong!(15);
+              //     break;
+              //   case SegmentType.third:
+              //     widget.howLong!(30);
+              //     break;
+              //   case SegmentType.fourth:
+              //     widget.howLong!(45);
+              //     break;
+              //   case SegmentType.fifth:
+              //     widget.howLong!(60);
+              //     break;
+              //   case SegmentType.sixth:
+              //     widget.howLong!(90);
+              //     break;
+              //   default:
+              // }
             },
           )),
         ],

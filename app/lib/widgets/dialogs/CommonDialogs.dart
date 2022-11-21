@@ -1,3 +1,4 @@
+import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
 
 import '../../utils/exportPackages.dart';
@@ -24,8 +25,7 @@ showAlert(msg,
         child: new CustomButton.regular(
           title: btnName,
           onTap: () {
-            Navigator.of(
-                    LocalString.navigatorKey.currentState!.overlay!.context)
+            Navigator.of(Constant.navigatorKey.currentState!.overlay!.context)
                 .pop();
             if (onTap != null) {
               onTap();
@@ -38,7 +38,7 @@ showAlert(msg,
 
   showDialog(
       barrierDismissible: false, //barrierDismiss,
-      context: LocalString.navigatorKey.currentState!.overlay!.context,
+      context: Constant.navigatorKey.currentState!.overlay!.context,
       builder: (BuildContext context) {
         return alert;
       });
@@ -46,7 +46,7 @@ showAlert(msg,
 //part of commons;
 
 dismissWaitDialog() {
-  var context = LocalString.navigatorKey.currentState!.overlay!.context;
+  var context = Constant.navigatorKey.currentState!.overlay!.context;
 
   if (LocalString.isRunningLoader) {
     LocalString.isRunningLoader = false;
@@ -76,7 +76,7 @@ showErrorAlert(error, {context, bool pop = false, VoidCallback? onTap}) {
           style: TextStyle(color: Colors.red),
         ),
         onPressed: () {
-          Navigator.of(LocalString.navigatorKey.currentState!.overlay!.context)
+          Navigator.of(Constant.navigatorKey.currentState!.overlay!.context)
               .pop();
           if (onTap != null) {
             onTap();
@@ -88,7 +88,7 @@ showErrorAlert(error, {context, bool pop = false, VoidCallback? onTap}) {
 
   showDialog(
       barrierDismissible: false,
-      context: LocalString.navigatorKey.currentState!.overlay!.context,
+      context: Constant.navigatorKey.currentState!.overlay!.context,
       builder: (BuildContext context) {
         return alert;
       });
@@ -103,7 +103,7 @@ shadowOnView(Widget view) {
 }
 
 waitDialog({message = "   Please wait...", Duration? duration}) {
-  var context = LocalString.navigatorKey.currentState!.overlay!.context;
+  var context = Constant.navigatorKey.currentState!.overlay!.context;
 
   LocalString.isRunningLoader = true;
   var dialog = Dialog(

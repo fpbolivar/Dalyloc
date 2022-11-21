@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:daly_doc/core/apisUtils/httpUrls.dart';
+import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/pages/allowLocation/allowLocation.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
@@ -72,7 +73,7 @@ class RegisterApis {
         await LocalStore().setotp(otp);
         await LocalStore().setuid(uid);
         Routes.pushSimple(
-            context: LocalString.navigatorKey.currentState!.context,
+            context: Constant.navigatorKey.currentState!.context,
             child: OtpVerifyScreen());
       } else {
         dismissWaitDialog();
@@ -145,7 +146,7 @@ class RegisterApis {
 
       if (data['status'] == true) {
         Routes.pushSimple(
-            context: LocalString.navigatorKey.currentState!.context,
+            context: Constant.navigatorKey.currentState!.context,
             child: AllowLocationScreen());
         dismissWaitDialog();
         showAlert(data['message'].toString());

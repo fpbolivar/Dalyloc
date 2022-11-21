@@ -6,9 +6,8 @@ import '../../../utils/exportPackages.dart';
 
 // ignore: must_be_immutable
 class EmaiViewTask extends StatelessWidget {
-  EmaiViewTask({
-    super.key,
-  });
+  EmaiViewTask({super.key, required this.controller});
+  TextEditingController controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +39,7 @@ class EmaiViewTask extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.only(left: 8),
                     child: TextField(
+                      controller: controller,
                       style: TextStyle(fontSize: 15),
                       onChanged: (text) {},
                       keyboardType: TextInputType.emailAddress,

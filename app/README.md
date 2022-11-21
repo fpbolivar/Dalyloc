@@ -2,15 +2,16 @@
 
 A new Flutter project.
 
-## Getting Started
+## MILESTONE -1
 
-This project is a starting point for a Flutter application.
+Designed Below Screens.
 
-A few resources to get you started if this is your first Flutter project:
+Splash || IntroPage || Login || Register || ForgotPassword || OTP Verify || CreateNewPassword ||
+HomeTaskList || CreateTask View || Setting ||Notification List || Allow Location || WakeUp Time Set View
+ChangePassword || Profile || PlanList || ActivePlanView
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 14 Nov,2022
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+#Create Local DB
+In Local DB we perform below operations:
+insert task || get task list by date || delete task || update task.

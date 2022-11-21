@@ -149,8 +149,8 @@ class DateHelper {
     return leapYear;
   }
 
-  List<DateTime> getDateOfMonth() {
-    var now = DateTime.now();
+  List<DateTime> getDateOfMonth(DateTime date) {
+    var now = date;
     var totalDays = datesInMonth(now);
     var listOfDates = List<int>.generate(totalDays, (i) => i + 1);
     List<DateTime> arrayDates = [];
@@ -158,11 +158,19 @@ class DateHelper {
       final dt = DateTime(now.year, now.month, element);
       arrayDates.add(dt);
     }
+    // var newDate = DateTime(now.year, now.month, element);
+    // DateTime pastMonth = DateTime.now().add(Duration(days: 30));
+    DateTime dateCurrent = now;
+    for (var i = 1; i <= 20; i++) {
+      arrayDates.add(dateCurrent.add(Duration(days: i)));
+    }
+
+    print(arrayDates);
     return arrayDates;
   }
 
-  int getCurrentDayDD() {
-    var now = DateTime.now();
+  int getCurrentDayDD(DateTime date) {
+    var now = date;
     return now.day;
   }
 

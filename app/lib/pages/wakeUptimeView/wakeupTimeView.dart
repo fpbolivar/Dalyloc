@@ -61,7 +61,7 @@ class _WakeUpTimeViewScreenState extends State<WakeUpTimeViewScreen> {
               title: "Set WakeUp Time",
               onTap: () {
                 Routes.pushSimple(
-                    context: context, child: ScheduleCalendarScreen());
+                    context: context, child: Routes.setScheduleScreen());
               },
             ),
             const SizedBox(

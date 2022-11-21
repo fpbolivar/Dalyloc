@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:daly_doc/core/apisUtils/httpUrls.dart';
+import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/utils/exportPackages.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
 import '../../widgets/dialogs/CommonDialogs.dart';
@@ -58,8 +59,8 @@ class LoginApis extends ChangeNotifier {
         await LocalStore().set_nameofuser(name.toString());
         await LocalStore().setToken(token.toString());
         Routes.pushSimpleAndReplaced(
-            context: LocalString.navigatorKey.currentState!.overlay!.context,
-            child: ScheduleCalendarScreen());
+            context: Constant.navigatorKey.currentState!.overlay!.context,
+            child: Routes.setScheduleScreen());
       } else {
         showAlert(data['message'].toString());
       }

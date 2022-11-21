@@ -7,10 +7,9 @@ import '../model/subtaskModel.dart';
 
 // ignore: must_be_immutable
 class AddSubTaskViewTask extends StatefulWidget {
-  AddSubTaskViewTask({
-    super.key,
-  });
-
+  AddSubTaskViewTask({super.key, this.onSubmitted, required this.data});
+  Function(List<SubtaskModel>)? onSubmitted;
+  List<SubtaskModel> data = [];
   @override
   State<AddSubTaskViewTask> createState() => _AddSubTaskViewTaskState();
 }
@@ -22,11 +21,12 @@ class _AddSubTaskViewTaskState extends State<AddSubTaskViewTask> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    data.add(SubtaskModel(isSelected: false, description: "Shoping"));
-    data.add(SubtaskModel(
-        isSelected: false,
-        description:
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make"));
+    data = widget.data;
+    // data.add(SubtaskModel(isSelected: false, description: "Shoping"));
+    // data.add(SubtaskModel(
+    //     isSelected: false,
+    //     description:
+    //         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make"));
   }
 
   @override
@@ -78,11 +78,11 @@ class _AddSubTaskViewTaskState extends State<AddSubTaskViewTask> {
                       ),
                       checkColor: Colors.green[900],
                       activeColor: Colors.transparent,
-                      value: data[index].isSelected,
+                      value: data[index].isCompleted,
                       onChanged: (value) {
                         print(value);
                         setState(() {
-                          data[index].isSelected = value;
+                          data[index].isCompleted = value;
                         });
                       }),
                 ),
@@ -100,7 +100,23 @@ class _AddSubTaskViewTaskState extends State<AddSubTaskViewTask> {
                       )
                     ],
                   ),
-                )
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                Container(
+                    width: 20,
+                    height: 20,
+                    child: InkWell(
+                        child: Icon(Icons.delete),
+                        onTap: () {
+                          List<SubtaskModel> dateTemp = [];
+                          dateTemp.addAll(data);
+                          dateTemp.removeAt(index);
+                          data = dateTemp;
+                          widget.onSubmitted!(data);
+                          setState(() {});
+                        })),
               ],
             );
           },
@@ -115,11 +131,18 @@ class _AddSubTaskViewTaskState extends State<AddSubTaskViewTask> {
 
   addSubTaskData(String datatext) {
     if (datatext.toString().isNotEmpty) {
-      data.insert(0, SubtaskModel(description: datatext, isSelected: true));
+      data.insert(
+          0,
+          SubtaskModel(
+              id: DateTime.now().microsecondsSinceEpoch,
+              description: datatext,
+              isCompleted: false));
       subTaskTF.clear();
       setState(() {});
+      widget.onSubmitted!(data);
       Navigator.of(context).pop();
     } else {
+      widget.onSubmitted!(data);
       Navigator.of(context).pop();
     }
   }
@@ -139,6 +162,7 @@ class _AddSubTaskViewTaskState extends State<AddSubTaskViewTask> {
             child: Container(
               height: 200,
               clipBehavior: Clip.antiAlias,
+              // ignore: sort_child_properties_last
               child: Material(
                   elevation: 0,
                   color: AppColor.segmentBarBgColor,
