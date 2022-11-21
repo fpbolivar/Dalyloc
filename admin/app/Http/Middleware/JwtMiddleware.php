@@ -27,7 +27,8 @@ class JwtMiddleware
                 return response()->json([
                     'message' => 'user not found',
                     'status'=>false,
-                    'status_code' => false
+                    'status_code' => false,
+                    'auth_code' => 808
                 ]);
             } else {
                 \Auth::loginUsingId($user->id);
@@ -38,7 +39,9 @@ class JwtMiddleware
             return response()->json([
                 'message' => $e->getMessage(),
                 'status'=>false,
-                'status_code' => false
+                'status_code' => false,
+                'auth_code' => 808
+
             ]);
 
         } catch (TokenInvalidException $e) {
@@ -46,14 +49,18 @@ class JwtMiddleware
             return response()->json([
                 'message' => 'token_invalid',
                 'status'=>false,
-                'status_code' => false
+                'status_code' => false,
+                'auth_code' => 808
+
             ]);
 
         } catch (JWTException $e) {
             return response()->json([
                 'message' => 'token_expired',
                 'status'=>false,
-                'status_code' => false
+                'status_code' => false,
+                'auth_code' => 808
+
             ]);
 
         }

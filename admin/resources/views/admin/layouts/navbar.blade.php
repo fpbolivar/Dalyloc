@@ -26,6 +26,11 @@
                 href="{{ url('admin/users') }}"><i class="side-menu__icon fe fe-users"></i><span
                     class="side-menu__label">Users</span></a>
         </li>
+        <li class="slide">
+            <a class="side-menu__item {{ (request()->is('admin/business-category')) ? 'active' : '' }}"
+                href="{{ url('admin/business-category') }}"><i class="side-menu__icon fe fe-award"></i><span
+                    class="side-menu__label">Business Category</span></a>
+        </li>
 
     </ul>
 </aside>

@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Carbon;
+use App\Models\Model\UserSubscription;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -64,6 +65,9 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-
-   
+    public function UserSubscription()
+    {
+        return $this->hasmany(UserSubscription::class,'user_id','id')->orderBy('id','DESC');
+    }
+ 
 }

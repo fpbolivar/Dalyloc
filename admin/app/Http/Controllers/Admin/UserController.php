@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Model\SubscriptionPlans;
 
 class UserController extends Controller
 {
@@ -26,5 +27,12 @@ class UserController extends Controller
             $deleteUser->save();
             return redirect('admin/users')->with('success', 'User blocked successfully.');
         }
+    }
+
+    public function UserView($id){
+        $user = User::with('UserSubscription')->find($id);
+        //dd($user);
+        return view('admin.users.detail',compact('user'));
+
     }
 }

@@ -84,10 +84,14 @@ class AuthApiController extends Controller
             $user->otp = null;
             $user->phone_verified_at = date('Y-m-d h:m:s');
             if ($user->save()) {
+                $token = JWTAuth::fromUser($user);
+
                 return response()->json([
                     'status' => true,
                     'status_code' => true,
-                    'message' => 'Mobile number authenticated successfully.'
+                    'message' => 'Mobile number authenticated successfully.',
+                    'access_token' => 'Bearer '.$token,
+
                 ]);
             } else {
                 return response()->json([
@@ -100,7 +104,7 @@ class AuthApiController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => true,
-                'message' => 'Invalid otp.'
+                'message' => 'Invalid OTP.'
             ]);
         }
     }
@@ -203,7 +207,7 @@ class AuthApiController extends Controller
             // }elseif (!is_null($user->social_id) && $user->login_type == 'google') {
             //     return response()->json(['message' => 'you are already login with the facebook account','status' => false]);
             // }
-            return response()->json(['message' => 'This phone number and password combination does not exist in our system. Please try again.','status' => false]);
+            return response()->json(['message' => 'Wrong Password.','status' => false]);
         }
     }
 

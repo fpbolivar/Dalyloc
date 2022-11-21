@@ -101,16 +101,18 @@ class SubscriptionHelper
 		return $arrayCreate;
 	}
 
-	public function GetSubscriptionDates($planData,$trailDays)
+	public function GetSubscriptionDates($planData)
 	{
-		$date = date('Y-m-d h:i:s');
+		// $date = date('Y-m-d h:i:s');
+		$startDate = date('Y-m-d');
 		$endDate = '';
-        // $trailDays = $planData->trail_days;
-        $startDate = date('Y-m-d H:i:s', strtotime($date . ' +'.$trailDays.' day'));
-        if ($planData->interval == 'month') {
-            $endDate = date('Y-m-d H:i:s', strtotime($startDate . ' +'.$planData->interval_count.' '.$planData->interval.''));
-        }elseif ($planData->interval == 'year') {
-            $endDate = date('Y-m-d H:i:s', strtotime($startDate . ' +'.$planData->interval_count.' '.$planData->interval.''));
+        // $startDate = date('Y-m-d H:i:s', strtotime($date . ' +'.$trailDays.' day'));
+        if ($planData->type == 'monthly') {
+			$endDate = date('Y-m-d', strtotime('+1 month', strtotime($startDate)));
+            // $endDate = date('Y-m-d H:i:s', strtotime($startDate . ' +1 month '.$planData->type.''));
+        }elseif ($planData->type == 'annually') {
+			$endDate = date('Y-m-d', strtotime('+1 year', strtotime($startDate)));
+            // $endDate = date('Y-m-d H:i:s', strtotime($startDate . ' +'.$planData->interval_count.' '.$planData->type.''));
         }
         return ['start_date'=>$startDate,'expire_date'=>$endDate];
 	}
