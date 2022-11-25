@@ -80,7 +80,7 @@
                                         {{($user->gender)?$user->gender:'N/A'}}
                                     </td>
                                     <td>
-                                        {{($user->height_feet)?$user->height_feet.".".($user->height_inch? $user->height_inch : '0'):'N/A'}}
+                                        {{($user->height)?$user->height:'N/A'}}
                                     </td>
                                     <td>{{($user->weight)?$user->weight:'N/A'}}
                                     </td>

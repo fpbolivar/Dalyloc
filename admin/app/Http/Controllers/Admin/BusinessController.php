@@ -30,11 +30,11 @@ class BusinessController extends Controller
                 $path = '/images/business';
                 $addBusiness->image = $imageHelper->UploadImage($request->image,$path);
             }
-                if($addBusiness->save()){
-                    return redirect('admin/business-category')->with('success', 'Business Category created successfully.');
-                }else{
-                    return redirect('admin/business-category')->with('error', 'Something went wrong.');
-                }
+            if($addBusiness->save()){
+                return redirect('admin/business-category')->with('success', 'Business Category created successfully.');
+            }else{
+                return redirect('admin/business-category')->with('error', 'Something went wrong.');
+            }
         }else{
             return view('admin.business.addbusiness');
         }
@@ -42,7 +42,6 @@ class BusinessController extends Controller
 
     public function BlockBusiness($id)
     {
-
         $business = BusinessCategory::find($id);
         if ($business->is_deleted == "1") {
             $business->is_deleted = "0";
@@ -80,7 +79,6 @@ class BusinessController extends Controller
                 }
 
             }
-            //if has no image
             else{
                 $editBusiness->business_category_name = $request->business_category_name;
                 if($request->isDeleted == 1){
@@ -95,6 +93,6 @@ class BusinessController extends Controller
             }
         }else{
                 return view('admin.business.editbusiness',compact('editBusiness')); 
-            }
+        }
     }
 }

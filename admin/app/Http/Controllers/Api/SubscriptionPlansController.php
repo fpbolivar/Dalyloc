@@ -49,6 +49,43 @@ class SubscriptionPlansController extends Controller
         }
     }
 
+    public function GetUserActivePlansByType(Request $request){
+        $validator = Validator::make($request->all(),[
+            'plan_operation' => 'required',
+
+        ]);
+         // if validation fails
+    	if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' => $validator->messages()->first()
+            ]);
+        } 
+        $checkSubscription = UserSubscription::whereuser_id(auth()->user()->id)->where('plan_operation',$request->plan_operation)->first();
+        $today = date('Y-m-d');
+        if($checkSubscription != null){
+            $isActive = 0;
+            if($checkSubscription->end_date >= $today && $checkSubscription->subscription_status == 'active')
+            {
+                $isActive = 1;
+            }
+            return response()->json([
+                'status' => true,
+                'status_code' => true,
+                'isActive' => $isActive
+            ]);
+        }else{
+            return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' => 'No data found'
+            ]);
+        }
+
+
+
+    }
     public function StripeUserSubscription(Request $request, SubscriptionHelper $helper){
         $validator = Validator::make($request->all(),[
             'plan_id' => 'required|exists:subscription_plans,id',

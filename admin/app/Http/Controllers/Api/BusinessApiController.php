@@ -31,9 +31,9 @@ class BusinessApiController extends Controller
     	 $validator = Validator::make($request->all(),[
             'business_name' => 'required',
             'business_email' => 'required|email',
-            'business_address'=> 'required',
-            'lat'=> 'required',
-            'lng'=> 'required',
+            // 'business_address'=> 'required',
+            // 'lat'=> 'required',
+            // 'lng'=> 'required',
             'business_category_id'=> 'required',
         ]);
          // if validation fails
@@ -53,29 +53,38 @@ class BusinessApiController extends Controller
                 'message' => 'Already has a business.'
             ]);
         }else{
+            $checkBusinessSlug = UserBusiness::where('slug',\Str::slug($request->business_name))->first();
             $createUserBusiness = new UserBusiness;
             $createUserBusiness->user_id = auth()->user()->id;
             if($request->has('slot_interval')){
                 $createUserBusiness->slot_interval = $request->slot_interval;
             }     
             $createUserBusiness->business_name = $request->business_name;
-            $createUserBusiness->slug = \Str::slug($request->business_name);
+            if($checkBusinessSlug){
+                $createUserBusiness->slug = \Str::slug($request->business_name).'_'.rand(10,100);
+            }else{
+                $createUserBusiness->slug = \Str::slug($request->business_name);
+            }
              //if has image
              if($request->has('business_image')){
                 $path = '/images/user-business';
                 $createUserBusiness->business_img = $imageHelper->UploadImage($request->business_image,$path);
             }
             $createUserBusiness->business_email = $request->business_email;
-            $createUserBusiness->business_address = $request->business_address;
-            $createUserBusiness->lat = $request->lat;
-            $createUserBusiness->lng = $request->lng;
+            // $createUserBusiness->business_address = $request->business_address;
+            // $createUserBusiness->lat = $request->lat;
+            // $createUserBusiness->lng = $request->lng;
             $createUserBusiness->business_category_id = $request->business_category_id;
             if($createUserBusiness->save()){
+                $url = env('BOOKING_URL');
+                $slug = $createUserBusiness->slug;
+                $booking_url = $url . $slug;
                 return response()->json([
                     'status' => true,
                     'status_code' => true,
                     'message' =>'Business created successfully.',
-                    'user_business_id' => $createUserBusiness->id
+                    'user_business' => $createUserBusiness,
+                    'booking_url'=>$booking_url
                 ]);
             }else{
                 return response()->json([
@@ -84,9 +93,81 @@ class BusinessApiController extends Controller
                     'message' =>'Something went wrong.',
                 ]);
             }
-        }
+       }
 
     }
+
+      //user update business
+      public function UpdateUserBusiness(Request $request, ImageHelper $imageHelper){
+        // validate
+        $validator = Validator::make($request->all(),[
+            'user_business_id'=>'required|exists:user_business,id',
+           'business_name' => 'required',
+           'business_email' => 'required|email',
+           // 'business_address'=> 'required',
+           // 'lat'=> 'required',
+           // 'lng'=> 'required',
+           'business_category_id'=> 'required',
+       ]);
+        // if validation fails
+         if ($validator->fails()) {
+           $error = $validator->messages()->all();
+           return response()->json([
+               'status' => false,
+               'status_code' => true,
+               'message' =>$error[0]
+           ]);
+       }
+           $checkBusinessSlug = UserBusiness::where('slug',\Str::slug($request->business_name))->first();
+           $updateUserBusiness = UserBusiness::where('user_id',auth()->user()->id)->where('id',$request->user_business_id)->first();
+           if($updateUserBusiness){
+            //$updateUserBusiness->user_id = auth()->user()->id;
+           if($request->has('slot_interval')){
+            $updateUserBusiness->slot_interval = $request->slot_interval;
+        }     
+        $updateUserBusiness->business_name = $request->business_name;
+        if($checkBusinessSlug){
+            $updateUserBusiness->slug = \Str::slug($request->business_name).'_'.rand(10,100);
+        }else{
+            $updateUserBusiness->slug = \Str::slug($request->business_name);
+        }
+         //if has image
+         if($request->has('business_image')){
+            $path = '/images/user-business';
+            $updateUserBusiness->business_img = $imageHelper->UploadImage($request->business_image,$path);
+        }
+        $updateUserBusiness->business_email = $request->business_email;
+        $updateUserBusiness->business_address = $request->business_address;
+        $updateUserBusiness->lat = $request->lat;
+        $updateUserBusiness->lng = $request->lng;
+        $updateUserBusiness->business_category_id = $request->business_category_id;
+        if($updateUserBusiness->save()){
+            $url = env('BOOKING_URL');
+            $slug = $updateUserBusiness->slug;
+            $booking_url = $url . $slug;
+            return response()->json([
+                'status' => true,
+                'status_code' => true,
+                'message' =>'Business Updated successfully.',
+                'user_business' => $updateUserBusiness,
+                'booking_url'=>$booking_url
+            ]);
+        }else{
+            return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' =>'Something went wrong.',
+            ]);
+        }
+           }else{
+            return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' => 'Data not found'
+            ]);
+           }
+           
+   }
 
     public function GetUserBusiness(){
         $userBusiness = UserBusiness::with('UserBusinessCategory','UserBusinessTiming')->where('user_id',auth()->user()->id)->first();
@@ -136,7 +217,7 @@ class BusinessApiController extends Controller
                     return response()->json([
                         'status' => true,
                         'status_code' => true,
-                        'message' => 'Slot interavl is updated successfully',
+                        'message' => 'Slot interval is updated successfully',
                     ]);
                 }else{
                     return response()->json([
