@@ -38,7 +38,10 @@ class ToastMessage {
     )..show(Constant.navigatorKey.currentState!.context);
   }
 
-  static showSuccessMessage({msg = ""}) {
+  static showSuccessMessage(
+      {msg = "",
+      Color color = Colors.green,
+      Color leftColor = Colors.black87}) {
     // if (ToastMessage.isShow) {
     //   Navigator.of(Constant.navigatorKey.currentState!.context).pop();
     // }
@@ -50,9 +53,9 @@ class ToastMessage {
       margin: EdgeInsets.all(6.0),
       borderRadius: BorderRadius.circular(12),
       flushbarStyle: FlushbarStyle.FLOATING,
-      leftBarIndicatorColor: Colors.green[800],
+      leftBarIndicatorColor: leftColor == null ? Colors.black87 : leftColor,
       //  backgroundGradient: LinearGradient(colors: [Colors.blue, Colors.teal]),
-      backgroundColor: Colors.green,
+      backgroundColor: color == null ? Colors.green : color,
       // onStatusChanged: ((status) {
       //   print(status);
       //   ToastMessage.isShow = true;
@@ -60,13 +63,13 @@ class ToastMessage {
       //     ToastMessage.isShow = false;
       //   }
       // }),
-      boxShadows: [
-        BoxShadow(
-          color: Colors.blue[800]!,
-          offset: Offset(0.0, 2.0),
-          blurRadius: 3.0,
-        )
-      ],
+      // boxShadows: [
+      //   BoxShadow(
+      //     color: Colors.blue[800]!,
+      //     offset: Offset(0.0, 2.0),
+      //     blurRadius: 3.0,
+      //   )
+      // ],
     )..show(Constant.navigatorKey.currentState!.context);
   }
 

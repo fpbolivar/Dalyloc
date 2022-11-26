@@ -20,7 +20,9 @@ class LocalStore {
 
   final String _userCountry = "_userCountry";
   final String _userCity = "_userCity";
+  final String _businessId = "_businessId";
   final String _userState = "_userState";
+  final String _businessSlug = "_businessSlug";
 
   final String _userPincode = "_userPincode";
   final String _age = "_age";
@@ -38,6 +40,38 @@ class LocalStore {
   Future<String> get_MobileNumberOfUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     var value = prefs.getString(_MobileNumberOfUser) ?? '';
+
+    print("GET _MobileNumberOfUser");
+    print(value);
+    return value;
+  }
+
+  Future<bool> setBusinessSlug(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("set _businessSlug");
+    print(value);
+    return (prefs.setString(_businessSlug, value));
+  }
+
+  Future<String> getBusinessSlug() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var value = prefs.getString(_businessSlug) ?? '';
+
+    print("GET _businessSlug");
+    print(value);
+    return value;
+  }
+
+  Future<bool> setBusinessId(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("set _businessSlug");
+    print(value);
+    return (prefs.setString(_businessId, value));
+  }
+
+  Future<String> getBusinessId() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var value = prefs.getString(_businessId) ?? '';
 
     print("GET _MobileNumberOfUser");
     print(value);

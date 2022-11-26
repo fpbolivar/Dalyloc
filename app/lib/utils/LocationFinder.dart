@@ -180,7 +180,7 @@ class LocationDetector {
       // region: "in",
       onError: onError,
       mode: Mode.overlay,
-      components: [Component(Component.country, code)],
+      components: [Component(Component.country, 'us')],
     );
 
     bool? data = await displayPrediction(p!);

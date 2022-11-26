@@ -36,7 +36,8 @@ class _TimeSelectorWidgetState extends State<TimeSelectorWidget> {
     if (widget.data != null) {
       startSelectedTime = widget.data.startime!;
       endSelectedTime = widget.data.endtime!;
-      print("widget.data.startime ${widget.data.startime!.timeStr}");
+      print(
+          "widget.data.startime ${widget.data.startime!.timeStr} . ${widget.data.name}");
       print("widget.data.endtime ${widget.data.endtime!.timeStr}");
     }
     startTimeTF.text = startSelectedTime.timeStr;
@@ -60,8 +61,9 @@ class _TimeSelectorWidgetState extends State<TimeSelectorWidget> {
               if (startTimeTF.text.isEmpty) {
                 var timeFinal = DateFormat("HH:mm").format(DateTime.now());
                 setState(() {
-                  startSelectedTime.timeStr = timeFinal;
+                  // startSelectedTime.timeStr = timeFinal;
                   startTimeTF = TextEditingController(text: timeFinal);
+                  // widget.data.startime!.pickupTime = timeFinal.toString();
                 });
                 widget.onChangeStartTime(startSelectedTime);
               }
@@ -73,6 +75,7 @@ class _TimeSelectorWidgetState extends State<TimeSelectorWidget> {
                   setState(() {
                     startSelectedTime.timeStr = timeFinal;
                     startTimeTF = TextEditingController(text: timeFinal);
+                    // widget.data.startime!.pickupTime = timeFinal.toString();
                   });
                   widget.onChangeStartTime(startSelectedTime);
                 }
@@ -85,7 +88,8 @@ class _TimeSelectorWidgetState extends State<TimeSelectorWidget> {
                 minLine: 1,
                 textController: startTimeTF,
                 enabled: false,
-                placeholder: "start Time"),
+                title: "Start Time",
+                placeholder: "Start Time"),
           ),
         ),
         Expanded(
@@ -98,9 +102,7 @@ class _TimeSelectorWidgetState extends State<TimeSelectorWidget> {
               if (endTimeTF.text.isEmpty) {
                 var timeFinal = DateFormat("HH:mm").format(DateTime.now());
                 setState(() {
-                  // startSelectedTime.time = picked;
-
-                  endSelectedTime.timeStr = timeFinal;
+                  // endSelectedTime.timeStr = timeFinal;
                   endTimeTF = TextEditingController(text: timeFinal);
                 });
                 widget.onChangeEndTime(endSelectedTime);
@@ -125,6 +127,7 @@ class _TimeSelectorWidgetState extends State<TimeSelectorWidget> {
                 minLine: 1,
                 textController: endTimeTF,
                 enabled: false,
+                title: "End Time",
                 placeholder: "End Time"),
           ),
         ),
@@ -135,6 +138,7 @@ class _TimeSelectorWidgetState extends State<TimeSelectorWidget> {
   Widget writeReview(
       {maxLine = 5,
       minLine = 5,
+      title = "",
       textController,
       enabled = true,
       keybordType = TextInputType.text,
@@ -142,37 +146,46 @@ class _TimeSelectorWidgetState extends State<TimeSelectorWidget> {
       placeholder = "Description"}) {
     return Container(
       //color: Colors.white,
-      height: 40,
+      width: 100,
+      height: 80,
       child: Padding(
         padding: const EdgeInsets.all(1.0),
-        child: TextField(
-          style: TextStyle(fontSize: 14, color: Colors.black),
-          minLines: minLine,
-          maxLines: maxLine,
-          autocorrect: false,
-          controller: textController,
-          keyboardType: keybordType,
-          onChanged: (text) {
-            onChange(text);
-          },
-          decoration: InputDecoration(
-            hintText: placeholder,
-            contentPadding: EdgeInsets.only(top: 4, left: 5),
-            hintStyle: TextStyle(fontSize: 10, color: Colors.black),
-            disabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              borderSide: BorderSide(width: 0.5, color: Colors.transparent),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Text(title),
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              borderSide: BorderSide(width: 0.5, color: Colors.transparent),
+            TextField(
+              style: TextStyle(fontSize: 18, color: Colors.black),
+              minLines: minLine,
+              maxLines: maxLine,
+              autocorrect: false,
+              controller: textController,
+              keyboardType: keybordType,
+              onChanged: (text) {
+                onChange(text);
+              },
+              decoration: InputDecoration(
+                hintText: placeholder,
+                contentPadding: EdgeInsets.only(top: 4, left: 5),
+                hintStyle: TextStyle(fontSize: 10, color: Colors.black),
+                disabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  borderSide: BorderSide(width: 0.5, color: Colors.grey),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  borderSide: BorderSide(width: 0.5, color: Colors.grey),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  borderSide: BorderSide(width: 0.5, color: Colors.grey),
+                ),
+              ),
+              enabled: enabled,
             ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              borderSide: BorderSide(width: 0.5, color: Colors.transparent),
-            ),
-          ),
-          enabled: enabled,
+          ],
         ),
       ),
     );

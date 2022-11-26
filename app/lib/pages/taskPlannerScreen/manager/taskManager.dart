@@ -170,6 +170,13 @@ class TaskManager with ChangeNotifier {
     return outputDate;
   }
 
+  DateTime dateObjFromStr(date) {
+    DateTime parseDate = new DateFormat("yyyy-MM-dd").parse(date);
+    var inputDate = DateTime.parse(parseDate.toString());
+
+    return inputDate;
+  }
+
   String timeFromStr(date) {
     DateTime parseDate = new DateFormat("h:mm a").parse(date);
     var inputDate = DateTime.parse(parseDate.toString());
@@ -181,6 +188,11 @@ class TaskManager with ChangeNotifier {
 
   String dateParseyyyyMMdd(DateTime date) {
     var _date = DateFormat('yyyy-MM-dd').format(date).toString();
+    return _date;
+  }
+
+  String dateParseMMMddyyyy(DateTime date) {
+    var _date = DateFormat('MMMM dd,yyyy').format(date).toString();
     return _date;
   }
 

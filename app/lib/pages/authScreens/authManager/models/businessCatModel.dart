@@ -24,6 +24,7 @@ class WeekDaysModel {
   String? value;
   String? name;
   String? id;
+  String? userid;
   String? status;
   bool? selected;
   PickUpDateTime? startime;
@@ -35,8 +36,23 @@ class WeekDaysModel {
       this.status,
       required this.name,
       this.id,
-      required this.value});
+      this.userid,
+      this.value});
 
+  factory WeekDaysModel.fromJsonServer(Map<String, dynamic> json) {
+    return WeekDaysModel(
+      name: json['day'].toString(),
+      userid: json['user_id'].toString(),
+      id: json['id'].toString(),
+      endtime: PickUpDateTime(timeStr: json['close_time'].toString()),
+      startime: PickUpDateTime(timeStr: json['open_time'].toString()),
+      selected: json['isClosed'] == 0
+          ? true
+          : json['isClosed'] == 1
+              ? false
+              : false,
+    );
+  }
   factory WeekDaysModel.fromJson(Map<String, dynamic> json) {
     return WeekDaysModel(
       value: json['value'].toString(),

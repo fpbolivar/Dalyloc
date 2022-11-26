@@ -1,14 +1,22 @@
+import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/pages/authScreens/authManager/api/logoutApi.dart';
 import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/createNewBusiness.dart';
+import 'package:daly_doc/pages/settingsScreen/controller/settingController.dart';
 import 'package:daly_doc/pages/smartScheduleScreens/smartScheduleView.dart';
 import 'package:daly_doc/widgets/socialLoginButton/socialLoginButton.dart';
+import 'package:provider/provider.dart';
 import '../../../utils/exportPackages.dart';
 import '../../../utils/exportScreens.dart';
 import '../../../utils/exportWidgets.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../authScreens/authManager/api/businessApis.dart';
+import '../authScreens/authManager/models/businessCatModel.dart';
+import '../authScreens/authManager/models/userBusinesModel.dart';
+import '../authScreens/createNewBusinessScreens/CongratsScreen.dart';
 import '../changePassword/changePasswordView.dart';
+import '../dailyDevotinalPlan/views/momentOfPrayerView.dart';
 import '../subscriptionPlansScreen/activePlanView.dart';
 import '../subscriptionPlansScreen/planMonthlyYearlyView.dart';
 import '../userProfile/userProfile.dart';
@@ -26,15 +34,15 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
-  bool getData = false;
-  @override
-  void initState() {
-    super.initState();
+  var businessId = "";
+  UserBusinessModel? UserBusinessData;
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getplanList();
-    });
-  }
+  List<WeekDaysModel> weekDays = [];
+  var email = '';
+  var name = '';
+  int? dataIndex = 0;
+
+  bool getData = false;
 
   List<SettingOption> accountOption = [
     SettingOption(title: "My Profile", section: 0),
@@ -71,6 +79,34 @@ class _SettingScreenState extends State<SettingScreen> {
     ),
   ];
   @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getplanList();
+      getUserBusinessDetail();
+    });
+  }
+
+  getUserBusinessDetail() async {
+    UserBusinessModel? tempResponse =
+        await Constant.settingProvider.getUserBusinessDetail();
+    if (tempResponse != null) {
+      UserBusinessData = tempResponse;
+      email = UserBusinessData!.businessEmail.toString();
+      name = UserBusinessData!.businessName.toString();
+      dataIndex = UserBusinessData!.userBusinessCategory!.id;
+      weekDays = UserBusinessData!.timing!;
+      businessId = UserBusinessData!.userId.toString();
+      print("businessId${businessId}");
+      Constant.settingProvider.businessOption[0].title = "Business Setting";
+    } else {
+      Constant.settingProvider.businessOption[0].title = "Create New Business ";
+    }
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.newBgcolor,
@@ -80,7 +116,7 @@ class _SettingScreenState extends State<SettingScreen> {
       body: BackgroundCurveView(
           child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
           child: bodyDesign(),
         ),
       )),
@@ -193,13 +229,20 @@ class _SettingScreenState extends State<SettingScreen> {
                     //.replaceAll("Plan", "");
                     d = d.trim();
                     var data = planOption[rowIndex].subscriptionSubPlans;
-
-                    Routes.pushSimple(
-                        context: context,
-                        child: PlanMonthlyYearlyView(
-                          title: d,
-                          subscriptionSubPlans: data,
-                        ));
+                    if (data!.first.operationType == "meal") {
+                      Routes.pushSimple(
+                          context: context, child: IntroMealPlanView());
+                    } else if (data.first.operationType == "devotional") {
+                      Routes.pushSimple(
+                          context: context, child: MomentOfPrayerView());
+                    } else {
+                      Routes.pushSimple(
+                          context: context,
+                          child: PlanMonthlyYearlyView(
+                            title: d,
+                            subscriptionSubPlans: data,
+                          ));
+                    }
                   }),
               const SizedBox(
                 height: 20,
@@ -213,12 +256,25 @@ class _SettingScreenState extends State<SettingScreen> {
               const SizedBox(
                 height: 20,
               ),
-              SectionRowListView(
-                  itemList: businessOption,
-                  onTap: (sectionIndex, rowIndex) {
-                    Routes.pushSimple(
-                        context: context, child: CreateNewBusinessScreen());
-                  }),
+              Consumer<SettingController>(builder: (context, object, child) {
+                return SectionRowListView(
+                    itemList: Constant.settingProvider.businessOption,
+                    onTap: (sectionIndex, rowIndex) async {
+                      print(businessId);
+
+                      Constant.settingProvider.tempResponse == null
+                          ? Routes.pushSimple(
+                              context: context,
+                              child: CreateNewBusinessScreen())
+                          : Routes.pushSimple(
+                              context: context,
+                              child: BusinessSettingView(
+                                UserBusinessData:
+                                    Constant.settingProvider.tempResponse,
+                                weekDays: weekDays,
+                              ));
+                    });
+              }),
               const SizedBox(
                 height: 20,
               ),

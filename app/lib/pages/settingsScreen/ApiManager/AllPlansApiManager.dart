@@ -195,6 +195,9 @@ class AllPlansApiManager {
           List<PlanInfoModel> listPlan =
               list.map((obj) => PlanInfoModel.fromJson(obj)).toList();
           onSuccess(listPlan);
+        } else {
+          List<PlanInfoModel> temp = [];
+          onSuccess(temp);
         }
       } else {
         if (data["auth_code"] != null || token == null) {

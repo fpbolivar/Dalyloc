@@ -13,6 +13,8 @@ import 'core/Sql/DBIntializer.dart';
 import 'pages/onboardingScreen.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
 
+import 'widgets/floatingActionButton/flutter_speed_dial.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -42,6 +44,7 @@ class _DalyDocAppState extends State<DalyDocApp> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = ValueNotifier(ThemeMode.dark);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) {
@@ -49,6 +52,17 @@ class _DalyDocAppState extends State<DalyDocApp> {
 
           return taskProvider;
         }),
+        ChangeNotifierProvider(create: (_) {
+          var mealProvider = Constant.mealProvider;
+
+          return mealProvider;
+        }),
+        ChangeNotifierProvider(create: (_) {
+          var settingProvider = Constant.settingProvider;
+
+          return settingProvider;
+        }),
+
         // ChangeNotifierProvider(create: (_) => TaskManager()),
       ],
       child: MaterialApp(

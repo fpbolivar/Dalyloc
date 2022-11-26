@@ -103,6 +103,50 @@ showLocationSelection(msg, context,
       });
 }
 
+showImageOptions(msg, context,
+    {bool pop = false, Function(String)? onSelection}) {
+  var alert = AlertDialog(
+    title: Container(
+      child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 5,
+          ),
+          TextButton(
+            child: new Text(
+              "Show",
+              style: TextStyle(fontSize: 17, color: Colors.black),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+              onSelection!("Show");
+            },
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          TextButton(
+            child: new Text(
+              "Delete",
+              style: TextStyle(fontSize: 17, color: Colors.black),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+              onSelection!("Delete");
+            },
+          ),
+        ],
+      ),
+    ),
+    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(15)),
+  );
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      });
+}
+
 showAlert(msg,
     {bool pop = false,
     VoidCallback? onTap,
@@ -115,15 +159,22 @@ showAlert(msg,
           SizedBox(
             height: 10,
           ),
-          Text(msg)
+          Text(
+            msg,
+            style: TextStyle(fontSize: 14),
+          )
         ],
       ),
     ),
-    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(15)),
+    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(5)),
     actions: <Widget>[
       Center(
         child: new CustomButton.regular(
           title: btnName,
+          width: 70,
+          height: 30,
+          fontSize: 13,
+          radius: 4,
           onTap: () {
             Navigator.of(Constant.navigatorKey.currentState!.overlay!.context)
                 .pop();
@@ -169,20 +220,31 @@ showErrorAlert(error, {context, bool pop = false, VoidCallback? onTap}) {
     shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(15)),
     actions: <Widget>[
       // usually buttons at the bottom of the dialog
-
-      new ElevatedButton(
-        child: new Text(
-          "OK",
-          style: TextStyle(color: Colors.red),
-        ),
-        onPressed: () {
+      CustomButton.regular(
+        title: "OK",
+        width: 50,
+        height: 30,
+        fontSize: 12,
+        onTap: () {
+          //onTap!();
+          //  onTap();
           Navigator.of(Constant.navigatorKey.currentState!.overlay!.context)
               .pop();
-          if (onTap != null) {
-            onTap();
-          }
         },
-      ),
+      )
+      // new ElevatedButton(
+      //   child: new Text(
+      //     "OK",
+      //     style: TextStyle(color: Colors.red),
+      //   ),
+      //   onPressed: () {
+      //     Navigator.of(Constant.navigatorKey.currentState!.overlay!.context)
+      //         .pop();
+      //     if (onTap != null) {
+      //       onTap();
+      //     }
+      //   },
+      // ),
     ],
   );
 
@@ -221,6 +283,7 @@ waitDialog({message = "   Please wait...", Duration? duration}) {
               margin: EdgeInsets.all(10),
               child: CircularProgressIndicator(
                 strokeWidth: 2,
+                color: AppColor.theme,
               )),
           Text(message),
         ],

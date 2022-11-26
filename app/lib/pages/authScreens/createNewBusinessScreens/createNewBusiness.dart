@@ -1,21 +1,38 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/pages/authScreens/authManager/api/businessApis.dart';
+import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/CongratsScreen.dart';
+import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/bookingLinkScreen.dart';
+import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/depositsScreen.dart';
+import 'package:daly_doc/widgets/components/imageLoadView.dart';
 import 'package:daly_doc/widgets/weekDayCell/weekDayCell.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../core/localStore/localStore.dart';
 import '../../../utils/LocationFinder.dart';
 import '../../../utils/exportPackages.dart';
 import '../../../utils/exportWidgets.dart';
 import '../authManager/models/businessCatModel.dart';
+import '../authManager/models/userBusinesModel.dart';
 
 class CreateNewBusinessScreen extends StatefulWidget {
   bool update;
   bool timing;
   String? red;
+  UserBusinessModel? userBusinessData;
+  List<WeekDaysModel>? weekDays;
+
   CreateNewBusinessScreen(
-      {Key? key, this.red, this.update = false, this.timing = true})
+      {Key? key,
+      this.red,
+      this.update = false,
+      this.timing = false,
+      this.userBusinessData,
+      this.weekDays})
       : super(key: key);
 
   @override
@@ -30,25 +47,93 @@ class _CreateNewBusinessScreenScreenState
   TextEditingController longLatTFC = TextEditingController();
   TextEditingController nameTFC = TextEditingController();
   List<BusinessCatModel> catData = [];
+  UserBusinessModel? UserBusinessData;
   List<WeekDaysModel> weekDays = [];
   WeekDaysModel? singleSelection;
-  StreamController controller = StreamController();
   int? dataIndex = 0;
+  String lat = "";
+  String long = "";
+  String imageUrl = "";
+  BusinessCatModel? _selected;
+  StreamController controller = StreamController();
+
   var selectAddress = '';
   var code = "";
   var pageIndex = 0;
+  String businessCategoryId = "0";
+
+  File? image;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    initilizeWeekDays();
-    getUserData();
+    print("PANGEINDEx${widget.timing}");
+    if (widget.timing) {
+      initilizeWeekDays();
+    }
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getBusinessDetail();
+    });
+  }
+
+  getBusinessDetail() async {
+    UserBusinessModel? userBiz = await BusinessApis().getUserBusinessDetail();
+
+    if (widget.timing == true) {
+      UserBusinessData = userBiz;
+      weekDays = UserBusinessData!.timing!;
+      setState(() {});
+    }
+    if (widget.update == true) {
+      if (userBiz != null) {
+        UserBusinessData = userBiz;
+
+        emailTFC.text = UserBusinessData!.businessEmail.toString();
+        nameTFC.text = UserBusinessData!.businessName.toString();
+
+        lat = UserBusinessData!.lat.toString();
+        long = UserBusinessData!.lng.toString();
+        businessCategoryId = UserBusinessData!.businessCategoryId.toString();
+        addressTFC.text = UserBusinessData!.businessAddress.toString();
+        imageUrl = UserBusinessData!.businessImg.toString();
+
+        setState(() {});
+      }
+    }
     BusinessApis().getBusinessCat((List) {
       print(List);
       catData = List;
-
+      if (UserBusinessData != null) {
+        catData.forEach((element) {
+          if (UserBusinessData!.businessCategoryId == element.id) {
+            _selected = element;
+          }
+        });
+      }
       setState(() {});
     });
+
+    if (widget.update == true) {
+      // UserBusinessData = widget.userBusinessData;
+      // emailTFC.text = UserBusinessData!.businessEmail.toString();
+      // nameTFC.text = UserBusinessData!.businessName.toString();
+      // dataIndex = UserBusinessData!.userBusinessCategory!.id;
+
+      setState(() {});
+    }
+    if (widget.timing == true) {
+      if (weekDays.isNotEmpty) {
+        setState(() {});
+      } else {
+        initilizeWeekDays();
+      }
+    }
+
+    if (widget.timing == false) {
+      getUserData();
+    }
+
+    if (widget.timing == false) {}
   }
 
   @override
@@ -56,17 +141,21 @@ class _CreateNewBusinessScreenScreenState
     return Scaffold(
       backgroundColor: AppColor.newBgcolor,
       appBar: CustomAppBar(
-          title: widget.update == true ? getUpdateTitle() : getTitle(),
-          onTap: () {
-            if (pageIndex > 0) {
-              pageIndex = pageIndex - 1;
-              setState(() {});
-            } else {
-              Navigator.of(context).pop();
-            }
-          }
-          //widget.timing == true
-          ),
+        title: widget.update == true
+            ? getUpdateTitle()
+            : widget.timing == true
+                ? LocalString.lblBusinessTiming
+                : getTitle(),
+        // onTap: () {
+        //   if (pageIndex > 0) {
+        //     pageIndex = pageIndex - 1;
+        //     setState(() {});
+        //   } else {
+        //     Navigator.of(context).pop();
+        //   }
+        // }
+        // //widget.timing == true
+      ),
       body: BackgroundCurveView(
           child: SafeArea(
         child: Padding(
@@ -100,7 +189,7 @@ class _CreateNewBusinessScreenScreenState
               //   height: 20,
               // ),
               //widget.timing == false
-              if (pageIndex == 0)
+              if (widget.timing == false && pageIndex == 0 || pageIndex == 1)
                 Column(
                   children: [
                     Text(
@@ -114,7 +203,7 @@ class _CreateNewBusinessScreenScreenState
                     const SizedBox(
                       height: 20,
                     ),
-                    list(),
+                    dropDown(),
                     const SizedBox(
                       height: 20,
                     ),
@@ -131,10 +220,10 @@ class _CreateNewBusinessScreenScreenState
                     ),
                   ],
                 ),
-              if (pageIndex == 2) weekDayTimingView(),
+              if (pageIndex == 2 || widget.timing == true) weekDayTimingView(),
               // widget.update == true
 
-              if (pageIndex == 1)
+              if (pageIndex == 1 || widget.update == true)
                 Column(
                   children: [
                     const SizedBox(
@@ -144,18 +233,34 @@ class _CreateNewBusinessScreenScreenState
                     const SizedBox(
                       height: 20,
                     ),
-                    CustomTF(
-                      controllr: addressTFC,
-                      placeholder: LocalString.plcAddress,
-                      onChange: (p0) {
-                        showLocationSelection(
-                          "",
-                          context,
-                          onSelection: (value) {
-                            locationPopup(value);
-                          },
-                        );
-                      },
+                    Stack(
+                      children: [
+                        CustomTF(
+                          controllr: addressTFC,
+                          placeholder: LocalString.plcAddress,
+                          enabled: false,
+                          onChange: (p0) {},
+                        ),
+                        Positioned(
+                          child: Container(
+                            color: AppColor.newBgcolor,
+                            child: InkWell(
+                              child: Icon(Icons.gps_fixed),
+                              onTap: () {
+                                showLocationSelection(
+                                  "",
+                                  context,
+                                  onSelection: (value) {
+                                    locationPopup(value);
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                          right: 10,
+                          top: 15,
+                        )
+                      ],
                     ),
                     const SizedBox(
                       height: 20,
@@ -186,15 +291,46 @@ class _CreateNewBusinessScreenScreenState
 
               CustomButton.regular(
                 title: //widget.timing == true
-                    pageIndex == 0
+                    widget.update == true
                         ? LocalString.lblSave
                         : widget.update == true
                             ? LocalString.lblSave
                             : LocalString.lblSubmit,
-                onTap: () {
-                  if (pageIndex < 2) {
-                    pageIndex = pageIndex + 1;
-                    setState(() {});
+                onTap: () async {
+                  if (widget.update == false && widget.timing == false) {
+                    BusinessApis().createBusiness(
+                        name: nameTFC.text,
+                        email: emailTFC.text,
+                        businessCategoryId: businessCategoryId.toString(),
+                        onSuccess: () {
+                          //Navigator.pop(context);
+                          //Navigator.pop(context);
+                          Routes.pushSimple(
+                              context: context,
+                              child: CongratsScreenBusiness());
+                        });
+                  } else if (widget.update == true && widget.timing == false) {
+                    var id = await LocalStore().getBusinessId();
+                    BusinessApis().updateBusiness(
+                        id: id,
+                        name: nameTFC.text,
+                        image: image == null ? "" : image!.path.toString(),
+                        lat: lat,
+                        long: long,
+                        address: addressTFC.text,
+                        email: emailTFC.text,
+                        businessCategoryId: businessCategoryId.toString(),
+                        onSuccess: () {
+                          Navigator.pop(context);
+                        });
+                  } else if (widget.timing == true) {
+                    BusinessApis().createBusinesTiming(
+                        weekDays: weekDays,
+                        onSuccess: () {
+                          Navigator.pop(context);
+                        });
+                    // Routes.pushSimple(
+                    //     context: context, child: DepositScreens());
                   }
                 },
               ),
@@ -203,6 +339,73 @@ class _CreateNewBusinessScreenScreenState
               ),
             ]),
       ),
+    );
+  }
+
+  Widget dropDown() {
+    return Container(
+      padding: EdgeInsets.all(5),
+      height: 55,
+      decoration: BoxDecoration(
+          border: Border.all(width: 1, color: AppColor.textBlackColor
+              //                   <--- border width here
+              ),
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.transparent),
+      child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+        Expanded(
+          child: DropdownButtonHideUnderline(
+            child: ButtonTheme(
+              //alignedDropdown: true,
+              child: DropdownButton<BusinessCatModel>(
+                hint: Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: new Text(
+                    "Category",
+                    style: TextStyle(fontSize: 15),
+                  ),
+                ),
+                value: _selected,
+                underline: Container(
+                  height: 2,
+                  color: Colors.white,
+                ),
+                onChanged: (BusinessCatModel? newValue) {
+                  setState(() {
+                    _selected = newValue;
+                  });
+                  if (_selected != null) {
+                    businessCategoryId = _selected!.id.toString();
+                  }
+                },
+                items: catData.map((BusinessCatModel map) {
+                  return new DropdownMenuItem<BusinessCatModel>(
+                    value: map,
+                    // value: _mySelection,
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                            padding: EdgeInsets.only(left: 10),
+                            width: MediaQuery.of(context).size.width * 0.6,
+                            child: Text(
+                              map.name!,
+                              overflow: TextOverflow.visible,
+                              // overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontSize: 17),
+                              maxLines: 2,
+                            )),
+                        SizedBox(
+                          width: 20,
+                        )
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ),
+      ]),
     );
   }
 
@@ -220,23 +423,31 @@ class _CreateNewBusinessScreenScreenState
           borderRadius: BorderRadius.circular(8),
           color: Colors.transparent),
       child: DropdownButton(
-        underline: const SizedBox(),
+        // underline: Container(
+        //   height: 2,
+        //   color: Colors.black,
+        // ),
         value: dataIndex,
-        elevation: 35,
+        elevation: 50,
         borderRadius: BorderRadius.circular(20),
         dropdownColor: AppColor.newBgcolor,
         isExpanded: true,
         focusColor: Colors.transparent,
-        items: List.generate(catData.length + 1, (index) {
-          final String data = (index < 1)
-              ? "Choose category"
-              : catData[index - 1].name.toString();
-          return DropdownMenuItem(value: index, child: Text(data));
-        }).toList(),
+        items: [],
+        // items: List.generate(catData.length + 1, (index) {
+        //   final String data = (index < 1)
+        //       ? "Choose category"
+        //       : catData[index - 1].name.toString();
+        //   return DropdownMenuItem(value: index, child: Text(data));
+        // }).toList(),
         onChanged: (value) {
           // Update State
-          dataIndex = value;
-          setState(() {});
+          // print(value);
+          // print(businessCategoryId);
+          // businessCategoryId = int.parse(catData[value!].id.toString());
+          // print("businessCategoryId ${businessCategoryId}");
+          // dataIndex = value;
+          // setState(() {});
         },
       ),
     );
@@ -249,28 +460,56 @@ class _CreateNewBusinessScreenScreenState
       radius: Radius.circular(8),
       strokeWidth: 1,
       child: Container(
-        height: 100,
+        height: 150,
         width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.add_circle_outline_outlined)),
-            Text(
-              "Upload Business Image",
-              style: TextStyle(fontSize: 16),
-            ),
-            // Container(
-            //   decoration: BoxDecoration(color: AppColor.buttonColor),
-            //   child: CustomButton.regular(
-            //     width: 100,
-            //     title: LocalString.lblUpload,
-            //     onTap: () {},
-            //   ),
-            // ),
-          ],
-        ),
+        child: image == null
+            ? Stack(
+                fit: StackFit.expand,
+                children: [
+                  if (image == null)
+                    if (imageUrl != "")
+                      Container(
+                        height: 150,
+                        child: ImageLoadFromURL(
+                          imgURL: HttpUrls.WS_BASEURL + imageUrl,
+                        ),
+                      ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            showImageSelectDialog("Upload Business Logo");
+                          },
+                          icon: Icon(Icons.add_circle_outline_outlined)),
+                      Text(
+                        "Upload Business Image",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  )
+                ],
+              )
+            : InkWell(
+                onTap: () {
+                  showImageOptions(
+                    "",
+                    context,
+                    onSelection: (value) {
+                      imageOptionPopup(value);
+                    },
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(0.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.file(
+                      image!,
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                )),
       ),
     );
   }
@@ -280,6 +519,9 @@ class _CreateNewBusinessScreenScreenState
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        SizedBox(
+          height: 50,
+        ),
         // SizedBox(
         //   height: 20,
         // ),
@@ -313,51 +555,58 @@ class _CreateNewBusinessScreenScreenState
   initilizeWeekDays() {
     weekDays = [
       WeekDaysModel(
-        name: "Monday",
+        name: "Sunday",
         value: "1",
+        id: "0",
+        selected: false,
+        endtime: PickUpDateTime(timeStr: ""),
+        startime: PickUpDateTime(timeStr: ""),
+      ),
+      WeekDaysModel(
+        name: "Monday",
+        value: "2",
+        id: "0",
         selected: false,
         endtime: PickUpDateTime(timeStr: ""),
         startime: PickUpDateTime(timeStr: ""),
       ),
       WeekDaysModel(
         name: "Tuesday",
-        value: "2",
+        value: "3",
         selected: false,
+        id: "0",
         endtime: PickUpDateTime(timeStr: ""),
         startime: PickUpDateTime(timeStr: ""),
       ),
       WeekDaysModel(
         name: "Wednesday",
-        value: "3",
+        value: "4",
+        id: "0",
         selected: false,
         endtime: PickUpDateTime(timeStr: ""),
         startime: PickUpDateTime(timeStr: ""),
       ),
       WeekDaysModel(
         name: "Thursday",
-        value: "4",
+        value: "5",
         selected: false,
+        id: "0",
         endtime: PickUpDateTime(timeStr: ""),
         startime: PickUpDateTime(timeStr: ""),
       ),
       WeekDaysModel(
         name: "Friday",
-        value: "5",
+        value: "6",
         selected: false,
+        id: "0",
         endtime: PickUpDateTime(timeStr: ""),
         startime: PickUpDateTime(timeStr: ""),
       ),
       WeekDaysModel(
         name: "Saturday",
-        value: "6",
-        selected: false,
-        endtime: PickUpDateTime(timeStr: ""),
-        startime: PickUpDateTime(timeStr: ""),
-      ),
-      WeekDaysModel(
-        name: "Sunday",
         value: "7",
         selected: false,
+        id: "0",
         endtime: PickUpDateTime(timeStr: ""),
         startime: PickUpDateTime(timeStr: ""),
       ),
@@ -365,6 +614,7 @@ class _CreateNewBusinessScreenScreenState
   }
 
   Widget weeklist() {
+    int buttonClickCount = 0;
     return ListView.separated(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
@@ -372,6 +622,8 @@ class _CreateNewBusinessScreenScreenState
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () {
+              buttonClickCount = buttonClickCount + 1;
+
               print(weekDays[index].selected);
               weekDays[index].selected = !weekDays[index].selected!;
               // if (singleSelection != null) {
@@ -389,19 +641,26 @@ class _CreateNewBusinessScreenScreenState
               // });
               // print(weekDays[index].selected);
               controller.add(weekDays[index].selected);
+
               List<String> idsDays = [];
               weekDays.forEach((elementCate) {
                 if (elementCate.selected!) {
                   idsDays.add(elementCate.value!);
                 }
               });
-              preSetTime(weekDays[index].selected!, index);
+              // if (buttonClickCount == 0) {
+              //   print(buttonClickCount);
+
+              // }
+              // if (weekDays[index].endtime!.timeStr == "") {
+              //   // preSetTime(weekDays[index].selected!, index);
+              // }
               print(idsDays);
             },
             child: WeekDaysCell(
               data: weekDays[index],
               onChangeEndTime: (PickUpDateTime et) {
-                weekDays[index].endtime = et;
+                // weekDays[index].endtime = et;
 
                 if (singleSelection == null) {
                   singleSelection = weekDays[index];
@@ -418,7 +677,8 @@ class _CreateNewBusinessScreenScreenState
                 ///  preFillTime();
               },
               onChangeStartTime: (PickUpDateTime st) {
-                weekDays[index].startime = st;
+                // weekDays[index].startime = st;
+                print("kkkllll${weekDays[index].startime!.timeStr}");
                 if (singleSelection == null) {
                   singleSelection = weekDays[index];
                 } else {
@@ -428,6 +688,7 @@ class _CreateNewBusinessScreenScreenState
                         singleSelection = weekDays[index];
                       }
                     }
+                    controller.add("");
                   }
                 }
 
@@ -446,6 +707,37 @@ class _CreateNewBusinessScreenScreenState
         itemCount: weekDays.length);
   }
 
+  Future pickImageFromGallery() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+      final imageTemp = File(image.path);
+      print(imageTemp);
+      imageUrl = "";
+      setState(() => this.image = imageTemp);
+      print(imageTemp);
+
+      // Navigator.pop(context);
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
+  Future pickImageFromCamera() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.camera);
+      if (image == null) return;
+      final imageTemp = File(image.path);
+      print(imageTemp);
+      imageUrl = "";
+      setState(() => this.image = imageTemp);
+
+      print(imageTemp);
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
   preSetTime(bool value, index) {
     if (singleSelection != null) {
       if (singleSelection!.startime!.timeStr != "" &&
@@ -461,6 +753,56 @@ class _CreateNewBusinessScreenScreenState
         setState(() {});
       }
     }
+  }
+
+  showImageSelectDialog(msg,
+      {bool pop = false,
+      VoidCallback? onTap,
+      barrierDismiss = false,
+      String btnName = "OK"}) {
+    var alert = AlertDialog(
+      title: Container(
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              height: 10,
+            ),
+            Text(msg)
+          ],
+        ),
+      ),
+      shape:
+          RoundedRectangleBorder(borderRadius: new BorderRadius.circular(15)),
+      actions: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            CustomButton.regular(
+              width: 100,
+              title: "Gallery",
+              onTap: () {
+                pickImageFromGallery();
+                Navigator.pop(context);
+              },
+            ),
+            CustomButton.regular(
+              width: 100,
+              title: "Camera",
+              onTap: () {
+                pickImageFromCamera();
+              },
+            )
+          ],
+        )
+      ],
+    );
+
+    showDialog(
+        barrierDismissible: false, //barrierDismiss,
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        });
   }
 
   preFillTime() {
@@ -485,6 +827,15 @@ class _CreateNewBusinessScreenScreenState
     }
   }
 
+  imageOptionPopup(String value) {
+    if ("Delete" == value) {
+      image = null;
+      setState(() {});
+    } else {
+      print(value);
+    }
+  }
+
   locationPopup(String value) {
     {
       if ("Automatic" == value) {
@@ -499,6 +850,7 @@ class _CreateNewBusinessScreenScreenState
           print(
               "-----******----- ${value!.address}   ${value.lat} ${value.long}");
           await LocalStore().setaddress(value.address);
+
           setAddress();
         });
       }
@@ -550,7 +902,8 @@ class _CreateNewBusinessScreenScreenState
       code = code1;
       selectAddress = selectAddress1;
       addressTFC.text = selectAddress;
-      longLatTFC.text = latLong.first + "/" + latLong.last;
+      lat = latLong.first;
+      long = latLong.last;
     });
   }
 }

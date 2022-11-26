@@ -5,6 +5,7 @@ class HeaderCalendarDatesModal {
   DateTime? dateTime;
   String? dayFormat;
   String? monthFormat;
+  String? monthShortFormat;
   String? yyyyFormat;
   String? day;
   String? dateFormatYYYYMMDD;
@@ -14,6 +15,7 @@ class HeaderCalendarDatesModal {
       this.day,
       this.dateFormatYYYYMMDD,
       this.monthFormat,
+      this.monthShortFormat,
       this.yyyyFormat}) {}
   factory HeaderCalendarDatesModal.fromDate(DateTime dt) {
     final DateFormat formatterDD = DateFormat('dd');
@@ -22,6 +24,8 @@ class HeaderCalendarDatesModal {
     final String dayEEE = formatterEEE.format(dt);
     final DateFormat formatterMMMM = DateFormat('MMMM');
     final String dayMMMM = formatterMMMM.format(dt);
+    final DateFormat formatterMM = DateFormat('MMM');
+    final String dayMM = formatterMM.format(dt);
     final DateFormat formatterYYYY = DateFormat('yyyy');
     final DateFormat formatterYYYYMMDD = DateFormat('yyyy');
     final String yyyymmdd = TaskManager().dateParseyyyyMMdd(dt);
@@ -32,6 +36,7 @@ class HeaderCalendarDatesModal {
         dayFormat: dayEEE,
         dateFormatYYYYMMDD: yyyymmdd,
         monthFormat: dayMMMM,
+        monthShortFormat: dayMM,
         yyyyFormat: dayYYYY);
   }
 }

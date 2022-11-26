@@ -52,17 +52,20 @@ class PlanItemView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "${itemData.planList?.first.title} Plan",
-          style: const TextStyle(
-              fontSize: 18, color: Colors.black, fontWeight: FontWeight.w400),
-        ),
         // ignore: prefer_const_constructors
         SizedBox(
           height: 5,
         ),
         Row(
           children: [
+            Text(
+              "${itemData.planList?.first.title} Plan",
+              style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w400),
+            ),
+            Spacer(),
             Text(
               "\$ ${itemData.planList?.first.price}/",
               // ignore: prefer_const_constructors
@@ -84,14 +87,25 @@ class PlanItemView extends StatelessWidget {
         SizedBox(
           height: 10,
         ),
-
-        CustomButton.regular(
-          width: 110,
-          height: 20,
-          title: "Manage Subscription",
-          fontSize: 10,
-          radius: 3,
-        ),
+        Row(children: [
+          Text(
+            "Next billing date " + itemData.end_dateFormat,
+            // ignore: prefer_const_constructors
+            style: TextStyle(
+                color: Colors.black, fontWeight: FontWeight.w400, fontSize: 12),
+          ),
+          Spacer(),
+          CustomButton.regular(
+            width: 60,
+            height: 20,
+            title: "Manage",
+            fontSize: 14,
+            fontweight: FontWeight.w500,
+            background: Colors.transparent,
+            titleColor: AppColor.textGrayBlue,
+            radius: 3,
+          ),
+        ])
       ],
     );
   }

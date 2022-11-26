@@ -6,9 +6,13 @@
 
     <queries>
         <provider android:authorities="com.facebook.katana.provider.PlatformProvider" />
+         <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
     </queries>
    <application
-        android:label="daly_doc"
+        android:label="DalyDoc"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
        <meta-data

@@ -6,11 +6,15 @@ import '../../utils/exportPackages.dart';
 import '../localStore/localStore.dart';
 
 class Routes {
-  static gotoLogin(BuildContext context, {Map<String, dynamic>? data}) async {}
-  static pushSimple(
-      {required BuildContext context,
-      required Widget child,
-      Function(String)? onBackPress}) {
+  static gotoLogin(
+    BuildContext context, {
+    Map<String, dynamic>? data,
+  }) async {}
+  static pushSimple({
+    required BuildContext context,
+    required Widget child,
+    Function(String)? onBackPress,
+  }) {
     Navigator.push(
       context,
       CupertinoPageRoute(
@@ -23,7 +27,8 @@ class Routes {
                     return true;
                   }
                 },
-              )),
+              ),
+          settings: RouteSettings(name: child.runtimeType.toString())),
     );
 
     // Navigator.of(context)

@@ -5,6 +5,7 @@ import 'package:daly_doc/pages/taskPlannerScreen/components/viewDetailTask.dart'
 import 'package:daly_doc/pages/taskPlannerScreen/createTaskView.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/manager/ApisManager/Apis.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
+import 'package:daly_doc/widgets/floatingActionButton/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqlite_api.dart';
 
@@ -35,6 +36,7 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
   List<GroupTaskItemModel> taskGroupData = [];
   TaskManager manager = TaskManager();
   DateTime calendarSelectedDate = DateTime.now();
+  var extend = false;
   @override
   void initState() {
     manager = Constant.taskProvider;
@@ -50,20 +52,22 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
     return Scaffold(
       backgroundColor: AppColor.newBgcolor,
       // ignore: unnecessary_new
+
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 20, right: 10),
-        child: FloatingActionButton(
-            elevation: 0.0,
-            backgroundColor: AppColor.theme,
-            onPressed: () {
-              Routes.presentSimple(
-                  context: context,
-                  child: CreateTaskView(
-                    isUpdate: false,
-                    date: selectedDate!.dateTime!,
-                  ));
-            },
-            child: const Icon(Icons.add)),
+        child: floatActionButton(),
+        // child: FloatingActionButton(
+        //     elevation: 0.0,
+        //     backgroundColor: AppColor.theme,
+        //     onPressed: () {
+        //       Routes.presentSimple(
+        //           context: context,
+        //           child: CreateTaskView(
+        //             isUpdate: false,
+        //             date: selectedDate!.dateTime!,
+        //           ));
+        //     },
+        //     child: const Icon(Icons.add)),
       ),
       body: SafeArea(
           child: Stack(
@@ -236,6 +240,77 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
               ],
             ));
       },
+    );
+  }
+
+  Widget floatActionButton() {
+    return SpeedDial(
+      // animatedIcon: AnimatedIcons.menu_close,
+      // animatedIconTheme: IconThemeData(size: 22.0),
+      // / This is ignored if animatedIcon is non null
+      // child: Text("open"),
+      // activeChild: Text("close"),
+      icon: Icons.add,
+      activeIcon: Icons.close,
+      spacing: 5,
+      mini: false,
+
+      //openCloseDial: isDialOpen,
+      childPadding: const EdgeInsets.all(5),
+      spaceBetweenChildren: 4,
+      overlayOpacity: 0.0,
+      onOpen: () => debugPrint('OPENING DIAL'),
+      onClose: () => debugPrint('DIAL CLOSED'),
+
+      useRotationAnimation: true,
+      tooltip: 'Open Speed Dial',
+      heroTag: 'speed-dial-hero-tag',
+      foregroundColor: Colors.white,
+      backgroundColor: AppColor.theme,
+
+      elevation: 8.0,
+      animationCurve: Curves.elasticInOut,
+      isOpenOnStart: false,
+
+      shape: const StadiumBorder(),
+      // childMargin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      children: [
+        SpeedDialChild(
+            child: Image.asset("assets/icons/ic_calendar.png",
+                width: 20, height: 20, color: AppColor.fabItemImageColor),
+            backgroundColor: Colors.deepOrange,
+            backgroundColorItem: Color(0xFFFCF5DD),
+            foregroundColor: Colors.white,
+            label: 'Appointment',
+            onTap: () {
+              showAlert("Coming Soon");
+            }),
+        SpeedDialChild(
+            child: Image.asset("assets/icons/fire.png",
+                width: 20, height: 20, color: AppColor.fabItemImageColor),
+            backgroundColor: Colors.deepOrange,
+            backgroundColorItem: Color(0xFFFFE7DA),
+            foregroundColor: Colors.white,
+            label: 'Meal Plan',
+            onTap: () {
+              Routes.pushSimple(context: context, child: IntroMealPlanView());
+            }),
+        SpeedDialChild(
+            child: Image.asset("assets/icons/ic_taskEdit.png",
+                width: 20, height: 20, color: AppColor.fabItemImageColor),
+            backgroundColor: Colors.deepOrange,
+            foregroundColor: Colors.white,
+            backgroundColorItem: Color(0xFFDFECF4),
+            label: 'Task',
+            onTap: () {
+              Routes.pushSimple(
+                  context: context,
+                  child: CreateTaskView(
+                    isUpdate: false,
+                    date: selectedDate!.dateTime!,
+                  ));
+            }),
+      ],
     );
   }
 }

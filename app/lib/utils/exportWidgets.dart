@@ -11,6 +11,7 @@ export 'package:daly_doc/core/LocalString/localString.dart';
 export 'package:daly_doc/core/apisUtils/internetCheck.dart';
 export 'package:daly_doc/core/helpersUtil/validator.dart';
 export 'package:daly_doc/widgets/dialogs/CommonDialogs.dart';
+export 'package:daly_doc/widgets/components/commonWidget.dart';
 
 //Routes
 export '../core/routes/routes.dart';

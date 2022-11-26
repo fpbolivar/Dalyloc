@@ -34,6 +34,14 @@ class LocalString {
       "Your inbox is a brain dump for everything you need to do, But don't yet know when you want to do them.";
   static const lblSkip = "SKIP";
   static const lblGoalSetting = "Goal Setting";
+  static const lblDeposit = "Deposits";
+  static const lblBookingAcceptance = "Booking Acceptance";
+
+  static const lblTimeSlotsAvailabilty = "Time Slots Availabilty";
+  static const lblDepositDescription =
+      "Require clients to pay (%) a deposit at the time of booking. ";
+  static const lblBookingLinkDc =
+      "Let client book online 24/7 on your free booking webiste.";
   static const lblLogin = "Login";
   static const lblLetsStart = "Let’s Get\nStarted";
   static const lblLetsStartDescription =
@@ -55,14 +63,27 @@ class LocalString {
   static const lblSignUp = "SignUp";
 
   static const lblVerify = "Verify";
+  static const lblCongratulation = "Congratulation";
   static const lblSignUpDescription =
       "To manage daily plans, getting reminder about tasks, events create an account. ";
   static const lblBusinessDescription =
       "To manage daily plans, getting reminder about tasks, events create an business. ";
+  static const lblBusinessCongratsDescription =
+      "You gain access to proceed your business at next level. ";
   static const lblCreateAnAccount = "Create an account";
   static const lblCreateAnBusiness = "Create Business";
+  static const lblDc1 =
+      "Good morning, Lord! Today's a new day, a chance for a new start. Yesterday is gone and with it any regrets, mistakes, or failures I may have experienced. It's a good day to be glad and give thanks, and I do, Lord. Thank you for today, a new opportunity to love, give, and be all that you want me to be.";
+  static const lblAmomentofPrayerDc =
+      "Good morning, Lord!\nToday's a new day, a chance for a new start. Yesterday is gone and with it any regrets, mistakes, or failures I may have experienced. It's a good day to be glad and give thanks, and I do, Lord. Thank you for today, a new opportunity to love, give, and be all that you want me to be";
+  static const lblAmomentofPrayer = "A moment of Prayer";
+  static const lblPrayer = "Prayer";
+  static const lblLetsPray = "Let's Pray";
+
   static const lblBusinessTiming = "Business Timing ";
   static const lblBusinessDetails = "Business Details";
+  static const lblServiceDetail = "Service Detail";
+
   static const lblChangePassword = "Change Password";
   static const lblForgotPasswordNavTitle = "Forgot\nPassword?";
   static const lblForgotPasswordDescription =
@@ -75,6 +96,7 @@ class LocalString {
   static const lblCreateNewPasswordDescription =
       "Your new password must be differnet from previous used passwords.";
   static const lblSettingNavTitle = "Settings";
+  static const lblBizSettingNavTitle = "Business Settings";
   //PLACEHOLDER
   static const plcMobileNo = "Mobile No";
   static const plcEnterMobileNo = "Enter Mobile No";
@@ -87,8 +109,14 @@ class LocalString {
   static const plcLongLat = "Longitude/Latitude";
   static const plcEmail = "Email";
   static const plcName = "Name";
+  static const plcEnterTitle = "Enter title ";
+  static const plcNeedToAddMoreNotes = "Need to add more notes";
   static const plcBusinessEmail = "Business Email";
   static const plcBusinessName = "Business Name";
+
+  static const plcServiceName = "Service Name";
+  static const plcServicePrice = "Business Price";
+  static const plcDuration = "Duration";
 
   //MESSAGES
   static const msgEmail = "Enter email";
