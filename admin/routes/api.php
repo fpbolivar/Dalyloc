@@ -9,7 +9,8 @@ use App\Http\Controllers\Api\ResetPasswordController;
 use App\Http\Controllers\Api\CreateTaskController;
 use App\Http\Controllers\Api\SubscriptionPlansController;
 use App\Http\Controllers\Api\BusinessApiController;
-
+use App\Http\Controllers\Api\ApiMealController;
+use App\Http\Controllers\Api\ApiUserWorkout;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,12 +61,15 @@ Route::group(['middleware' => ['user.api']], function() {
         Route::get('get-plans',[SubscriptionPlansController::class,'GetPlans']);
         Route::get('get-user-active-plans',[SubscriptionPlansController::class,'GetUserActivePlans']);
         Route::post('stripe-user-cancel-subscription',[SubscriptionPlansController::class,'StripeUserCancelSubscription']);
+        Route::get('get-user-active-plans-by-type',[SubscriptionPlansController::class,'GetUserActivePlansByType']);
+
 
         //stripe
         Route::post('stripe-user-subscription',[SubscriptionPlansController::class,'StripeUserSubscription']);
         
         //user business
         Route::post('create-user-business',[BusinessApiController::class,'CreateUserBusiness']);
+        Route::post('update-user-business',[BusinessApiController::class,'UpdateUserBusiness']);
         Route::get('get-user-business',[BusinessApiController::class,'GetUserBusiness']);
         Route::post('edit-user-business-slot-interval',[BusinessApiController::class,'EditUserBusinessSlotInterval']);
 
@@ -78,6 +82,31 @@ Route::group(['middleware' => ['user.api']], function() {
         //user business timing
         Route::post('create-user-business-timing',[BusinessApiController::class,'CreateUserBusinessTiming']);
         Route::post('edit-user-business-timing',[BusinessApiController::class,'EditUserBusinessTiming']);
+
+        //get menu type
+        Route::get('get-menu-type',[ApiMealController::class,'GetMenuType']);
+        Route::get('get-meal-size',[ApiMealController::class,'GetMealSize']);
+        Route::get('get-allergies',[ApiMealController::class,'GetAllergies']);
+        Route::get('get-meal-cookware',[ApiMealController::class,'GetMealCookware']);
+        Route::get('get-recipes',[ApiMealController::class,'GetRecipes']);
+        Route::get('get-recipes-by-category',[ApiMealController::class,'GetRecipesByCategory']);
+        Route::get('get-single-recipe',[ApiMealController::class,'GetSingleRecipe']);
+        Route::get('get-user-single-recipe',[ApiMealController::class,'GetUserSingleRecipe']);
+        
+
+        //user meal plan
+        Route::get('get-selected-meal-ids',[ApiMealController::class,'GetSelectedMealIds']);
+        Route::post('create-user-meal-plan',[ApiMealController::class,'CreateUserMealPlan']);
+        Route::get('get-user-meal-plan',[ApiMealController::class,'GetUserMealPlan']);
+        Route::post('create-user-meal-detail',[ApiMealController::class,'CreateUserMealDetail']);
+        Route::get('get-user-meal-detail',[ApiMealController::class,'GetUserMealDetail']);
+        Route::get('get-notification-setting',[ApiMealController::class,'GetNotificationSetting']);
+
+        //user workout
+        Route::get('get-workout-level',[ApiUserWorkout::class,'GetWorkoutLevel']);
+        Route::get('get-workouts-by-workout-level-id',[ApiUserWorkout::class,'GetWorkoutByWorkoutLevelId']);
+        Route::get('get-exercies-by-workout-id',[ApiUserWorkout::class,'GetExerciseByWorkoutId']);
+        Route::post('create-user-workout',[ApiUserWorkout::class,'CreateUserWorkout']);
 
 
 	});

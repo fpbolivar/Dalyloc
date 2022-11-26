@@ -39,6 +39,9 @@
 		<!-- JQuery js-->
 		<script src="{{asset('admin/assets/js/jquery-3.2.1.min.js')}}"></script>
 
+		<!-- Multiselect js -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.min.js"></script>
+
 		<!-- Bootstrap js -->
 		<script src="{{asset('admin/assets/plugins/bootstrap-4.3.1/js/popper.min.js')}}"></script>
 		<script src="{{asset('admin/assets/plugins/bootstrap-4.3.1/js/bootstrap.min.js')}}"></script>

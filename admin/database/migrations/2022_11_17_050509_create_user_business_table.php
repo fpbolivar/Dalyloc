@@ -20,7 +20,7 @@ class CreateUserBusinessTable extends Migration
             $table->string('business_name');
             $table->string('business_img')->nullable();
             $table->string('business_email');
-            $table->string('business_address');
+            $table->string('business_address')->nullable();
             $table->double('lat',15,8)->nullable();
             $table->double('lng',15,8)->nullable();
             $table->string('slot_interval')->default(15);

@@ -82,29 +82,46 @@ class ApiProfileController extends Controller
         //             'name.required'=>'What everyone else will see you as?',
         //            ];
         // validate feilds
-        $validator = Validator::make($request->all(),[
-            'name' => 'required',
+        //$validator = Validator::make($request->all(),[
+            //'name' => 'required',
             // 'email' => 'unique:users,email,'.auth()->user()->id.',id',
-        ]);
+       // ]);
         // if validation fails
-        if ($validator->fails()) {
-            $error = $validator->messages()->all();
-            return response()->json([
-                'status' => false,
-                'status_code' => true,
-                'message' =>$error[0]
-            ]);
-        }
+        // if ($validator->fails()) {
+        //     $error = $validator->messages()->all();
+        //     return response()->json([
+        //         'status' => false,
+        //         'status_code' => true,
+        //         'message' =>$error[0]
+        //     ]);
+        // }
         // get and update user
         $user = User::find(auth()->user()->id);
+        if($request->has('date_of_birth')){
+            $user->date_of_birth = $request->date_of_birth;
+        }
+        if($request->has('weight')){
+            $user->weight = $request->weight;
+        }
+        if($request->has('height')){
+            $user->height = $request->height;
+        }
+        if($request->has('gender')){
+            $user->gender = $request->gender;
+        }
         $user->name = $request->name;
-        $user->date_of_birth = $request->date_of_birth;
-        $user->age = $request->age;
-        $user->gender = $request->gender;
-        $user->height_feet = $request->height_feet;
-        $user->height_inch = $request->height_inch;
-        $user->weight = $request->weight;
-
+        $user->email = $request->email;
+        if($request->has('phone_no')){
+            if($user->phone_no == $request->phone_no){
+                return response()->json([
+                    'status' => true,
+                    'status_code' => true,
+                    'message' =>'Phone number is already exist.',
+                ]);
+            }else{
+                $user->phone_no = $request->phone_no; 
+            }
+        }
         // $user->email = isset($request->email)?$request->email:$user->email;        
         // if ($request->has('user_profile_pic')) {
         //      $pathImage = "images/user";

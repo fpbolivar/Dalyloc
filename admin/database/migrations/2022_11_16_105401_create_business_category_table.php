@@ -1,3 +1,4 @@
+php artisan migrate --path=/database/migrations/full_migration_file_name_migration.php
 <?php
 
 use Illuminate\Database\Migrations\Migration;
