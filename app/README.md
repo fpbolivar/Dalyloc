@@ -32,3 +32,12 @@ insert task || get task list by date || delete task || update task.
 
 #Create Business Flow
 #Create Meal Flow
+
+## 1 Dec,2022
+
+#Fix issue Meal Flow
+#Fix issue Business Flow
+#Wake Up Time Dynamic
+#Add (+) multi Option On HomeScreen
+#Add Payment Method
+#Manage Card Payment Method

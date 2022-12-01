@@ -1,4 +1,6 @@
 import 'package:daly_doc/core/colors/colors.dart';
+import 'package:daly_doc/core/constant/constants.dart';
+import 'package:daly_doc/pages/mealPlan/components/BottomOrderCartView.dart';
 import 'package:daly_doc/pages/mealPlan/components/intructionItemView.dart';
 import 'package:daly_doc/pages/mealPlan/components/receipeBasicDetailView.dart';
 import 'package:daly_doc/pages/mealPlan/components/receipeBottomButtonView.dart';
@@ -11,6 +13,7 @@ import 'package:daly_doc/utils/exportScreens.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
 import 'package:daly_doc/widgets/customRoundButton/customButton.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 enum InstructionType { check, numeric }
 
@@ -29,11 +32,11 @@ class _ReceipeDetailViewState extends State<ReceipeDetailView>
     'Ingredients',
     'Instructions',
   ];
-  MealController mealController = MealController();
+
   MealApis manager = MealApis();
   late TabController _tabController;
   ReceipeDetailModel? data = null;
-  MealItemModel? mealItem = null;
+
   var id = "1";
   @override
   void initState() {
@@ -65,14 +68,18 @@ class _ReceipeDetailViewState extends State<ReceipeDetailView>
 
     if (data != null) {
       if (data != null) {
-        mealItem = MealItemModel(
+        Constant.mealProvider.singleMealItem = MealItemModel(
             full_meal_image_url: data!.full_meal_image_url ?? "",
             id: data!.id,
             meal_calories: data!.meal_calories,
             meal_cooking_timing: data!.meal_cooking_timing,
             meal_name: data!.meal_name,
             meal_image: data!.meal_image,
+            isSelected: false,
             menu_type_id: data!.menu_type_id);
+        List<MealItemModel> item = Constant.mealProvider
+            .preSelectedItem([Constant.mealProvider.singleMealItem!], 0)!;
+        Constant.mealProvider.singleMealItem = item.first;
       }
 
       setState(() {});
@@ -201,16 +208,43 @@ class _ReceipeDetailViewState extends State<ReceipeDetailView>
                       ),
                     ),
                   ),
-                  ReceipeBottomButtonView(
-                    fromMyMealScrren: widget.fromMyMealScrren,
-                    addMealAction: () {
-                      if (mealItem == null) return;
-                      List<MealItemModel> data = [mealItem!];
-                      Routes.pushSimple(
-                          context: context,
-                          child: ReviewAllMealPlanView(data: data));
-                    },
-                  )
+                  Consumer<MealController>(builder: (context, object, child) {
+                    return Column(
+                      children: [
+                        ReceipeBottomButtonView(
+                          fromMyMealScrren: widget.fromMyMealScrren,
+                          isSelected:
+                              Constant.mealProvider.singleMealItem == null
+                                  ? false
+                                  : Constant
+                                      .mealProvider.singleMealItem!.isSelected!,
+                          addMealAction: () {
+                            if (Constant.mealProvider.singleMealItem == null) {
+                              return;
+                            }
+                            Constant.mealProvider.selectedItem(
+                                [Constant.mealProvider.singleMealItem!], 0);
+                          },
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Constant.mealProvider.selecteOrderItems.length == 0
+                            ? Container()
+                            : OrderCartItemView()
+                      ],
+                    );
+                  }),
+                  // ReceipeBottomButtonView(
+                  //   fromMyMealScrren: widget.fromMyMealScrren,
+                  //   addMealAction: () {
+                  //     if (mealItem == null) return;
+                  //     List<MealItemModel> data = [mealItem!];
+                  //     Routes.pushSimpleRootNav(
+                  //         context: context,
+                  //         child: ReviewAllMealPlanView(data: data));
+                  //   },
+                  // )
                 ],
               ),
       ),

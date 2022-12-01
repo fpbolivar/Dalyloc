@@ -40,7 +40,7 @@ class _BookingLinkScreenScreenState extends State<BookingLinkScreen> {
     return Scaffold(
       backgroundColor: AppColor.newBgcolor,
       appBar: CustomAppBar(
-        title: LocalString.lblCreateAnBusiness,
+        title: LocalString.lblOnlineBusiness,
       ),
       body: BackgroundCurveView(
           child: SafeArea(

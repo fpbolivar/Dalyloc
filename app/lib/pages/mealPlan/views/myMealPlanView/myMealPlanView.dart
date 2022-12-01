@@ -46,7 +46,8 @@ class _MyMealPlanViewState extends State<MyMealPlanView> {
           padding: const EdgeInsets.only(left: 10, top: 5),
           child: InkWell(
             onTap: () {
-              Routes.pushSimple(context: context, child: MealSettingView());
+              Routes.pushSimpleRootNav(
+                  context: context, child: MealSettingView());
             },
             child: Image.asset(
               "assets/icons/ic_setting.png",
@@ -77,12 +78,12 @@ class _MyMealPlanViewState extends State<MyMealPlanView> {
                       background: AppColor.theme,
                       fontSize: 15,
                       onTap: () {
-                        Routes.pushSimple(
-                            context: context,
-                            child: MealCookListView(),
-                            onBackPress: (d) {
-                              print("MealCookListView");
-                            });
+                        Constant.mealProvider.categoryCookList = [];
+                        Constant.mealProvider.selecteOrderItems = [];
+                        Routes.pushSimpleRootNav(
+                          context: context,
+                          child: MealCookListView(),
+                        );
                       },
                     ),
                   ),
@@ -173,7 +174,7 @@ class _MyMealPlanViewState extends State<MyMealPlanView> {
         MealItemModel item = categoryItem.data![index];
         return InkWell(
           onTap: () async {
-            Routes.pushSimple(
+            Routes.pushSimpleRootNav(
                 context: context,
                 child: ReceipeDetailView(
                   fromMyMealScrren: true,

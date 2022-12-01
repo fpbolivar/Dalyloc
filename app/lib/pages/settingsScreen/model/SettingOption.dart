@@ -5,6 +5,9 @@ enum SettingType { normal, logout, loading, refresh, toggle, counter, time }
 class SettingOption {
   String? title;
   int? section;
+  int? counter;
+  String? time;
+
   bool? value;
 
   SettingType? type;
@@ -12,6 +15,8 @@ class SettingOption {
   SettingOption(
       {this.title,
       this.section,
+      this.time,
+      this.counter,
       this.value = false,
       this.type = SettingType.normal,
       this.subscriptionSubPlans});

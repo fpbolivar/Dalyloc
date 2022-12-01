@@ -1,13 +1,21 @@
 import 'package:daly_doc/core/LocalString/localString.dart';
+import 'package:daly_doc/core/constant/constants.dart';
+import 'package:daly_doc/pages/mealPlan/components/BottomOrderCartView.dart';
+import 'package:daly_doc/pages/mealPlan/manager/mealcontroller.dart';
 import 'package:daly_doc/pages/notificationScreen/model/rowItemModel.dart';
 import 'package:daly_doc/pages/subscriptionPlansScreen/model/PlanInfoModel.dart';
+import 'package:provider/provider.dart';
 import '../../../core/colors/colors.dart';
 import '../../../utils/exportPackages.dart';
 
 // ignore: must_be_immutable
 class ReceipeBottomButtonView extends StatelessWidget {
   bool fromMyMealScrren = false;
-  ReceipeBottomButtonView({this.fromMyMealScrren = false, this.addMealAction});
+  bool isSelected = false;
+  ReceipeBottomButtonView(
+      {this.fromMyMealScrren = false,
+      this.addMealAction,
+      this.isSelected = false});
   VoidCallback? addMealAction;
   @override
   Widget build(BuildContext context) {
@@ -29,7 +37,7 @@ class ReceipeBottomButtonView extends StatelessWidget {
           ]),
       padding: const EdgeInsets.all(10),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 13),
+        padding: const EdgeInsets.symmetric(horizontal: 0),
         child: InkWell(
           onTap: () {},
           child: Row(
@@ -69,15 +77,21 @@ class ReceipeBottomButtonView extends StatelessWidget {
               //       ),
               //     )),
               if (!fromMyMealScrren)
-                CustomButton.regular(
-                  width: 130,
-                  fontSize: 15,
-                  height: 30,
-                  title: "Add to meal",
-                  background: AppColor.textGrayBlue,
-                  onTap: () {
-                    addMealAction!();
-                  },
+                Column(
+                  children: [
+                    CustomButton.regular(
+                      width: 130,
+                      fontSize: 15,
+                      height: 30,
+                      title: isSelected == false ? "Add to meal" : "Remove",
+                      background: isSelected == false
+                          ? AppColor.textGrayBlue
+                          : Colors.red,
+                      onTap: () {
+                        addMealAction!();
+                      },
+                    ),
+                  ],
                 )
             ],
           ),

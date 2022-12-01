@@ -16,6 +16,7 @@ class TaskModel {
   String isCompleted = "";
   String isDeleted = "";
   String utcDateTime = "";
+  String operationType = "";
   String user_id = "";
 
   int createTimeStamp = 0;
@@ -27,6 +28,7 @@ class TaskModel {
   TaskModel(
       {this.email = "",
       this.taskTimeStamp = 0,
+      this.operationType = "",
       this.endTime = "",
       this.dateString = "",
       this.startTime = "",
@@ -70,6 +72,7 @@ class TaskModel {
         startTime: json["start_task_time"].toString(),
         dateString: json["date_format"].toString(),
         endTime: json["end_task_time"].toString(),
+        operationType: json["task_type"] ?? "",
         createTimeStamp: json["create_time_stamp"] ?? 0,
         tid: json["t_id"] ?? 0,
         taskName: json["task_name"] ?? "",
@@ -112,6 +115,7 @@ class TaskModel {
         serverID: json["serverID"] ?? 0,
         createTimeStamp: json["createTimeStamp"],
         tid: json["tId"],
+        operationType: json["operationType"] ?? "",
         taskTimeStamp: json["taskTimeStamp"],
         utcDateTime: json["utcDateTime"] ?? "",
         isDeleted: json["isDeleted"] ?? "0",
@@ -148,6 +152,7 @@ class TaskModel {
       TASK_TABLE_KEY.TASKNAME: taskName,
       TASK_TABLE_KEY.UTCDATETIME: utcDateTime,
       TASK_TABLE_KEY.ISDELETED: isDeleted,
+      TASK_TABLE_KEY.OPERATIONTYPE: operationType,
     };
   }
 
@@ -168,6 +173,23 @@ class TaskModel {
       TASK_TABLE_KEY.TASKNAME: taskName,
       TASK_TABLE_KEY.UTCDATETIME: utcDateTime,
       TASK_TABLE_KEY.ISDELETED: isDeleted,
+      TASK_TABLE_KEY.OPERATIONTYPE: operationType,
     };
+  }
+}
+
+enum TaskType {
+  meal,
+  appointment,
+}
+
+extension TopicExtension on TaskType {
+  String get rawValue {
+    switch (this) {
+      case TaskType.meal:
+        return 'meal';
+      case TaskType.appointment:
+        return 'appointment';
+    }
   }
 }

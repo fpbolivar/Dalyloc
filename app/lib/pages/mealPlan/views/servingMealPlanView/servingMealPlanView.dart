@@ -82,7 +82,7 @@ class _ServingMealPlanViewState extends State<ServingMealPlanView> {
                                 meal_size_id: allDiet[selecteIndex].id);
                             if (result != null && goToNext) {
                               if (result == true) {
-                                Routes.pushSimple(
+                                Routes.pushSimpleRootNav(
                                     context: context,
                                     child: AllergiesFoodListView(
                                       gotoNext: true,

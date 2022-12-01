@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:daly_doc/core/constant/constants.dart';
+import 'package:daly_doc/pages/mealPlan/components/BottomOrderCartView.dart';
 import 'package:daly_doc/pages/mealPlan/components/mealCookItem.dart';
 import 'package:daly_doc/pages/mealPlan/components/mealItemView.dart';
 import 'package:daly_doc/pages/mealPlan/components/pickDietItemView.dart';
@@ -8,6 +10,7 @@ import 'package:daly_doc/pages/mealPlan/manager/mealApi.dart';
 import 'package:daly_doc/pages/mealPlan/manager/mealcontroller.dart';
 import 'package:daly_doc/pages/mealPlan/model/foodDietVarientModel.dart';
 import 'package:daly_doc/pages/mealPlan/model/mealCategoryModel.dart';
+import 'package:provider/provider.dart';
 import '../../../../utils/exportPackages.dart';
 import '../../../../utils/exportWidgets.dart';
 
@@ -25,7 +28,7 @@ class _ShowAllMealCookListViewState extends State<ShowAllMealCookListView> {
   var serachTF = TextEditingController();
   var textSearch = "";
   MealApis manager = MealApis();
-  MealController mealController = MealController();
+
   Timer timerSearch = Timer(const Duration(seconds: 0), () {
     print("Yeah, searching timer");
   });
@@ -43,6 +46,10 @@ class _ShowAllMealCookListViewState extends State<ShowAllMealCookListView> {
         id: widget.category?.categoryId);
     if (tempResponse != null) {
       categoryList = tempResponse;
+
+      categoryList!.data =
+          Constant.mealProvider.preSelectedItem(tempResponse.data!, 0);
+
       setState(() {});
     } else {
       categoryList = null;
@@ -85,11 +92,11 @@ class _ShowAllMealCookListViewState extends State<ShowAllMealCookListView> {
                     height: 20,
                   ),
                   if (categoryList != null)
-                    mealController.getSelectedAllListItem(
-                                [categoryList!]).length ==
-                            0
-                        ? Container()
-                        : bottomNextButtonView(),
+                    Consumer<MealController>(builder: (context, object, child) {
+                      return Constant.mealProvider.selecteOrderItems.length == 0
+                          ? Container()
+                          : OrderCartItemView();
+                    }),
                   const SizedBox(
                     height: 15,
                   ),
@@ -144,7 +151,7 @@ class _ShowAllMealCookListViewState extends State<ShowAllMealCookListView> {
         MealItemModel item = categoryItem.data![index];
         return InkWell(
           onTap: () async {
-            Routes.pushSimple(
+            Routes.pushSimpleRootNav(
                 context: context,
                 child: ReceipeDetailView(
                   fromMyMealScrren: true,
@@ -159,7 +166,7 @@ class _ShowAllMealCookListViewState extends State<ShowAllMealCookListView> {
               item: item,
               onAdd: () {
                 print("add");
-                mealController.selectedItem(categoryItem.data!, index);
+                Constant.mealProvider.selectedItem(categoryItem.data!, index);
                 setState(() {});
               },
             ),
@@ -219,7 +226,7 @@ class _ShowAllMealCookListViewState extends State<ShowAllMealCookListView> {
                         height: 5,
                       ),
                       Text(
-                        "${mealController.getSelectedAllListItem([
+                        "${Constant.mealProvider.getSelectedAllListItem([
                               categoryList!
                             ]).length} items",
                         style: const TextStyle(
@@ -239,9 +246,9 @@ class _ShowAllMealCookListViewState extends State<ShowAllMealCookListView> {
                   height: 30,
                   title: "Next",
                   onTap: () {
-                    List<MealItemModel> data =
-                        mealController.getSelectedAllListItem([categoryList!]);
-                    Routes.pushSimple(
+                    List<MealItemModel> data = Constant.mealProvider
+                        .getSelectedAllListItem([categoryList!]);
+                    Routes.pushSimpleRootNav(
                         context: context,
                         child: ReviewAllMealPlanView(data: data));
                   },

@@ -1,11 +1,15 @@
 import 'dart:async';
 import 'package:daly_doc/core/localStore/localStore.dart';
+import 'package:daly_doc/pages/checkingPlanSubscription/checkingPlanSubscription.dart';
 import 'package:daly_doc/pages/dailyDevotinalPlan/views/payersListView.dart';
+import 'package:daly_doc/pages/mealPlan/manager/mealEnum.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../utils/exportPackages.dart';
 import '../../../utils/exportWidgets.dart';
+import '../Apis/PrayerApis.dart';
+import '../models/prayerModel.dart';
 
 class MomentOfPrayerView extends StatefulWidget {
   MomentOfPrayerView({
@@ -17,10 +21,26 @@ class MomentOfPrayerView extends StatefulWidget {
 }
 
 class _MomentOfPrayerViewScreenState extends State<MomentOfPrayerView> {
+  AdminPrayerModel? adminPrayer;
+  bool data = false;
+  bool isActive = false;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getPrayer();
+    });
+  }
+
+  getPrayer() {
+    PrayerApis().getAdmin((data) {
+      print("objectallCatallCatallCatallCat${data}");
+      adminPrayer = data;
+
+      setState(() {});
+    });
   }
 
   @override
@@ -30,14 +50,46 @@ class _MomentOfPrayerViewScreenState extends State<MomentOfPrayerView> {
       appBar: CustomAppBar(
         title: LocalString.lblAmomentofPrayer,
       ),
+      bottomNavigationBar: isActive
+          ? SafeArea(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                child: CustomButton.regular(
+                  title: "Continue",
+                  onTap: () {
+                    Routes.pushSimple(context: context, child: PrayerView());
+                  },
+                ),
+              ),
+            )
+          : Container(
+              height: 1,
+            ),
       body: BackgroundCurveView(
           child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: bodyDesign(),
-        ),
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: isActive
+                ? viewMoment()
+                : CheckSubscriptionView(
+                    activeStatus: (value) {
+                      setState(() {
+                        isActive = value;
+                      });
+                      print("isActive$isActive");
+                    },
+                    title: "Devotional",
+                    typeOfOperation: MealTypePlan.devotional,
+                  )),
       )),
     );
+  }
+
+  viewMoment() {
+    return adminPrayer == null
+        ? Center(child: CircularProgressIndicator())
+        : bodyDesign();
   }
 
 //METHID : -   bodyDesign
@@ -46,8 +98,8 @@ class _MomentOfPrayerViewScreenState extends State<MomentOfPrayerView> {
       child: Column(
         children: [
           SizedBox(height: MediaQuery.of(context).size.height * 0.15),
-          const Text(
-            LocalString.lblAmomentofPrayerDc,
+          Text(
+            adminPrayer!.prayerDescription!,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14.0,
@@ -55,8 +107,8 @@ class _MomentOfPrayerViewScreenState extends State<MomentOfPrayerView> {
             ),
           ),
           SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-          const Text(
-            "Rebecca Barlow Jordan",
+          Text(
+            adminPrayer!.writtenby!,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 18.0,
@@ -64,13 +116,7 @@ class _MomentOfPrayerViewScreenState extends State<MomentOfPrayerView> {
             ),
           ),
           //
-          SizedBox(height: MediaQuery.of(context).size.height * 0.3),
-          CustomButton.regular(
-            title: "Continue",
-            onTap: () {
-              Routes.pushSimple(context: context, child: PrayerView());
-            },
-          ),
+
           const SizedBox(height: 50)
         ],
       ),

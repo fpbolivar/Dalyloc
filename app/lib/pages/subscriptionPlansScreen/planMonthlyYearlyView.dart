@@ -1,3 +1,4 @@
+import 'package:daly_doc/pages/paymentPages/apiManager/paymentManager.dart';
 import 'package:daly_doc/pages/settingsScreen/ApiManager/AllPlansApiManager.dart';
 import 'package:daly_doc/widgets/ToastBar/toastMessage.dart';
 import 'package:daly_doc/widgets/htmlRender/htmlRender.dart';
@@ -80,10 +81,12 @@ class _PlanMonthlyYearlyViewState extends State<PlanMonthlyYearlyView> {
                 msg: LocalString.msgWantBuyPlanTask,
                 OnTap: () {
                   print(selectedItem!.type.toString());
-                  AllPlansApiManager().planSubcribe(
-                    planId: selectedItem!.subscriptionPlanId.toString(),
-                    type: selectedItem!.type.toString(),
-                  );
+                  PaymentManager().planSubcribe(
+                      planId: selectedItem!.id.toString(), type: "");
+                  // AllPlansApiManager().planSubcribe(
+                  //   planId: selectedItem!.subscriptionPlanId.toString(),
+                  //   type: selectedItem!.type.toString(),
+                  // );
                 });
           },
           child: Container(

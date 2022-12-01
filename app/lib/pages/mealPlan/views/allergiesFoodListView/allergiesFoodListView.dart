@@ -78,7 +78,7 @@ class _AllergiesFoodListViewState extends State<AllergiesFoodListView> {
                                 await manager.createMeal(allergies_id: ids);
                             if (result != null && goToNext) {
                               if (result == true) {
-                                Routes.pushSimple(
+                                Routes.pushSimpleRootNav(
                                     context: context,
                                     child: LikesFoodListView(gotoNext: true));
                               }

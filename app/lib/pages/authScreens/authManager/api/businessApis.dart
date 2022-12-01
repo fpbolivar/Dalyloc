@@ -3,6 +3,7 @@ import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/pages/authScreens/authManager/models/businessCatModel.dart';
 
 import 'package:daly_doc/pages/authScreens/authManager/models/serviceItemModel.dart';
+import 'package:daly_doc/pages/subscriptionPlansScreen/model/PlanInfoModel.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:daly_doc/utils/exportPackages.dart';
@@ -63,7 +64,7 @@ class BusinessApis {
     }
   }
 
-  Future<UserBusinessModel?> getUserBusinessDetail() async {
+  Future<UserBusinessModel?> getUserBusinessDetail({needLoader = true}) async {
     if (await internetCheck() == false) {
       showAlert(LocalString.internetNot);
 
@@ -76,15 +77,21 @@ class BusinessApis {
     };
     print(HttpUrls.WS_GETBUSINESS);
     try {
-      waitDialog();
+      if (needLoader) {
+        waitDialog();
+      }
       Response response =
           await get(Uri.parse(HttpUrls.WS_GETBUSINESS), headers: header);
-
+      if (needLoader) {
+        dismissWaitDialog();
+      }
       var data = json.decode(response.body);
       print('${data}');
 
       if (data['status'] == true) {
-        dismissWaitDialog();
+        if (needLoader) {
+          dismissWaitDialog();
+        }
         print("result ${data["data"]}");
         var allCat = data["data"];
         print('${allCat}');
@@ -92,14 +99,85 @@ class BusinessApis {
         await LocalStore().setBusinessId(obj.id.toString());
         return obj;
       } else {
-        dismissWaitDialog();
+        if (needLoader) {
+          dismissWaitDialog();
+        }
         // showAlert(data['message'].toString());
         return null;
       }
     } catch (e) {
-      dismissWaitDialog();
+      if (needLoader) {
+        dismissWaitDialog();
+      }
       print(e.toString());
       return null;
+    }
+  }
+
+  Future<List<PlanInfoModel>?> getActivePlan(
+      {onSuccess, needLoader = true}) async {
+    List<PlanInfoModel> temp = [];
+    var token = await LocalStore().getToken();
+    if (await internetCheck() == false) {
+      showAlert(LocalString.internetNot);
+
+      return temp;
+    }
+
+    var header = {
+      "Authorization": token,
+    };
+
+    var url = HttpUrls.WS_GETACTIVEPLANS;
+    print(url);
+    if (needLoader) {
+      waitDialog();
+    }
+    try {
+      Response response = await get(
+        Uri.parse(url),
+        headers: header,
+      );
+      if (needLoader) {
+        dismissWaitDialog();
+      }
+      print(url);
+      var data = jsonDecode(response.body);
+      print('${data}');
+
+      if (data["status_code"] == true) {
+        var list = data["activeplans"] as List;
+        if (list.length > 0) {
+          List<PlanInfoModel> listPlan =
+              list.map((obj) => PlanInfoModel.fromJson(obj)).toList();
+          return listPlan;
+        } else {
+          List<PlanInfoModel> temp = [];
+          return temp;
+        }
+      } else {
+        if (data["auth_code"] != null || token == null) {
+          showAlert(LocalString.msgSessionExpired, onTap: () {
+            Routes.gotoMainScreen();
+          });
+        } else {
+          List<PlanInfoModel> listPlan = [];
+
+          showAlert(data['message'].toString());
+          return listPlan;
+        }
+      }
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    } catch (e) {
+      if (needLoader) {
+        dismissWaitDialog();
+      }
+      print(e.toString());
+      showErrorAlert(e.toString());
+
+      return temp;
     }
   }
 
@@ -606,6 +684,93 @@ class BusinessApis {
       }
     } catch (e) {
       //dismissWaitDialog();
+      print(e.toString());
+      showErrorAlert(e.toString());
+      return null;
+    }
+  }
+
+  Future<bool?> getActivePaymentStatus() async {
+    var token = await LocalStore().getToken();
+    if (await internetCheck() == false) {
+      showAlert(LocalString.internetNot);
+      return null;
+    }
+    // waitDialog();
+    var id = await LocalStore().getBusinessId();
+    var url = HttpUrls.WS_GET_ACTIVEPAYMENT + id;
+
+    var header = await HttpUrls.headerData();
+    print(url);
+    try {
+      Response response = await get(Uri.parse(url), headers: header);
+      //dismissWaitDialog();
+      var data = jsonDecode(response.body);
+      print('${data}');
+
+      if (data['status'] == true) {
+        var obj = data["is_active_payment"];
+        if (obj != null) {
+          print("obj${obj}");
+          return obj.toString() == "1";
+        }
+
+        return null;
+      } else {
+        if (data["auth_code"] != null || token == null) {
+          showAlert(LocalString.msgSessionExpired, onTap: () {
+            Routes.gotoMainScreen();
+          });
+          return null;
+        } else {
+          showAlert(data['message'].toString());
+          return null;
+        }
+      }
+    } catch (e) {
+      //dismissWaitDialog();
+      print(e.toString());
+      showErrorAlert(e.toString());
+      return null;
+    }
+  }
+
+  Future<bool?> updateActivePaymentStatus({String value = "0"}) async {
+    var token = await LocalStore().getToken();
+    if (await internetCheck() == false) {
+      showAlert(LocalString.internetNot);
+      return null;
+    }
+    waitDialog();
+    var id = await LocalStore().getBusinessId();
+    var url = HttpUrls.WS_UPDATEACTIVEPAYMENT;
+    var header = await HttpUrls.headerData();
+
+    var body = {"user_business_id": id, "is_active_payment": value};
+    var request = json.encode(body);
+    print(url);
+    try {
+      Response response =
+          await post(Uri.parse(url), body: request, headers: header);
+      dismissWaitDialog();
+      var data = jsonDecode(response.body);
+      print('${data}');
+
+      if (data['status'] == true) {
+        return true;
+      } else {
+        if (data["auth_code"] != null || token == null) {
+          showAlert(LocalString.msgSessionExpired, onTap: () {
+            Routes.gotoMainScreen();
+          });
+          return null;
+        } else {
+          showAlert(data['message'].toString());
+          return null;
+        }
+      }
+    } catch (e) {
+      dismissWaitDialog();
       print(e.toString());
       showErrorAlert(e.toString());
       return null;

@@ -1,10 +1,13 @@
 import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/bookingLinkScreen.dart';
 import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/timeSlotsAvailabilty.dart';
+import 'package:daly_doc/pages/dailyDevotinalPlan/Apis/PrayerApis.dart';
+import 'package:daly_doc/pages/dailyDevotinalPlan/models/prayerSettingModel.dart';
 import 'package:daly_doc/pages/settingsScreen/components/sectionRowListView.dart';
 import 'package:daly_doc/pages/settingsScreen/model/SettingOption.dart';
-import '../../../../utils/exportPackages.dart';
-import '../../../../utils/exportScreens.dart';
-import '../../../../utils/exportWidgets.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
+import '../../../../../utils/exportPackages.dart';
+import '../../../../../utils/exportScreens.dart';
+import '../../../../../utils/exportWidgets.dart';
 import 'package:flutter/cupertino.dart';
 
 class DevotionalPlanSetting extends StatefulWidget {
@@ -24,30 +27,59 @@ class _DevotionalPlanSettingState extends State<DevotionalPlanSetting> {
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {});
+    data = PrayerSettingModel(
+        paryer_daily_count: 1,
+        prayer_end_time: "",
+        prayer_notify: "0",
+        prayer_start_time: "");
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getPrayerSetting();
+    });
   }
 
   List<SettingOption> onlineItemOption = [
     SettingOption(title: "Notifications", section: 0, type: SettingType.toggle),
   ];
 
-  List<SettingOption> businessOption = [
-    SettingOption(title: " Daily", section: 1, type: SettingType.counter),
+  List<SettingOption> prayerOption = [
     SettingOption(
-        title: "Business details", section: 1, type: SettingType.time),
+        title: " Daily", section: 1, type: SettingType.counter, counter: 0),
     SettingOption(
-        title: LocalString.lblServiceDetail,
-        section: 1,
-        type: SettingType.time),
+        title: "Start Time", section: 1, type: SettingType.time, time: ""),
+    SettingOption(
+        title: "End time", section: 1, type: SettingType.time, time: ""),
   ];
-
+  PrayerSettingModel? data;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.newBgcolor,
       appBar: CustomAppBarWithBackButton(
-        title: LocalString.lblBizSettingNavTitle,
+        title: LocalString.lblDevSettingNavTitle,
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: CustomButton.regular(
+            title: "Save",
+            onTap: () async {
+              var mgr = TaskManager();
+              var counter = prayerOption[0].counter;
+              var stime = prayerOption[1].time;
+              var etime = prayerOption[2].time;
+              var stimeUTC = mgr.generateUtcTime(time: stime);
+              var etimeUTC = mgr.generateUtcTime(time: etime);
+
+              print(counter);
+              print("stime ${stime}  ${stimeUTC}");
+              print("etime ${etime}  ${etimeUTC}");
+              await PrayerApis().prayerSetting(
+                  startTime: stimeUTC,
+                  endTime: etimeUTC,
+                  paryer_daily_count: counter);
+            },
+          ),
+        ),
       ),
       body: BackgroundCurveView(
           child: SafeArea(
@@ -57,6 +89,40 @@ class _DevotionalPlanSettingState extends State<DevotionalPlanSetting> {
         ),
       )),
     );
+  }
+
+  getPrayerSetting() async {
+    data = await PrayerApis().getPrayerSetting();
+    if (data == null) {
+      //onlineItemOption[0].value = false;
+    } else {
+      onlineItemOption[0].value =
+          data!.prayer_notify.toString() == "1" ? true : false;
+
+      var mgr = TaskManager();
+
+      var stime = data!.prayer_start_time;
+
+      var etime = data!.prayer_end_time;
+      var stimeLocal = mgr.generateLocalTime(time: stime);
+      var etimeLocal = mgr.generateLocalTime(time: etime);
+
+      prayerOption[0].counter = data!.paryer_daily_count;
+      prayerOption[1].time = stimeLocal;
+      prayerOption[2].time = etimeLocal;
+    }
+
+    setState(() {});
+  }
+
+  setNotification(String value) async {
+    bool? status = await PrayerApis().prayerSetting(isNotificationValue: value);
+    if (status == null || status == false) {
+      //onlineItemOption[0].value = false;
+    } else {
+      //onlineItemOption[0].value = true;
+    }
+    setState(() {});
   }
 
 //METHID : -   bodyDesign
@@ -75,6 +141,7 @@ class _DevotionalPlanSettingState extends State<DevotionalPlanSetting> {
                   borderEnable: borderEnable,
                   onSelectionBool: ((boolValue, p1, p2) {
                     onlineItemOption[p2].value = boolValue;
+                    setNotification(boolValue ? "1" : "0");
                     setState(() {});
                   }),
                   onTap: (sectionIndex, rowIndex) {
@@ -91,7 +158,7 @@ class _DevotionalPlanSettingState extends State<DevotionalPlanSetting> {
                 height: 20,
               ),
               SectionRowListView(
-                  itemList: businessOption,
+                  itemList: prayerOption,
                   onTap: (sectionIndex, rowIndex) {
                     // rowIndex == 0
                     //     ? Routes.pushSimple(

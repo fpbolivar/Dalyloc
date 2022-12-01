@@ -12,6 +12,7 @@ import 'components/notesTFView.dart';
 import 'components/timePickerComponent/homepage.dart';
 import 'manager/ApisManager/Apis.dart';
 import 'model/TaskModel.dart';
+import 'model/TimeModel.dart';
 import 'model/subtaskModel.dart';
 
 class CreateTaskView extends StatefulWidget {
@@ -36,8 +37,10 @@ class _CreateTaskViewState extends State<CreateTaskView> {
   int indexHrsSelected = 0;
   int indexMinSelected = 0;
   int indexAMPMSelected = 0;
-  var hrsData = [];
-  var minutesData = [];
+  //var hrsData = [];
+  List<TimeModel> hrsData = [];
+  List<TimeModel> minutesData = [];
+  //var minutesData = [];
   //var finalTime = "09:00 AM";
   var finalTime = "09:00";
   var displayTimeText = "";
@@ -171,11 +174,19 @@ class _CreateTaskViewState extends State<CreateTaskView> {
                     indexMinSelected: indexMinSelected,
                     onRefresh: (indexHrsSelectedTemp, indexMinSelectedTemp,
                         indexAMPMSelectedTemp, finalTime) {
-                      setState(() {
-                        indexHrsSelected = indexHrsSelectedTemp;
-                        indexMinSelected = indexMinSelectedTemp;
-                        indexAMPMSelected = indexAMPMSelectedTemp;
-                      });
+                      if (hrsData[indexHrsSelectedTemp].enable == false) {
+                        setState(() {});
+                        Future.delayed(Duration(milliseconds: 300), () {
+                          timeDisabe();
+                        });
+                      } else {
+                        setState(() {
+                          indexHrsSelected = indexHrsSelectedTemp;
+                          indexMinSelected = indexMinSelectedTemp;
+                          indexAMPMSelected = indexAMPMSelectedTemp;
+                        });
+                      }
+
                       calculateTimeUseInterval();
                     },
                   )),
@@ -233,6 +244,8 @@ class _CreateTaskViewState extends State<CreateTaskView> {
   }
 
   validateForm() {
+    print(DateTime.now().microsecondsSinceEpoch);
+
     if (nameTF.text.isEmpty) {
       ToastMessage.showMessage(msg: LocalString.msgTaskName);
     }
@@ -334,13 +347,16 @@ class _CreateTaskViewState extends State<CreateTaskView> {
       clipBehavior: Clip.antiAliasWithSaveLayer,
       builder: (BuildContext context) {
         return CalendarAlertView(
+          enablePastDates: false,
           intialDate: DateTime.now(),
           onDateSelect: (date) {
             var _date = TaskManager().dateParseMMddyyyy(date);
             _dateYYYYMMDD = TaskManager().dateParseyyyyMMdd(date);
+
             setState(() {
               displayDateText = _date;
             });
+            timeDisabe();
           },
         );
       },
@@ -350,6 +366,7 @@ class _CreateTaskViewState extends State<CreateTaskView> {
   setup() {
     hrsSetup();
     minutesSetup();
+
     timecController = FixedExtentScrollController();
     minController = FixedExtentScrollController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -359,6 +376,7 @@ class _CreateTaskViewState extends State<CreateTaskView> {
         timecController.jumpToItem(8);
         minController.jumpToItem(30);
         calculateTimeUseInterval();
+        timeDisabe();
       } else {
         displayDateText = manager.dateFromStr(itemTask!.dateString);
 
@@ -380,18 +398,57 @@ class _CreateTaskViewState extends State<CreateTaskView> {
         print("indexMinCalculate$indexMinCalculate}");
         timecController.jumpToItem(indexHrCalculate);
         minController.jumpToItem(indexMinCalculate);
+        timeDisabe();
         setState(() {});
       }
     });
   }
 
-  calculateTimeUseInterval() async {
+  timeDisabe() {
+    var dt = DateTime.now();
+    var currentDate = TaskManager().dateParseyyyyMMdd(dt);
+    var time24 = TaskManager().timeFromDATE(dt);
+
+    if (currentDate == _dateYYYYMMDD) {
+      var ff = time24.split(":");
+      var hr = ff[0].trim();
+      var min = ff[1].trim();
+      var indexHrCalculate = int.parse(hr);
+      var indexMinCalculate = int.parse(min);
+      if (indexMinCalculate <= 30) {
+        indexHrCalculate = indexHrCalculate - 1;
+      }
+      timecController.jumpToItem(indexHrCalculate);
+      print("timeDisabe ${indexHrCalculate}");
+      for (int i = 0; i < indexHrCalculate; i++) {
+        hrsData[i].enable = false;
+      }
+      calculateTimeUseInterval(
+          index: indexHrCalculate, needHideSomeIndex: true);
+      setState(() {});
+    } else {
+      for (var element in hrsData) {
+        element.enable = true;
+      }
+      setState(() {});
+    }
+  }
+
+  calculateTimeUseInterval({needHideSomeIndex = false, index = 0}) async {
     String amPm = ""; //indexAMPMSelected == 0 ? "AM" : "PM";
-    finalTime = hrsData[indexHrsSelected] +
-        ":" +
-        minutesData[indexMinSelected] +
-        " " +
-        amPm;
+    if (!needHideSomeIndex) {
+      finalTime = hrsData[indexHrsSelected].title +
+          ":" +
+          minutesData[indexMinSelected].title +
+          " " +
+          amPm;
+    } else {
+      finalTime = hrsData[index].title +
+          ":" +
+          minutesData[indexMinSelected].title +
+          " " +
+          amPm;
+    }
     String timeParse24 = finalTime;
 
     var ff = timeParse24.split(":");
@@ -421,21 +478,43 @@ class _CreateTaskViewState extends State<CreateTaskView> {
 
   hrsSetup() {
     for (var i = 1; i <= 23; i += 1) {
+      TimeModel obj = TimeModel();
+      obj.enable = true;
       if (10 > i) {
-        hrsData.add("0${i}");
+        obj.title = "0${i}";
+        //hrsData.add("0${i}");
       } else {
-        hrsData.add("${i}");
+        obj.title = "${i}";
+        //hrsData.add("${i}");
       }
+
+      hrsData.add(obj);
     }
+    print("hrsData ${hrsData.length}");
   }
 
   minutesSetup() {
     for (var i = 0; i < 60; i += 1) {
+      TimeModel obj = TimeModel();
+      obj.enable = true;
       if (10 > i) {
-        minutesData.add("0${i}");
+        obj.title = "0${i}";
+        //  minutesData.add("0${i}");
       } else {
-        minutesData.add("${i}");
+        obj.title = "${i}";
+        // minutesData.add("${i}");
       }
+      minutesData.add(obj);
+    }
+  }
+
+  timeHide() {
+    for (var i = 0; i < 60; i += 1) {
+      // if (10 > i) {
+      //   minutesData.add("0${i}");
+      // } else {
+      //   minutesData.add("${i}");
+      // }
     }
   }
 }

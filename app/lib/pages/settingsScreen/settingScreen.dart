@@ -2,8 +2,12 @@ import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/pages/authScreens/authManager/api/logoutApi.dart';
 import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/createNewBusiness.dart';
+import 'package:daly_doc/pages/excercisePlan/excercisePlanScreen.dart';
+import 'package:daly_doc/pages/paymentPages/savedCardListView.dart';
 import 'package:daly_doc/pages/settingsScreen/controller/settingController.dart';
 import 'package:daly_doc/pages/smartScheduleScreens/smartScheduleView.dart';
+import 'package:daly_doc/pages/subscriptionPlansScreen/model/PlanInfoModel.dart';
+import 'package:daly_doc/pages/wakeUptimeView/wakeupTimeView.dart';
 import 'package:daly_doc/widgets/socialLoginButton/socialLoginButton.dart';
 import 'package:provider/provider.dart';
 import '../../../utils/exportPackages.dart';
@@ -43,10 +47,15 @@ class _SettingScreenState extends State<SettingScreen> {
   int? dataIndex = 0;
 
   bool getData = false;
-
+  bool isBusinessActive = false;
   List<SettingOption> accountOption = [
     SettingOption(title: "My Profile", section: 0),
     SettingOption(title: "Change Password", section: 0),
+    SettingOption(title: "Wake Time", section: 0),
+  ];
+
+  List<SettingOption> paymentMethod = [
+    SettingOption(title: "Payment Method", section: 4),
   ];
   List<SettingOption> activePlannOption = [
     SettingOption(title: "Active Plan", section: 1),
@@ -69,7 +78,11 @@ class _SettingScreenState extends State<SettingScreen> {
     SettingOption(title: "Smart Scheduling", section: 3),
   ];
   List<SettingOption> businessOption = [
-    SettingOption(title: "Create New Business ", section: 3),
+    SettingOption(
+      title: "Create New Business ",
+      section: 3,
+      type: SettingType.loading,
+    ),
   ];
   List<SettingOption> logoutOption = [
     SettingOption(
@@ -81,30 +94,57 @@ class _SettingScreenState extends State<SettingScreen> {
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    Constant.settingProvider.businessOption = [];
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       getplanList();
-      getUserBusinessDetail();
+      await Constant.settingProvider.refreshList();
+      setState(() {});
+      // getActivePlan();
     });
   }
 
-  getUserBusinessDetail() async {
-    UserBusinessModel? tempResponse =
-        await Constant.settingProvider.getUserBusinessDetail();
-    if (tempResponse != null) {
-      UserBusinessData = tempResponse;
-      email = UserBusinessData!.businessEmail.toString();
-      name = UserBusinessData!.businessName.toString();
-      dataIndex = UserBusinessData!.userBusinessCategory!.id;
-      weekDays = UserBusinessData!.timing!;
-      businessId = UserBusinessData!.userId.toString();
-      print("businessId${businessId}");
-      Constant.settingProvider.businessOption[0].title = "Business Setting";
-    } else {
-      Constant.settingProvider.businessOption[0].title = "Create New Business ";
-    }
-    setState(() {});
-  }
+  // getActivePlan() {
+  //   AllPlansApiManager().getActivePlan(
+  //       needLoader: false,
+  //       onSuccess: (List<PlanInfoModel> list) {
+  //         list.forEach(
+  //           (element) {
+  //             if ("business" == element.plan_operation) {
+  //               isBusinessActive = true;
+  //             }
+  //           },
+  //         );
+  //         if (isBusinessActive) {
+  //           Constant.settingProvider.businessOption
+  //               .add(SettingOption(title: "Create New Business ", section: 3));
+  //           addCreateBizWidgetLoading();
+  //           getUserBusinessDetail();
+  //         }
+  //         setState(() {});
+  //       });
+
+  //   //getUserBusinessDetail();
+  // }
+
+  // getUserBusinessDetail() async {
+  //   UserBusinessModel? tempResponse =
+  //       await Constant.settingProvider.getUserBusinessDetail();
+  //   if (tempResponse != null) {
+  //     UserBusinessData = tempResponse;
+  //     email = UserBusinessData!.businessEmail.toString();
+  //     name = UserBusinessData!.businessName.toString();
+  //     dataIndex = UserBusinessData!.userBusinessCategory!.id;
+  //     weekDays = UserBusinessData!.timing!;
+  //     businessId = UserBusinessData!.userId.toString();
+  //     print("businessId${businessId}");
+
+  //     Constant.settingProvider.businessOption[0].title = "Business Setting";
+  //   } else {
+  //     Constant.settingProvider.businessOption[0].title = "Create New Business ";
+  //   }
+  //   Constant.settingProvider.businessOption[0].type = SettingType.normal;
+  //   setState(() {});
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -143,12 +183,28 @@ class _SettingScreenState extends State<SettingScreen> {
     setState(() {});
   }
 
+  addCreateBizWidgetRefresh() {
+    Constant.settingProvider.businessOption[0].title = "Tap to refresh";
+    Constant.settingProvider.businessOption[0].section = 3;
+    Constant.settingProvider.businessOption[0].type = SettingType.refresh;
+
+    setState(() {});
+  }
+
+  addCreateBizWidgetLoading() {
+    Constant.settingProvider.businessOption[0].title = "Loading";
+    Constant.settingProvider.businessOption[0].section = 3;
+    Constant.settingProvider.businessOption[0].type = SettingType.loading;
+
+    setState(() {});
+  }
+
   getplanList() {
     AllPlansApiManager().getAllPlans(onSuccess: (List<GetAllPlansModel> data) {
       planOption = [];
 
       data.forEach((element) {
-        print(element.title);
+        print(element.typeOfOperation);
         final title = element.title;
         var obj = SettingOption(
             title: title,
@@ -195,10 +251,25 @@ class _SettingScreenState extends State<SettingScreen> {
                     if (rowIndex == 0) {
                       Routes.pushSimple(
                           context: context, child: UserProfileViewScreen());
-                    } else {
+                    } else if (rowIndex == 1) {
                       Routes.pushSimple(
                           context: context, child: ChangePassswordView());
+                    } else if (rowIndex == 2) {
+                      Routes.pushSimple(
+                          context: context,
+                          child: WakeUpTimeViewScreen(
+                            fromSetting: true,
+                          ));
                     }
+                  }),
+              const SizedBox(
+                height: 20,
+              ),
+              SectionRowListView(
+                  itemList: paymentMethod,
+                  onTap: (sectionIndex, rowIndex) {
+                    Routes.pushSimple(
+                        context: context, child: SavedCardListView());
                   }),
               const SizedBox(
                 height: 20,
@@ -212,6 +283,7 @@ class _SettingScreenState extends State<SettingScreen> {
               const SizedBox(
                 height: 20,
               ),
+
               SectionRowListView(
                   itemList: planOption,
                   onTap: (sectionIndex, rowIndex) {
@@ -235,6 +307,9 @@ class _SettingScreenState extends State<SettingScreen> {
                     } else if (data.first.operationType == "devotional") {
                       Routes.pushSimple(
                           context: context, child: MomentOfPrayerView());
+                    } else if (data.first.operationType == "exercise") {
+                      Routes.pushSimple(
+                          context: context, child: ExcercisePlanScreen());
                     } else {
                       Routes.pushSimple(
                           context: context,
@@ -247,37 +322,43 @@ class _SettingScreenState extends State<SettingScreen> {
               const SizedBox(
                 height: 20,
               ),
-              SectionRowListView(
-                  itemList: smartOption,
-                  onTap: (sectionIndex, rowIndex) {
-                    Routes.pushSimple(
-                        context: context, child: SmartScheduleView());
-                  }),
-              const SizedBox(
-                height: 20,
-              ),
-              Consumer<SettingController>(builder: (context, object, child) {
-                return SectionRowListView(
-                    itemList: Constant.settingProvider.businessOption,
-                    onTap: (sectionIndex, rowIndex) async {
-                      print(businessId);
-
-                      Constant.settingProvider.tempResponse == null
-                          ? Routes.pushSimple(
-                              context: context,
-                              child: CreateNewBusinessScreen())
-                          : Routes.pushSimple(
-                              context: context,
-                              child: BusinessSettingView(
-                                UserBusinessData:
-                                    Constant.settingProvider.tempResponse,
-                                weekDays: weekDays,
-                              ));
-                    });
-              }),
-              const SizedBox(
-                height: 20,
-              ),
+              // SectionRowListView(
+              //     itemList: smartOption,
+              //     onTap: (sectionIndex, rowIndex) {
+              //       Routes.pushSimple(
+              //           context: context, child: SmartScheduleView());
+              //     }),
+              // const SizedBox(
+              //   height: 20,
+              // ),
+              if (Constant.settingProvider.businessOption.length != 0)
+                Consumer<SettingController>(builder: (context, object, child) {
+                  return SectionRowListView(
+                      itemList: Constant.settingProvider.businessOption,
+                      onTap: (sectionIndex, rowIndex) async {
+                        print(businessId);
+                        if (Constant.settingProvider.businessOption[rowIndex]
+                                .type ==
+                            SettingType.loading) {
+                          return;
+                        }
+                        Constant.settingProvider.tempResponse == null
+                            ? Routes.pushSimple(
+                                context: context,
+                                child: CreateNewBusinessScreen())
+                            : Routes.pushSimple(
+                                context: context,
+                                child: BusinessSettingView(
+                                  UserBusinessData:
+                                      Constant.settingProvider.tempResponse,
+                                  weekDays: weekDays,
+                                ));
+                      });
+                }),
+              if (Constant.settingProvider.businessOption.length != 0)
+                const SizedBox(
+                  height: 20,
+                ),
               SectionRowListView(
                   itemList: logoutOption,
                   onTap: (sectionIndex, rowIndex) async {

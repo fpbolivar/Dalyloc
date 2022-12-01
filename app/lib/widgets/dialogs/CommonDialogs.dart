@@ -59,6 +59,108 @@ alertTimePicker(BuildContext context,
   // onSelected(picked);
 }
 
+TimePicker(BuildContext context,
+    {TimeOfDay? initialTime,
+    onSelected,
+    heading = "Select time",
+    onClose}) async {
+  print("_selectDate");
+  var now = DateTime.now();
+  var today = new DateTime(now.year, now.month, now.day, now.hour, 0);
+  showCupertinoModalPopup(
+      context: context,
+      builder: (_) => Material(
+            child: Container(
+                height: 260,
+                child: Column(
+                  children: [
+                    Container(child: Text(heading), color: Colors.white),
+                    Expanded(
+                      child: Container(
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          child: CupertinoDatePicker(
+                              // minimumDate: DateTime.now().add(Duration(days: 1)),
+                              mode: CupertinoDatePickerMode.time,
+                              use24hFormat: true,
+                              minuteInterval: 1,
+                              initialDateTime: today,
+                              // minuteInterval: 30,
+                              //initialDateTime: DateTime.now().add(Duration(days: 1)),
+                              onDateTimeChanged: (picked) {
+                                onSelected(picked);
+                              })),
+                    )
+                  ],
+                )),
+          )).then((value) {
+    print("CLOSES");
+    if (onClose != null) {
+      onClose();
+    }
+  });
+  //DateTime selectedDate = DateTime.now();
+  // final TimeOfDay picked = await showTimePicker(
+  //   initialEntryMode: TimePickerEntryMode.dial,
+  //   context: context,
+  //   initialTime: initialTime,
+  //   builder: (BuildContext context, Widget child) {
+  //     return MediaQuery(
+  //       data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+  //       child: child,
+  //     );
+  //   },
+  // );
+
+  // onSelected(picked);
+}
+
+Widget review(
+    {maxLine = 5,
+    minLine = 5,
+    title = "",
+    textController,
+    enabled = true,
+    keybordType = TextInputType.text,
+    onChange,
+    placeholder = "Description"}) {
+  return Container(
+    child: Column(
+      children: [
+        Text(title),
+        TextField(
+          style: TextStyle(fontSize: 18, color: Colors.black),
+          minLines: minLine,
+          maxLines: maxLine,
+          autocorrect: false,
+          controller: textController,
+          keyboardType: keybordType,
+          onChanged: (text) {
+            onChange(text);
+          },
+          decoration: InputDecoration(
+            hintText: placeholder,
+            contentPadding: EdgeInsets.only(top: 0, left: 0),
+            hintStyle: TextStyle(fontSize: 10, color: Colors.black),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              borderSide: BorderSide(width: 0.5, color: Colors.grey),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              borderSide: BorderSide(width: 0.5, color: Colors.grey),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              borderSide: BorderSide(width: 0.5, color: Colors.grey),
+            ),
+          ),
+          enabled: enabled,
+        ),
+      ],
+    ),
+  );
+}
+
 showLocationSelection(msg, context,
     {bool pop = false, Function(String)? onSelection}) {
   var alert = AlertDialog(
@@ -184,6 +286,80 @@ showAlert(msg,
           },
         ),
       ),
+    ],
+  );
+
+  showDialog(
+      barrierDismissible: false, //barrierDismiss,
+      context: Constant.navigatorKey.currentState!.overlay!.context,
+      builder: (BuildContext context) {
+        return alert;
+      });
+}
+
+showConfirmAlert(msg,
+    {bool pop = false,
+    VoidCallback? onTap,
+    barrierDismiss = false,
+    String btnName = "OK"}) {
+  var alert = AlertDialog(
+    title: Container(
+      child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            msg,
+            style: TextStyle(fontSize: 14),
+          )
+        ],
+      ),
+    ),
+    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(5)),
+    actions: <Widget>[
+      Row(
+        children: [
+          Spacer(),
+          Center(
+            child: new CustomButton.regular(
+              title: "Dismiss",
+              width: 70,
+              height: 30,
+              fontSize: 13,
+              background: Colors.red,
+              radius: 4,
+              onTap: () {
+                Navigator.of(
+                        Constant.navigatorKey.currentState!.overlay!.context)
+                    .pop();
+              },
+            ),
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          Center(
+            child: new CustomButton.regular(
+              title: btnName,
+              width: 70,
+              background: AppColor.theme,
+              height: 30,
+              fontSize: 13,
+              radius: 4,
+              onTap: () {
+                Navigator.of(
+                        Constant.navigatorKey.currentState!.overlay!.context)
+                    .pop();
+                if (onTap != null) {
+                  onTap();
+                }
+              },
+            ),
+          ),
+          Spacer(),
+        ],
+      )
     ],
   );
 

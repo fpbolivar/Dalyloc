@@ -36,6 +36,7 @@ class _BusinessSettingViewState extends State<BusinessSettingView> {
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       getOnlinePaymentStatus();
+      getActivePaymentStatus();
     });
   }
 
@@ -77,6 +78,17 @@ class _BusinessSettingViewState extends State<BusinessSettingView> {
     setState(() {});
   }
 
+  getActivePaymentStatus() async {
+    bool? status = await BusinessApis().getActivePaymentStatus();
+    print("status${status}");
+    if (status == null || status == false) {
+      paymentOption[0].value = false;
+    } else {
+      paymentOption[0].value = true;
+    }
+    setState(() {});
+  }
+
   updateOnlinePaymentStatus(String value) async {
     bool? status = await BusinessApis()
         .getOnlinePaymentStatus(needUpdate: true, value: value);
@@ -84,6 +96,15 @@ class _BusinessSettingViewState extends State<BusinessSettingView> {
       onlineItemOption[0].value = false;
     } else {
       onlineItemOption[0].value = true;
+    }
+  }
+
+  updateActivePaymentStatus(String value) async {
+    bool? status = await BusinessApis().updateActivePaymentStatus(value: value);
+    if (status == null || status == false) {
+      paymentOption[0].value = false;
+    } else {
+      paymentOption[0].value = true;
     }
   }
 
@@ -178,6 +199,7 @@ class _BusinessSettingViewState extends State<BusinessSettingView> {
                   onSelectionBool: ((boolValue, p1, p2) {
                     paymentOption[p2].value = boolValue;
                     setState(() {});
+                    updateActivePaymentStatus(boolValue ? "1" : "0");
                   }),
                   onTap: (sectionIndex, rowIndex) {
                     if (rowIndex == 1) {

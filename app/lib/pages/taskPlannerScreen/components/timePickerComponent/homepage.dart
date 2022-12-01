@@ -1,5 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:daly_doc/pages/taskPlannerScreen/components/timePickerComponent/wakeUpHourItem.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/components/timePickerComponent/wakeUpMinutesItem.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/model/TimeModel.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
 import 'package:flutter/material.dart';
 import 'am_pm.dart';
@@ -15,6 +18,7 @@ class CustomTimePicker extends StatelessWidget {
       this.interval = 1,
       required this.controller,
       this.indexHrsSelected = 0,
+      this.wakeUpTimeEnabled = false,
       this.indexMinSelected = 0,
       this.indexAMPMSelected = 0,
       this.onRefresh,
@@ -27,39 +31,41 @@ class CustomTimePicker extends StatelessWidget {
   FixedExtentScrollController controller;
   FixedExtentScrollController minController;
   int indexHrsSelected = 0;
+  bool? wakeUpTimeEnabled;
   int indexMinSelected = 0;
   int indexAMPMSelected = 0;
-  var hrsData = [];
-  var minutesData = [];
+  List<TimeModel> hrsData = [];
+  List<TimeModel> minutesData = [];
   Function(int, int, int, String)? onRefresh;
   String displayTimeText = "";
   setup() {
     print("CustomTimePicker${interval}");
     cal();
-    hrsSetup();
-    minutesSetup();
+    // hrsSetup();
+    //minutesSetup();
     controller = FixedExtentScrollController();
     WidgetsBinding.instance.addPostFrameCallback(initListData);
   }
 
   hrsSetup() {
-    for (var i = 1; i <= 12; i += 1) {
-      if (10 > i) {
-        hrsData.add("0${i}");
-      } else {
-        hrsData.add("${i}");
-      }
-    }
+    //hrsData =
+    // for (var i = 1; i <= 12; i += 1) {
+    //   if (10 > i) {
+    //     hrsData.add("0${i}");
+    //   } else {
+    //     hrsData.add("${i}");
+    //   }
+    // }
   }
 
   minutesSetup() {
-    for (var i = 0; i < 60; i += 1) {
-      if (10 > i) {
-        minutesData.add("0${i}");
-      } else {
-        minutesData.add("${i}");
-      }
-    }
+    // for (var i = 0; i < 60; i += 1) {
+    //   if (10 > i) {
+    //     minutesData.add("0${i}");
+    //   } else {
+    //     minutesData.add("${i}");
+    //   }
+    // }
   }
 
   initListData(_) async {
@@ -151,11 +157,18 @@ class CustomTimePicker extends StatelessWidget {
                 childDelegate: ListWheelChildBuilderDelegate(
                   childCount: hrsData.length,
                   builder: (context, index) {
-                    return MyHours(
-                      hours: index,
-                      txt: hrsData[index],
-                      selectedHrs: indexHrsSelected,
-                    );
+                    return wakeUpTimeEnabled == true
+                        ? WakeHoursItem(
+                            hours: index,
+                            txt: hrsData[index].title,
+                            selectedHrs: indexHrsSelected,
+                          )
+                        : MyHours(
+                            hours: index,
+                            enable: hrsData[index].enable!,
+                            txt: hrsData[index].title,
+                            selectedHrs: indexHrsSelected,
+                          );
                   },
                 ),
               ),
@@ -184,11 +197,17 @@ class CustomTimePicker extends StatelessWidget {
                 childDelegate: ListWheelChildBuilderDelegate(
                   childCount: minutesData.length,
                   builder: (context, index) {
-                    return MyMinutes(
-                      mins: index,
-                      txt: minutesData[index],
-                      selectedMins: indexMinSelected,
-                    );
+                    return wakeUpTimeEnabled == true
+                        ? WakeUpHourItem(
+                            mins: index,
+                            txt: minutesData[index].title,
+                            selectedMins: indexMinSelected,
+                          )
+                        : MyMinutes(
+                            mins: index,
+                            txt: minutesData[index].title,
+                            selectedMins: indexMinSelected,
+                          );
                   },
                 ),
               ),
@@ -240,10 +259,11 @@ class CustomTimePicker extends StatelessWidget {
   }
 
   makeTimeFormat() {
-    String hr = hrsData[indexHrsSelected];
-    String min = minutesData[indexMinSelected];
+    String hr = hrsData[indexHrsSelected].title;
+    String min = minutesData[indexMinSelected].title;
     String format = indexAMPMSelected == 0 ? "AM" : "PM";
-
+    print("MINNNNN$min");
+    print("MINNNNN$indexMinSelected");
     String finalTime = hr + ":" + min + " " + format;
     print(finalTime);
     onRefresh!(

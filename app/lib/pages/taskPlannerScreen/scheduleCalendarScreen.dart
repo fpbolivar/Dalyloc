@@ -1,4 +1,7 @@
 import 'package:daly_doc/core/Sql/DBIntializer.dart';
+import 'package:daly_doc/core/localStore/localStore.dart';
+import 'package:daly_doc/pages/appoinmentPlan/views/lookingForView.dart';
+import 'package:daly_doc/pages/dailyDevotinalPlan/views/momentOfPrayerView.dart';
 import 'package:daly_doc/pages/notificationScreen/notificationScreen.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/components/viewDetailTask.dart';
 
@@ -37,14 +40,20 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
   TaskManager manager = TaskManager();
   DateTime calendarSelectedDate = DateTime.now();
   var extend = false;
+  String wakeUpTime = "";
   @override
   void initState() {
     manager = Constant.taskProvider;
     headerDateList(calendarSelectedDate);
     super.initState();
+    getWakeUpTime();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       getTaskList();
     });
+  }
+
+  getWakeUpTime() async {
+    wakeUpTime = await LocalStore().getAge();
   }
 
   @override
@@ -169,6 +178,13 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                   : TimelineView(
                       taskGroupData: manager.taskGroupData,
                       onSelectItem: (section, row) async {
+                        TaskModel item =
+                            manager.taskGroupData[section].task![row];
+                        if (item.operationType == TaskType.meal.rawValue) {
+                          Routes.pushSimpleRootNav(
+                              context: context, child: MyMealPlanView());
+                          return;
+                        }
                         showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -226,7 +242,7 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
                   child: CustomButton.regular(
-                    title: "Jumo to day",
+                    title: "Jump to day",
                     onTap: () {
                       Constant.selectedDateYYYYMMDD =
                           manager.dateParseyyyyMMdd(calendarSelectedDate);
@@ -279,28 +295,38 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
             child: Image.asset("assets/icons/ic_calendar.png",
                 width: 20, height: 20, color: AppColor.fabItemImageColor),
             backgroundColor: Colors.deepOrange,
-            backgroundColorItem: Color(0xFFFCF5DD),
+            backgroundColorItem: AppColor.appointmentItemBgColor,
             foregroundColor: Colors.white,
             label: 'Appointment',
             onTap: () {
-              showAlert("Coming Soon");
+              Routes.pushSimple(context: context, child: LookingForView());
             }),
         SpeedDialChild(
             child: Image.asset("assets/icons/fire.png",
                 width: 20, height: 20, color: AppColor.fabItemImageColor),
             backgroundColor: Colors.deepOrange,
-            backgroundColorItem: Color(0xFFFFE7DA),
+            backgroundColorItem: AppColor.mealItemBgColor,
             foregroundColor: Colors.white,
             label: 'Meal Plan',
             onTap: () {
               Routes.pushSimple(context: context, child: IntroMealPlanView());
             }),
         SpeedDialChild(
+            child: Image.asset("assets/icons/prayer.png",
+                width: 20, height: 20, color: AppColor.fabItemImageColor),
+            backgroundColor: Colors.deepOrange,
+            foregroundColor: Colors.white,
+            backgroundColorItem: AppColor.prayerItemBgColor,
+            label: 'Prayer',
+            onTap: () {
+              Routes.pushSimple(context: context, child: MomentOfPrayerView());
+            }),
+        SpeedDialChild(
             child: Image.asset("assets/icons/ic_taskEdit.png",
                 width: 20, height: 20, color: AppColor.fabItemImageColor),
             backgroundColor: Colors.deepOrange,
             foregroundColor: Colors.white,
-            backgroundColorItem: Color(0xFFDFECF4),
+            backgroundColorItem: AppColor.taskItemBgColor,
             label: 'Task',
             onTap: () {
               Routes.pushSimple(

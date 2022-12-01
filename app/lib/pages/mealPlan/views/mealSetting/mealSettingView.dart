@@ -3,6 +3,7 @@ import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/pages/authScreens/authManager/api/logoutApi.dart';
 import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/createNewBusiness.dart';
 import 'package:daly_doc/pages/mealPlan/manager/mealApi.dart';
+import 'package:daly_doc/pages/paymentPages/savedCardListView.dart';
 import 'package:daly_doc/pages/settingsScreen/ApiManager/AllPlansApiManager.dart';
 import 'package:daly_doc/pages/settingsScreen/components/sectionRowListView.dart';
 import 'package:daly_doc/pages/settingsScreen/model/SettingOption.dart';
@@ -44,6 +45,9 @@ class _MealSettingViewState extends State<MealSettingView> {
     SettingOption(title: "Allergies", section: 0),
     SettingOption(title: "Dislike ingredients", section: 0),
     SettingOption(title: "Meal size", section: 0),
+  ];
+  List<SettingOption> paymentMethod = [
+    SettingOption(title: "Payment Method", section: 3),
   ];
   List<SettingOption> mealAlertOption = [
     SettingOption(title: "Notifications", section: 1, type: SettingType.toggle),
@@ -178,27 +182,36 @@ class _MealSettingViewState extends State<MealSettingView> {
                   onTap: (sectionIndex, rowIndex) {
                     switch (rowIndex) {
                       case 0:
-                        Routes.pushSimple(
+                        Routes.pushSimpleRootNav(
                             context: context,
                             child: PickYourDientVarientView());
 
                         break;
                       case 1:
-                        Routes.pushSimple(
+                        Routes.pushSimpleRootNav(
                             context: context, child: AllergiesFoodListView());
 
                         break;
                       case 2:
-                        Routes.pushSimple(
+                        Routes.pushSimpleRootNav(
                             context: context, child: LikesFoodListView());
                         break;
                       case 3:
-                        Routes.pushSimple(
+                        Routes.pushSimpleRootNav(
                             context: context, child: ServingMealPlanView());
 
                         break;
                       default:
                     }
+                  }),
+              const SizedBox(
+                height: 20,
+              ),
+              SectionRowListView(
+                  itemList: paymentMethod,
+                  onTap: (sectionIndex, rowIndex) {
+                    Routes.pushSimple(
+                        context: context, child: SavedCardListView());
                   }),
               const SizedBox(
                 height: 20,
@@ -237,10 +250,10 @@ class _MealSettingViewState extends State<MealSettingView> {
                     d = d.trim();
                     var data = planSettingOption[rowIndex].subscriptionSubPlans;
                     if (rowIndex == 0) {
-                      Routes.pushSimple(
+                      Routes.pushSimpleRootNav(
                           context: context, child: ActivePlanView());
                     } else {
-                      Routes.pushSimple(
+                      Routes.pushSimpleRootNav(
                           context: context,
                           child: PlanMonthlyYearlyView(
                             title: d,

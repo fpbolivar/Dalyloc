@@ -78,7 +78,7 @@ class _LikesFoodListViewState extends State<LikesFoodListView> {
                                 await manager.createMeal(dislikes_id: ids);
                             if (result != null && goToNext) {
                               if (result == true) {
-                                Routes.pushSimple(
+                                Routes.pushSimpleRootNav(
                                     context: context, child: MyMealPlanView());
                               }
                             } else {

@@ -23,7 +23,7 @@ class DBIntializer {
     var path = await getPathDB();
     print("DB path ${path}");
     var db = await openDatabase(path,
-        version: 4, onCreate: _onCreate, onUpgrade: _onUpgrade);
+        version: 5, onCreate: _onCreate, onUpgrade: _onUpgrade);
 
     // var db = await openDatabase(path,
     //   version: 4, onCreate: _onCreate, onUpgrade: _onUpgrade);
@@ -69,6 +69,11 @@ class DBIntializer {
       batch.execute(
           'ALTER TABLE $TASKTABLE ADD ${TASK_TABLE_KEY.ISDELETED} TEXT');
     }
+    if (oldVersion == 4) {
+      batch.execute(
+          'ALTER TABLE $TASKTABLE ADD ${TASK_TABLE_KEY.OPERATIONTYPE} TEXT');
+    }
+
     await batch.commit();
   }
 
@@ -81,7 +86,7 @@ class DBIntializer {
     print("DB Create ");
     // id INTEGER PRIMARY KEY AUTOINCREMENT,
     return await db.execute(
-        "CREATE TABLE $TASKTABLE (${TASK_TABLE_KEY.ID} integer primary key,${TASK_TABLE_KEY.SERVERID} integer, ${TASK_TABLE_KEY.EMAIL} TEXT, ${TASK_TABLE_KEY.TASK_TIME_STAMP} integer, ${TASK_TABLE_KEY.CREATE_TIME_STAMP} integer, ${TASK_TABLE_KEY.HOW_LONG} TEXT, ${TASK_TABLE_KEY.HOW_OFTEN} TEXT,${TASK_TABLE_KEY.NOTE} TEXT,${TASK_TABLE_KEY.SUBNOTESNOTE} TEXT,${TASK_TABLE_KEY.DATETEXT} TEXT,${TASK_TABLE_KEY.ENDTIME} TEXT,${TASK_TABLE_KEY.STARTTIME} TEXT,${TASK_TABLE_KEY.ISCOMPELETED} TEXT, ${TASK_TABLE_KEY.TASKNAME} TEXT,  ${TASK_TABLE_KEY.UTCDATETIME} TEXT , ${TASK_TABLE_KEY.ISDELETED} TEXT)");
+        "CREATE TABLE $TASKTABLE (${TASK_TABLE_KEY.ID} integer primary key,${TASK_TABLE_KEY.SERVERID} integer, ${TASK_TABLE_KEY.EMAIL} TEXT, ${TASK_TABLE_KEY.TASK_TIME_STAMP} integer, ${TASK_TABLE_KEY.CREATE_TIME_STAMP} integer, ${TASK_TABLE_KEY.HOW_LONG} TEXT, ${TASK_TABLE_KEY.HOW_OFTEN} TEXT,${TASK_TABLE_KEY.NOTE} TEXT,${TASK_TABLE_KEY.SUBNOTESNOTE} TEXT,${TASK_TABLE_KEY.DATETEXT} TEXT,${TASK_TABLE_KEY.ENDTIME} TEXT,${TASK_TABLE_KEY.STARTTIME} TEXT,${TASK_TABLE_KEY.ISCOMPELETED} TEXT, ${TASK_TABLE_KEY.TASKNAME} TEXT,  ${TASK_TABLE_KEY.UTCDATETIME} TEXT , ${TASK_TABLE_KEY.ISDELETED} TEXT,${TASK_TABLE_KEY.OPERATIONTYPE} TEXT)");
   }
 }
 
@@ -103,4 +108,5 @@ class TASK_TABLE_KEY {
   static String TASKNAME = 'taskName';
   static String UTCDATETIME = 'utcDateTime';
   static String ISDELETED = 'isDeleted';
+  static String OPERATIONTYPE = 'operationType';
 }

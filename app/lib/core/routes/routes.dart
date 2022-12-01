@@ -13,10 +13,39 @@ class Routes {
   static pushSimple({
     required BuildContext context,
     required Widget child,
-    Function(String)? onBackPress,
+    Function()? onBackPress,
   }) {
     Navigator.push(
       context,
+      CupertinoPageRoute(
+          builder: (context) => WillPopScope(
+                child: child,
+                onWillPop: () async {
+                  if (Navigator.of(context).userGestureInProgress) {
+                    return false;
+                  } else {
+                    return true;
+                  }
+                },
+              ),
+          settings: RouteSettings(name: child.runtimeType.toString())),
+    ).then((value) => {onBackPress!()});
+
+    // Navigator.of(context)
+    //     .push(CupertinoPageRoute(builder: (context) => child))
+    //     .then((value) {
+    //   if (onBackPress != null) {
+    //     onBackPress(value);
+    //   }
+    // });
+  }
+
+  static pushSimpleRootNav({
+    required BuildContext context,
+    required Widget child,
+    Function(String)? onBackPress,
+  }) {
+    Navigator.of(context).push(
       CupertinoPageRoute(
           builder: (context) => WillPopScope(
                 child: child,

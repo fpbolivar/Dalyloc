@@ -44,7 +44,7 @@ dependencies:
   google_sign_in:
   shared_preferences: ^2.0.15
   connectivity:
-  firebase_messaging:
+  firebase_messaging: ^14.1.2
   flutter_login_facebook:
   dotted_border:
   firebase_core:
@@ -52,7 +52,11 @@ dependencies:
   splash_screen_view: ^3.0.0
   animations: ^2.0.3
   url_launcher:
+  chewie: ^1.3.4
+  video_player: ^2.4.7
   image_picker:
+  carousel_slider: ^4.1.1
+  percent_indicator: ^4.2.2
   flutter_share: ^2.0.0
   flutter_html: 2.1.5
   sqflite: ^2.2.0+3
@@ -62,6 +66,7 @@ dependencies:
   flutter_google_places:
   provider: ^6.0.4
   cached_network_image: ^3.2.2
+  flutter_stripe: ^7.0.0
 
 dev_dependencies:
   flutter_test:
@@ -89,6 +94,7 @@ flutter:
     - assets/images/
     - assets/design_course/
     - assets/fitness_app/
+    - assets/images/card_provider/
     - assets/hotel/
     - assets/introduction_animation/
 

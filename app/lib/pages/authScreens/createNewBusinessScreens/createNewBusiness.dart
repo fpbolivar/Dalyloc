@@ -167,8 +167,8 @@ class _CreateNewBusinessScreenScreenState
   }
 
   getTitle() {
-    if (pageIndex == 0) return LocalString.lblCreateAnBusiness;
-    if (pageIndex == 1) return LocalString.lblCreateAnBusiness;
+    if (pageIndex == 0) return LocalString.lblCreateBusiness;
+    if (pageIndex == 1) return LocalString.lblCreateBusiness;
     if (pageIndex == 2) return LocalString.lblBusinessTiming;
   }
 

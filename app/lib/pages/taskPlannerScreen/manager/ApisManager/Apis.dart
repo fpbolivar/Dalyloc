@@ -35,6 +35,7 @@ class TaskApiManager {
         "taskTimeStamp": data.taskTimeStamp.toString(),
         "createTimeStamp": data.createTimeStamp,
         "howLong": data.howLong,
+        "task_type": data.operationType,
         "howOften": data.howOften,
         "note": data.note,
         "taskName": data.taskName,
@@ -112,6 +113,7 @@ class TaskApiManager {
         "taskTimeStamp": data.taskTimeStamp.toString(),
         "createTimeStamp": data.createTimeStamp,
         "howLong": data.howLong,
+        "task_type": data.operationType,
         "howOften": data.howOften,
         "taskName": data.taskName,
         "note": data.note,
@@ -262,6 +264,52 @@ class TaskApiManager {
       print(e.toString());
       //showErrorAlert(e.toString());
       return;
+    }
+  }
+
+  Future<String?> getSetWakeUpTime({needUpdate = false, value = "0"}) async {
+    var token = await LocalStore().getToken();
+    if (await internetCheck() == false) {
+      showAlert(LocalString.internetNot);
+      return null;
+    }
+    // waitDialog();
+
+    var url = HttpUrls.WS_GET_SET_WAKEUP_TIME;
+    if (needUpdate) {
+      url = url + "?wake_up=$value";
+    }
+    var header = await HttpUrls.headerData();
+    print(url);
+    try {
+      Response response = await get(Uri.parse(url), headers: header);
+      //dismissWaitDialog();
+      var data = jsonDecode(response.body);
+      print('${data}');
+
+      if (data['status'] == true) {
+        var obj = data["wake_up"];
+        if (obj != null) {
+          return obj.toString();
+        }
+
+        return null;
+      } else {
+        if (data["auth_code"] != null || token == null) {
+          showAlert(LocalString.msgSessionExpired, onTap: () {
+            Routes.gotoMainScreen();
+          });
+          return null;
+        } else {
+          showAlert(data['message'].toString());
+          return null;
+        }
+      }
+    } catch (e) {
+      //dismissWaitDialog();
+      print(e.toString());
+      showErrorAlert(e.toString());
+      return null;
     }
   }
 }

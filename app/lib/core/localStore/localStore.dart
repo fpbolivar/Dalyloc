@@ -1,3 +1,5 @@
+import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
+
 import '../../utils/exportPackages.dart';
 import 'package:client_information/client_information.dart';
 
@@ -30,6 +32,7 @@ class LocalStore {
   final String _inch = "_inch";
   final String _weight = "_weight";
   final String _deletedIDS = "_deletedIDS";
+  final String _wakeTime = "_wakeTime";
   Future<bool> set_MobileNumberOfUser(String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     print("set_MobileNumberOfUser");
@@ -267,6 +270,24 @@ class LocalStore {
 
     print("GET _inch");
     print(value);
+    return value;
+  }
+
+  Future<bool> setWake(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("_wakeTime");
+    print(value);
+    return (prefs.setString(_wakeTime, value));
+  }
+
+  Future<String> getWakeTime() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("_wakeTime");
+
+    var value = prefs.getString(_wakeTime) ?? '';
+    if (value != '') {
+      value = TaskManager().generateLocalTime(time: value);
+    }
     return value;
   }
 

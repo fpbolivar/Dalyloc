@@ -1,6 +1,8 @@
 import '../../utils/exportPackages.dart';
 
 class AppColor {
+  static var weightScrollColor = const Color(0xFF5084A3);
+  static var timerbg = const Color(0xFFF8F8F8);
   static var bgcolor = const Color(0xFF222F57);
   static var borderColor = const Color(0xFF699EBE);
   static var blueColor = const Color(0xFFDCEFFB);
@@ -27,7 +29,10 @@ class AppColor {
   static var tabIndicatorColor = const Color(0xFF4CA034);
 
   static var fabItemImageColor = const Color(0xFF727C8E);
-
+  static var mealItemBgColor = const Color(0xFFFFE7DA);
+  static var taskItemBgColor = const Color(0xFFDFECF4);
+  static var prayerItemBgColor = const Color(0xFFD1E5C8);
+  static var appointmentItemBgColor = const Color(0xFFFCF5DD);
   static var newBgcolor = const Color(0xFFEEF9FF);
   static var dailyLblcolor = const Color.fromARGB(255, 58, 225, 91);
   static var textWhiteColor = const Color(0xFFffffff);

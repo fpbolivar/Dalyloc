@@ -130,7 +130,7 @@ class AllPlansApiManager {
     };
 
     var param = {
-      "plan_id": planId,
+      "subscription_id": planId,
     };
     var url = HttpUrls.WS_CANCELPLANS;
     print(url);
@@ -164,11 +164,12 @@ class AllPlansApiManager {
     }
   }
 
-  getActivePlan({onSuccess}) async {
+  getActivePlan({onSuccess, needLoader = true}) async {
     var token = await LocalStore().getToken();
     if (await internetCheck() == false) {
       showAlert(LocalString.internetNot);
-
+      List<PlanInfoModel> temp = [];
+      onSuccess(temp);
       return;
     }
 
@@ -178,13 +179,17 @@ class AllPlansApiManager {
 
     var url = HttpUrls.WS_GETACTIVEPLANS;
     print(url);
-    waitDialog();
+    if (needLoader) {
+      waitDialog();
+    }
     try {
       Response response = await get(
         Uri.parse(url),
         headers: header,
       );
-      dismissWaitDialog();
+      if (needLoader) {
+        dismissWaitDialog();
+      }
       print(url);
       var data = jsonDecode(response.body);
       print('${data}');
@@ -214,9 +219,13 @@ class AllPlansApiManager {
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
     } catch (e) {
-      dismissWaitDialog();
+      if (needLoader) {
+        dismissWaitDialog();
+      }
       print(e.toString());
       showErrorAlert(e.toString());
+      List<PlanInfoModel> temp = [];
+      onSuccess(temp);
     }
   }
 }

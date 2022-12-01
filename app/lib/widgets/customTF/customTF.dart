@@ -12,11 +12,12 @@ class CustomTF extends StatefulWidget {
   bool obscureText;
   bool enabled;
   bool password;
-
+  int maxlines;
   TextInputType keyBoardType;
   Function(String)? onChange;
   CustomTF(
       {this.password = false,
+      this.maxlines = 1,
       //this.width = double.infinity,
       required this.controllr,
       this.keyBoardType = TextInputType.text,
@@ -47,6 +48,7 @@ class _CustomTFState extends State<CustomTF> {
       child: Padding(
         padding: EdgeInsets.only(left: 20),
         child: TextField(
+          maxLines: widget.maxlines,
           controller: widget.controllr,
           style: TextStyle(fontSize: 16),
           onChanged: (text) => {widget.onChange!(text)},

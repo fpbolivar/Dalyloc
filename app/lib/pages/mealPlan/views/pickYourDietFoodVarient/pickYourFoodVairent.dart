@@ -83,7 +83,7 @@ class _PickYourDientVarientViewState extends State<PickYourDientVarientView> {
                                 menu_type_id: allDiet[selecteIndex].id);
                             if (result != null && goToNext) {
                               if (result == true) {
-                                Routes.pushSimple(
+                                Routes.pushSimpleRootNav(
                                     context: context,
                                     child: AllergiesFoodListView(
                                       gotoNext: true,

@@ -1,5 +1,6 @@
 import '../../utils/exportPackages.dart';
 import '../../utils/exportWidgets.dart';
+import '../carousel/carousel_slider.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   String title;
@@ -29,7 +30,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ? Row(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left: 10),
+                        padding: const EdgeInsets.only(left: 10, top: 3),
                         child: IconButton(
                           // ignore: prefer_const_constructors
                           icon: Icon(
@@ -46,7 +47,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 30),
+                        padding: const EdgeInsets.only(left: 0),
                         child: Text(
                           title,
                           textAlign: TextAlign.left,
@@ -61,7 +62,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 : SizedBox(),
             icon == false
                 ? Padding(
-                    padding: const EdgeInsets.only(left: 30),
+                    padding: const EdgeInsets.only(left: 0),
                     child: Text(
                       title,
                       textAlign: TextAlign.left,
@@ -87,6 +88,36 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
     );
+
+    // AppBar(
+    //     elevation: 0,
+    //     title: Text(title),
+    //     leading: IconButton(
+    //       icon: Icon(
+    //         Icons.arrow_back_ios,
+    //         color: Colors.black,
+    //       ),
+    //       onPressed: () {},
+    //     ),
+    //     backgroundColor: Colors.transparent);
+  }
+
+  @override
+  // TODO: implement preferredSize
+  @override
+  Size get preferredSize => const Size.fromHeight(120.0);
+}
+
+class CustomAppBarWithImageScroll extends StatelessWidget
+    implements PreferredSizeWidget {
+  Widget? child;
+  CustomAppBarWithImageScroll({super.key, this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+        child:
+            Container(padding: const EdgeInsets.only(top: 20), child: child));
 
     // AppBar(
     //     elevation: 0,

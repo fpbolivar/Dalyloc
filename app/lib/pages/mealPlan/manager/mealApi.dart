@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/pages/authScreens/authManager/models/businessCatModel.dart';
 import 'package:daly_doc/pages/mealPlan/manager/mealEnum.dart';
@@ -392,7 +393,7 @@ class MealApis {
     }
   }
 
-  Future<bool?> bookOrCreateMeal(List<MealItemModel> data) async {
+  Future<bool?> bookOrCreateMeal(List<MealItemModel> data, String date) async {
     var token = await LocalStore().getToken();
     if (await internetCheck() == false) {
       showAlert(LocalString.internetNot);
@@ -403,7 +404,7 @@ class MealApis {
     var url = HttpUrls.WS_SubmitSelectedMeal;
     var header = await HttpUrls.headerData();
     var jsonReceipe = [];
-    String date = TaskManager().dateParseyyyyMMdd(DateTime.now());
+    //String date =// TaskManager().dateParseyyyyMMdd(DateTime.now());
     data.forEach((element) {
       jsonReceipe.add({"recipes_id": element.id, "cooking_date": date});
     });
@@ -418,6 +419,7 @@ class MealApis {
       print('${data}');
 
       if (data['status'] == true) {
+        Constant.mealProvider.selecteOrderItems = [];
         return true;
       } else {
         if (data["auth_code"] != null || token == null) {

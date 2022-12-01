@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:daly_doc/core/localStore/localStore.dart';
+import 'package:daly_doc/pages/dailyDevotinalPlan/Apis/PrayerApis.dart';
+import 'package:daly_doc/widgets/ToastBar/toastMessage.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -31,6 +33,17 @@ class _AddNewPrayerViewScreenState extends State<AddNewPrayerView> {
       appBar: CustomAppBar(
         title: LocalString.lblLetsPray,
       ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: CustomButton.regular(
+            title: "Add",
+            onTap: () {
+              validationForm();
+            },
+          ),
+        ),
+      ),
       body: BackgroundCurveView(
           child: SafeArea(
         child: Padding(
@@ -39,6 +52,23 @@ class _AddNewPrayerViewScreenState extends State<AddNewPrayerView> {
         ),
       )),
     );
+  }
+
+  validationForm() {
+    if (titleTFC.text.isEmpty) {
+      ToastMessage.showErrorwMessage(msg: "Enter title.");
+      return;
+    }
+    if (noteTFC.text.isEmpty) {
+      ToastMessage.showErrorwMessage(msg: "Enter note.");
+      return;
+    }
+    PrayerApis().createPrayer(
+        note: noteTFC.text,
+        title: titleTFC.text,
+        onSuccess: () {
+          Navigator.pop(context);
+        });
   }
 
 //METHID : -   bodyDesign
@@ -54,21 +84,9 @@ class _AddNewPrayerViewScreenState extends State<AddNewPrayerView> {
           SizedBox(height: 20),
           CustomTF(
             controllr: noteTFC,
+            maxlines: 100,
             placeholder: LocalString.plcNeedToAddMoreNotes,
             height: 100,
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-          //
-          SizedBox(height: MediaQuery.of(context).size.height - 400),
-          CustomButton.regular(
-            title: "Add",
-            onTap: () {
-              // Routes.pushSimple(
-              //     context: context,
-              //     child: CreateNewBusinessScreen(
-              //       update: true,
-              //     ));
-            },
           ),
         ],
       ),

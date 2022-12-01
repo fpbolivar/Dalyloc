@@ -1,3 +1,6 @@
+import 'package:daly_doc/core/constant/constants.dart';
+import 'package:daly_doc/core/localStore/localStore.dart';
+import 'package:daly_doc/pages/mealPlan/components/reviewCalenderButton.dart';
 import 'package:daly_doc/pages/mealPlan/components/reviewPlanItemWidget.dart';
 import 'package:daly_doc/pages/mealPlan/manager/mealApi.dart';
 import 'package:daly_doc/pages/mealPlan/model/mealCategoryModel.dart';
@@ -5,6 +8,9 @@ import 'package:daly_doc/pages/mealPlan/views/successOrderPage/successOrderPage.
 import 'package:daly_doc/pages/settingsScreen/ApiManager/AllPlansApiManager.dart';
 import 'package:daly_doc/pages/settingsScreen/model/allPlanMode.dart';
 import 'package:daly_doc/pages/subscriptionPlansScreen/planMonthlyYearlyView.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/manager/ApisManager/Apis.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/model/TaskModel.dart';
 import '../../../../utils/exportPackages.dart';
 import '../../../../utils/exportWidgets.dart';
 
@@ -20,10 +26,15 @@ class _ReviewAllMealPlanViewState extends State<ReviewAllMealPlanView> {
   MealApis manager = MealApis();
   bool isActive = false;
   bool isCheckingPlanLoading = false;
+  var _dateYYYYMMDD = "";
+  var displayDateText = "";
+  DateTime selectedDate = DateTime.now();
   @override
   void initState() {
     super.initState();
+    selectedDate = DateTime.now();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      setDate(selectedDate);
       allList = widget.data!;
       setState(() {});
     });
@@ -44,6 +55,7 @@ class _ReviewAllMealPlanViewState extends State<ReviewAllMealPlanView> {
       }
       if (isActive == false) {
         noPlanWidget();
+        //orderMealSubmit();
       }
     }
     isCheckingPlanLoading = false;
@@ -51,17 +63,57 @@ class _ReviewAllMealPlanViewState extends State<ReviewAllMealPlanView> {
   }
 
   orderMealSubmit() async {
-    bool? status = await manager.bookOrCreateMeal(allList);
+    bool? status = await manager.bookOrCreateMeal(allList, _dateYYYYMMDD);
 
     if (status != null) {
       if (status) {
-        Routes.pushSimple(context: context, child: SuccessOrderPageView());
-        // Constant.mealProvider.getAllUserData();
-        // Navigator.of(context).popUntil((route) =>
-        //     route.settings.name ==
-        //     MyMealPlanView().toString());
+        createTaskMealAddIntoDB();
       }
     }
+  }
+
+  createTaskMealAddIntoDB() async {
+    TaskManager manager = TaskManager();
+    String date =
+        _dateYYYYMMDD; //TaskManager().dateParseyyyyMMdd(DateTime.now());
+    final subtasks = manager.subtaskJSONMeal(allList);
+    final subtasksStr = json.encode(subtasks);
+    final utcDateTimeTask =
+        manager.generateUtcDateTime(date: date, time: "00:00");
+    var wakeTime = await LocalStore().getWakeTime();
+    if (wakeTime == "") {
+      wakeTime = "09:00 AM";
+    } else {
+      wakeTime = manager.timeFromStr12Hrs(wakeTime);
+    }
+    TaskModel data = TaskModel();
+    data.taskName = "Meal";
+    data.email = "";
+    data.utcDateTime = utcDateTimeTask;
+    data.tid = DateTime.now().microsecondsSinceEpoch;
+    data.howLong = "1m";
+    data.howOften = "once";
+    data.note = "";
+    data.endTime = "00:00";
+    data.createTimeStamp = DateTime.now().microsecondsSinceEpoch;
+    data.startTime = wakeTime;
+
+    data.dateString = date;
+    data.subNotes = subtasksStr;
+    data.isCompleted = "0";
+    data.operationType = TaskType.meal.rawValue;
+    data.serverID = 0;
+    print("${subtasksStr}");
+    manager.saveTaskData(data, needAlert: false, () {});
+    Constant.taskProvider.startTaskFetchFromDB();
+    // TaskApiManager().CreateTaskData(
+    //     data: data,
+    //     subTask: subtasks,
+    //     isSync: true,
+    //     onSuccess: (value) {
+    //       data.serverID = value;
+    //     });
+    Routes.pushSimpleRootNav(context: context, child: SuccessOrderPageView());
   }
 
   @override
@@ -93,19 +145,59 @@ class _ReviewAllMealPlanViewState extends State<ReviewAllMealPlanView> {
                                 strokeWidth: 2,
                               )),
                         )
-                      : CustomButton.regular(
-                          title: "Confirm",
-                          background: AppColor.theme,
-                          onTap: () async {
+                      : ReviewCalendarButton(
+                          date: displayDateText,
+                          onConfirm: () {
                             getActiveStatus();
                           },
+                          onCalender: () {
+                            showCalendarModalSheet();
+                          },
                         ),
+                  // : CustomButton.regular(
+                  //     title: "Confirm",
+                  //     background: AppColor.theme,
+                  //     onTap: () async {
+                  //       getActiveStatus();
+                  //     },
+                  //   ),
                   const SizedBox(
                     height: 15,
                   ),
                 ])),
       )),
     );
+  }
+
+  showCalendarModalSheet() {
+    return showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      builder: (BuildContext context) {
+        return CalendarAlertView(
+          enablePastDates: false,
+          intialDate: selectedDate,
+          onDateSelect: (date) {
+            setDate(date);
+          },
+        );
+      },
+    );
+  }
+
+  setDate(DateTime date) {
+    var _date = TaskManager().dateParseMMMddyyyy(date);
+    _dateYYYYMMDD = TaskManager().dateParseyyyyMMdd(date);
+
+    setState(() {
+      displayDateText = _date;
+    });
+    selectedDate = date;
   }
 
 //METHID : -   bodyDesign
@@ -263,7 +355,7 @@ class _ReviewAllMealPlanViewState extends State<ReviewAllMealPlanView> {
             }
           });
           if (mealplan != null) {
-            Routes.pushSimple(
+            Routes.pushSimpleRootNav(
                 context: context,
                 child: PlanMonthlyYearlyView(
                   title: "Meal",

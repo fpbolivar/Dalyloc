@@ -1,16 +1,19 @@
 import 'dart:async';
 import 'package:daly_doc/core/localStore/localStore.dart';
+import 'package:daly_doc/pages/dailyDevotinalPlan/Apis/PrayerApis.dart';
 import 'package:daly_doc/pages/dailyDevotinalPlan/views/payersListView.dart';
+import 'package:daly_doc/widgets/extension/string+capitalize.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../utils/exportPackages.dart';
 import '../../../utils/exportWidgets.dart';
+import '../models/prayerModel.dart';
 
 class PrayerDetailView extends StatefulWidget {
-  String? title = "";
-  String? status = "";
-  PrayerDetailView({Key? key, this.status = "Pending", this.title = ""})
+  PrayerModel? prayerData;
+
+  PrayerDetailView({Key? key, this.prayerData})
       : super(
           key: key,
         );
@@ -31,7 +34,7 @@ class _PrayerDetailViewState extends State<PrayerDetailView> {
     return Scaffold(
       backgroundColor: AppColor.newBgcolor,
       appBar: CustomAppBar(
-        title: widget.title!,
+        title: widget.prayerData!.prayerTitle!,
       ),
       body: BackgroundCurveView(
           child: SafeArea(
@@ -40,6 +43,31 @@ class _PrayerDetailViewState extends State<PrayerDetailView> {
           child: bodyDesign(),
         ),
       )),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: CustomButton.regular(
+            title: widget.prayerData!.prayerStatus!.capitalize(),
+            background:
+                widget.prayerData!.prayerStatus!.toLowerCase() != "answered"
+                    ? Color(0XFFD82121)
+                    : Color(0XFF2E7316),
+            onTap: () {
+              if (widget.prayerData!.prayerStatus!.toLowerCase() !=
+                  "answered") {
+                PrayerApis().changePrayerStatus(
+                    id: widget.prayerData!.id,
+                    onSuccess: () {
+                      Navigator.pop(context);
+                    });
+              } else {
+                showAlert("The Prayer Is Already Answered");
+              }
+              // Routes.pushSimple(context: context, child: PrayerView());
+            },
+          ),
+        ),
+      ),
     );
   }
 
@@ -47,20 +75,12 @@ class _PrayerDetailViewState extends State<PrayerDetailView> {
   Widget bodyDesign() {
     return SingleChildScrollView(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          data("Note", LocalString.lblDc1),
+          data("Note", widget.prayerData!.prayerNote),
           SizedBox(height: MediaQuery.of(context).size.height * 0.03),
           data("Response", LocalString.lblDc1),
-          SizedBox(height: MediaQuery.of(context).size.height - 500),
-          CustomButton.regular(
-            title: widget.status!,
-            background: widget.status!.toLowerCase() != "answered"
-                ? Colors.red
-                : Colors.green,
-            onTap: () {
-              Routes.pushSimple(context: context, child: PrayerView());
-            },
-          ),
         ],
       ),
     );
@@ -69,6 +89,7 @@ class _PrayerDetailViewState extends State<PrayerDetailView> {
   data(title, note) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(
           title,

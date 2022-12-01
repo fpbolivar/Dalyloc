@@ -4,7 +4,9 @@ class HttpUrls {
   var headers = {'Content-Type': 'application/json'};
   // ignore: constant_identifier_names
   static const WS_BASEURL =
-      "https://codeoptimalsolutions.com/test/daly-doc/public/";
+      "https://codeoptimalsolutions.com/test/daly-doc/public/"; //"http://192.168.1.6/";
+  //http://127.0.0.1:8000/api/auth/user-login
+  // "https://codeoptimalsolutions.com/test/daly-doc/public/";
   static const WS_BASEURL2 =
       "https://codeoptimalsolutions.com/test/daly-doc/public";
   // ignore: constant_identifier_names
@@ -19,7 +21,16 @@ class HttpUrls {
   static const WS_GETBUSINESS = "${WS_BASEURL}api/get-user-business";
   // ignore: constant_identifier_names
   static const WS_GETBUSINESSSERVICES =
-      "${WS_BASEURL}/api/get-all-user-business-service?business_id=";
+      "${WS_BASEURL}api/get-all-user-business-service?business_id=";
+  // ignore: constant_identifier_names
+  static const WS_GETADMINPRAYER = "${WS_BASEURL}api/admin-prayer";
+  // ignore: constant_identifier_names
+  static const WS_GETPRAYERLIST = "${WS_BASEURL}api/prayer-list";
+  // ignore: constant_identifier_names
+  static const WS_CREATEPRAYER = "${WS_BASEURL}api/prayer-create";
+  // ignore: constant_identifier_names
+  static const WS_CHANGEPRAYERSTATUS = "${WS_BASEURL}api/prayer-update";
+
   // ignore: constant_identifier_names
   static const WS_CREATEBUSINESSSERVICES =
       "${WS_BASEURL}api/create-user-business-service";
@@ -36,6 +47,7 @@ class HttpUrls {
   static const WS_USERLOGIN = "${WS_BASEURL}api/auth/user-login";
   // ignore: constant_identifier_names
   static const WS_USERLOGOUT = "${WS_BASEURL}api/logout";
+
   // ignore: constant_identifier_names
   static const WS_USERREGISTER = "${WS_BASEURL}api/auth/user-register";
   // ignore: constant_identifier_names
@@ -85,6 +97,9 @@ class HttpUrls {
   static const WS_GET_MEAL_ITEMS_BYTYPE =
       "${WS_BASEURL}api/get-user-meal-detail?type=";
   static const WS_CREATE_MEAL = "${WS_BASEURL}api/create-user-meal-detail";
+
+  static const WS_PRAYERSETTING = "${WS_BASEURL}api/prayer-setting";
+  static const WS_GETPRAYERSETTING = "${WS_BASEURL}api/get-setting";
   static const WS_GET_SELECTED_MEALPLAN =
       "${WS_BASEURL}api/get-selected-meal-ids";
   static const WS_GET_RECEIPE = "${WS_BASEURL}api/get-recipes";
@@ -99,13 +114,21 @@ class HttpUrls {
       "${WS_BASEURL}api/get-notification-setting";
   static const WS_GET_UPDATE_PAYMENT_ONLINE =
       "${WS_BASEURL}api/get-online-booking-setting";
+  static const WS_GET_SET_WAKEUP_TIME = "${WS_BASEURL}api/user-wake-up";
+  static const WS_GET_ACTIVEPAYMENT =
+      "${WS_BASEURL}api/get-active-payment?user_business_id=";
   static const WS_GET_ACTIVESTATUS_BY_TYPE =
       "${WS_BASEURL}api/get-user-active-plans-by-type?plan_operation=";
   static const WS_SubmitSelectedMeal = "${WS_BASEURL}api/create-user-meal-plan";
+
   static const WS_ACCEPTANCEUPDATE = "${WS_BASEURL}api/acceptance";
+  static const WS_UPDATEACTIVEPAYMENT = "${WS_BASEURL}api/active-payment";
   static const WS_DEPOSITPERCENTAGE = "${WS_BASEURL}api/deposit-percentage";
   static const WS_CreateMealSetup = "${WS_BASEURL}api/create-user-meal-detail";
-
+  static const WS_AddCard = "${WS_BASEURL}api/create-card-token";
+  static const WS_GetAllCard = "${WS_BASEURL}api/get-user-stripe-cards";
+  static const WS_DefaultCardSet = "${WS_BASEURL}api/update-default-card";
+  static const WS_DeleteCard = "${WS_BASEURL}api/delete-card";
   static Future<Map<String, String>> headerData() async {
     return {
       "Authorization": await LocalStore().getToken(),

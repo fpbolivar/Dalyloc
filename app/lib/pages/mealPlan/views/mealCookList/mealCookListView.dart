@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:daly_doc/core/constant/constants.dart';
+import 'package:daly_doc/pages/mealPlan/components/BottomOrderCartView.dart';
 import 'package:daly_doc/pages/mealPlan/components/mealCookItem.dart';
 import 'package:daly_doc/pages/mealPlan/components/mealItemView.dart';
 import 'package:daly_doc/pages/mealPlan/components/noMealWidget.dart';
@@ -10,6 +12,8 @@ import 'package:daly_doc/pages/mealPlan/manager/mealcontroller.dart';
 import 'package:daly_doc/pages/mealPlan/model/foodDietVarientModel.dart';
 import 'package:daly_doc/pages/mealPlan/model/mealCategoryModel.dart';
 import 'package:daly_doc/pages/mealPlan/views/mealCookList/showAllMealCookList.dart';
+import 'package:daly_doc/widgets/ToastBar/toastMessage.dart';
+import 'package:provider/provider.dart';
 import '../../../../utils/exportPackages.dart';
 import '../../../../utils/exportWidgets.dart';
 
@@ -22,11 +26,10 @@ class MealCookListView extends StatefulWidget {
 }
 
 class _MealCookListViewState extends State<MealCookListView> {
-  List<MealCategoryModel> categoryList = [];
   var serachTF = TextEditingController();
   var textSearch = "";
   MealApis manager = MealApis();
-  MealController mealController = MealController();
+
   Timer timerSearch = Timer(Duration(seconds: 0), () {
     print("Yeah, searching timer");
   });
@@ -40,12 +43,18 @@ class _MealCookListViewState extends State<MealCookListView> {
   }
 
   getReceipeList() async {
+    Constant.mealProvider.categoryCookList = [];
     List<MealCategoryModel>? tempResponse = await manager.getReceipeList();
     if (tempResponse != null) {
-      categoryList = tempResponse;
+      Constant.mealProvider.categoryCookList = tempResponse;
+      for (int i = 0; i < Constant.mealProvider.categoryCookList.length; i++) {
+        Constant.mealProvider.categoryCookList[i].data = Constant.mealProvider
+            .preSelectedItem(
+                Constant.mealProvider.categoryCookList[i].data!, 0);
+      }
       setState(() {});
     } else {
-      categoryList = [];
+      Constant.mealProvider.categoryCookList = [];
       setState(() {});
     }
   }
@@ -95,14 +104,19 @@ class _MealCookListViewState extends State<MealCookListView> {
                   // const SizedBox(
                   //   height: 10,
                   // ),
-                  Expanded(child: listCategory(context)),
+                  Consumer<MealController>(builder: (context, object, child) {
+                    return Expanded(child: listCategory(context));
+                  }),
                   const SizedBox(
                     height: 20,
                   ),
-                  mealController.getSelectedAllListItem(categoryList).length ==
-                          0
-                      ? Container()
-                      : bottomNextButtonView(),
+
+                  Consumer<MealController>(builder: (context, object, child) {
+                    return Constant.mealProvider.selecteOrderItems.length == 0
+                        ? Container()
+                        : OrderCartItemView();
+                  }),
+
                   SizedBox(
                     height: 15,
                   ),
@@ -112,7 +126,7 @@ class _MealCookListViewState extends State<MealCookListView> {
   }
 
   Widget listCategory(context) {
-    return categoryList.length == 0
+    return Constant.mealProvider.categoryCookList.length == 0
         ? NoMealWidget(
             refresh: () {
               getReceipeList();
@@ -124,13 +138,17 @@ class _MealCookListViewState extends State<MealCookListView> {
             padding: const EdgeInsets.only(right: 00),
             shrinkWrap: true,
             itemBuilder: (context, index) {
-              MealCategoryModel cat = categoryList[index];
-              return mealList(context, categoryItem: cat);
+              return Consumer<MealController>(
+                  builder: (context, object, child) {
+                MealCategoryModel cat =
+                    Constant.mealProvider.categoryCookList[index];
+                return mealList(context, categoryItem: cat);
+              });
             },
             separatorBuilder: (context, index) => const SizedBox(
                   width: 12,
                 ),
-            itemCount: categoryList.length);
+            itemCount: Constant.mealProvider.categoryCookList.length);
   }
 
   Widget mealList(context, {MealCategoryModel? categoryItem}) {
@@ -156,7 +174,7 @@ class _MealCookListViewState extends State<MealCookListView> {
                   onTap: () {
                     print("sss");
 
-                    Routes.pushSimple(
+                    Routes.pushSimpleRootNav(
                         context: context,
                         child: ShowAllMealCookListView(
                           category: categoryItem,
@@ -204,7 +222,7 @@ class _MealCookListViewState extends State<MealCookListView> {
         MealItemModel item = categoryItem.data![index];
         return InkWell(
           onTap: () async {
-            Routes.pushSimple(
+            Routes.pushSimpleRootNav(
                 context: context,
                 child: ReceipeDetailView(
                   fromMyMealScrren: false,
@@ -219,7 +237,24 @@ class _MealCookListViewState extends State<MealCookListView> {
               item: item,
               onAdd: () {
                 print("add");
-                mealController.selectedItem(categoryItem.data!, index);
+                // ToastMessage.test(msg: "e");
+                //Constant.mealProvider.showHideOrderItem();
+                MealItemModel item = categoryItem.data![index];
+                Constant.mealProvider.selectedItem(categoryItem.data!, index);
+
+                for (int i = 0;
+                    i < Constant.mealProvider.categoryCookList.length;
+                    i++) {
+                  Constant.mealProvider.categoryCookList[i].data =
+                      Constant.mealProvider.preSelectedItem(
+                          Constant.mealProvider.categoryCookList[i].data!, 0);
+                  Constant.mealProvider.categoryCookList[i].data!
+                      .forEach((element) {
+                    if (item.id == element.id) {
+                      element.isSelected = item.isSelected!;
+                    }
+                  });
+                }
                 setState(() {});
               },
             ),
@@ -279,7 +314,7 @@ class _MealCookListViewState extends State<MealCookListView> {
                         height: 5,
                       ),
                       Text(
-                        "${mealController.getSelectedAllListItem(categoryList).length} items",
+                        "${Constant.mealProvider.getSelectedAllListItem(Constant.mealProvider.categoryCookList).length} items",
                         style: TextStyle(
                             fontWeight: FontWeight.w400,
                             color: Colors.white,
@@ -297,9 +332,10 @@ class _MealCookListViewState extends State<MealCookListView> {
                   height: 30,
                   title: "Next",
                   onTap: () {
-                    List<MealItemModel> data =
-                        mealController.getSelectedAllListItem(categoryList);
-                    Routes.pushSimple(
+                    List<MealItemModel> data = Constant.mealProvider
+                        .getSelectedAllListItem(
+                            Constant.mealProvider.categoryCookList);
+                    Routes.pushSimpleRootNav(
                         context: context,
                         child: ReviewAllMealPlanView(
                           data: data,

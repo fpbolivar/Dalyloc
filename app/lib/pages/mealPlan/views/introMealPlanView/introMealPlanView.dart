@@ -88,9 +88,10 @@ class _IntroMealPlanViewState extends State<IntroMealPlanView> {
             background: AppColor.theme,
             onTap: () {
               if (status) {
-                Routes.pushSimple(context: context, child: MyMealPlanView());
+                Routes.pushSimpleRootNav(
+                    context: context, child: MyMealPlanView());
               } else {
-                Routes.pushSimple(
+                Routes.pushSimpleRootNav(
                     context: context,
                     child: PickYourDientVarientView(
                       gotoNext: true,

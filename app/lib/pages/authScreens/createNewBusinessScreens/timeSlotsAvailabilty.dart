@@ -89,7 +89,7 @@ class _TimeSlotsAvailabiltyScreensState
       setState(() {});
     }
     print(tempResponse!.slot_interval);
-    if (tempResponse!.serviceDetail != null) {
+    if (tempResponse.serviceDetail != null) {
       data[0].time = tempResponse.serviceDetail!.service_time;
     }
   }

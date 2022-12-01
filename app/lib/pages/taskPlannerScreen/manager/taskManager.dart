@@ -4,6 +4,7 @@ import 'package:daly_doc/core/LocalString/localString.dart';
 import 'package:daly_doc/core/Sql/createTaskHelper.dart';
 import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/main.dart';
+import 'package:daly_doc/pages/mealPlan/model/mealCategoryModel.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/manager/ApisManager/Apis.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/model/GroupTaskItemModel.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/model/TaskModel.dart';
@@ -82,6 +83,7 @@ class TaskManager with ChangeNotifier {
   }
 
   startTaskFetchFromDB() async {
+    var wakeUpTime = await LocalStore().getWakeTime();
     List<TaskModel> list = await getAllTask();
     list.forEach(
       (element) {
@@ -89,6 +91,20 @@ class TaskManager with ChangeNotifier {
       },
     );
     taskGroupData = convertGroupTaskByTime(list);
+
+    if (wakeUpTime != "") {
+      var fullArray = wakeUpTime.split(":");
+      final hr = int.tryParse(fullArray[0]) ?? 0;
+      final min = int.tryParse(fullArray[1]) ?? 0;
+      var wakeUPtime = timeFromStr12Hrs(wakeUpTime);
+
+      taskGroupData.insert(
+          0,
+          GroupTaskItemModel(
+              hr: hr,
+              time: wakeUPtime,
+              task: [TaskModel(operationType: "wake")]));
+    }
     notifyListeners();
   }
 
@@ -186,6 +202,73 @@ class TaskManager with ChangeNotifier {
     return outputDate;
   }
 
+  String generateUtcTime({time = ""}) {
+    print(time);
+
+    final timeComponent = time.split(":");
+    print(timeComponent);
+
+    if (timeComponent.length > 0) {
+      final hr = int.tryParse(timeComponent[0]) ?? 0;
+      final min = int.tryParse(timeComponent[1]) ?? 0;
+      var dd = DateTime.now();
+      DateTime dateTime = DateTime(dd.year, dd.month, dd.day, hr, min);
+      final utc = dateTime.toUtc();
+      String formattedDate = DateFormat('HH:mm').format(utc);
+      print("UTC TIME ${formattedDate}");
+      return formattedDate;
+    }
+
+    return "";
+  }
+
+  String generateLocalTime({time = ""}) {
+    print(time);
+
+    final timeComponent = time.split(":");
+    print(timeComponent);
+
+    if (timeComponent.length > 0) {
+      final hr = int.tryParse(timeComponent[0]) ?? 0;
+      final min = int.tryParse(timeComponent[1]) ?? 0;
+      var dd = DateTime.now();
+      DateTime dateTime = DateTime.utc(dd.year, dd.month, dd.day, hr, min);
+
+      //DateTime(dd.year, dd.month, dd.day, hr, min);
+      final utc = dateTime.toLocal();
+      String formattedDate = DateFormat('HH:mm').format(utc);
+      print("LOCAL TIME ${formattedDate}");
+      return formattedDate;
+    }
+
+    return "";
+  }
+
+  String timeFromStr12Hrs(date) {
+    DateTime parseDate = new DateFormat("HH:mm").parse(date);
+    var inputDate = DateTime.parse(parseDate.toString());
+    var outputFormat = DateFormat('hh:mm a');
+    var outputDate = outputFormat.format(inputDate);
+    print(outputDate);
+    return outputDate;
+  }
+
+  DateTime timeObjFromStr(date) {
+    DateTime parseDate = new DateFormat("h:mm a").parse(date);
+    var inputDate = DateTime.parse(parseDate.toString());
+    var outputFormat = DateFormat('HH:mm');
+    var outputDate = outputFormat.format(inputDate);
+    print(outputDate);
+    return inputDate;
+  }
+
+  String timeFromDATE(DateTime date) {
+    var outputFormat = DateFormat('HH:mm');
+    var outputDate = outputFormat.format(date);
+    print(outputDate);
+    return outputDate;
+  }
+
   String dateParseyyyyMMdd(DateTime date) {
     var _date = DateFormat('yyyy-MM-dd').format(date).toString();
     return _date;
@@ -204,6 +287,18 @@ class TaskManager with ChangeNotifier {
         "sId": element.id,
         "description": element.description,
         "isCompleted": element.isCompleted == false ? "0" : "1"
+      });
+    });
+    return jsonArray;
+  }
+
+  List<Map<String, dynamic>> subtaskJSONMeal(List<MealItemModel> data) {
+    List<Map<String, dynamic>> jsonArray = [];
+    data.forEach((element) {
+      jsonArray.add({
+        "sId": element.id,
+        "description": element.meal_name,
+        "isCompleted": 0,
       });
     });
     return jsonArray;
@@ -269,6 +364,9 @@ class TaskManager with ChangeNotifier {
   }
 
   updateTaskViaSync(TaskModel updateData, TaskModel serverObj) async {
+    // if (updateData.operationType == TaskType.meal.rawValue) {
+    //   return;
+    // }
     //PUSH TO LOCAL
     if (updateData.createTimeStamp < serverObj.createTimeStamp) {
       updateTaskData(serverObj, (status) {}, needAlert: false);
@@ -279,6 +377,7 @@ class TaskManager with ChangeNotifier {
       await updateServerID(serverObj);
       updateData.serverID = serverObj.serverID;
       final subtasks = subtaskJSON(updateData.subTaskslist!);
+
       TaskApiManager()
           .updateTaskApi(data: updateData, subTask: subtasks, isSync: true);
     }
@@ -291,6 +390,9 @@ class TaskManager with ChangeNotifier {
       int currentCountTemp = currentCount;
       TaskModel item = taskList[currentCountTemp];
       final subtasks = subtaskJSON(item.subTaskslist!);
+      // if (item.operationType == TaskType.meal.rawValue) {
+      //   return;
+      // }
       await TaskApiManager().CreateTaskData(
           data: item,
           subTask: subtasks,
@@ -330,6 +432,9 @@ class TaskManager with ChangeNotifier {
           if (itemL.tid == itemS.tid && itemL.serverID != 0) {
             keepLocalID.add(itemL);
           }
+          if (itemL.serverID == 0) {
+            keepLocalID.add(itemL);
+          }
         });
       });
     }
@@ -337,6 +442,9 @@ class TaskManager with ChangeNotifier {
       await Future.forEach(serverList, (itemS) async {
         await Future.forEach(localData, (itemL) async {
           if (itemL.tid == itemS.tid && itemL.serverID != 0) {
+            keepLocalID.add(itemL);
+          }
+          if (itemL.serverID == 0) {
             keepLocalID.add(itemL);
           }
         });

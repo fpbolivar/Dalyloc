@@ -2,6 +2,7 @@ import 'package:daly_doc/pages/notificationScreen/components/sectionRowlistView.
 import 'package:daly_doc/pages/notificationScreen/model/SectionItemModel.dart';
 import 'package:daly_doc/pages/notificationScreen/model/rowItemModel.dart';
 import 'package:daly_doc/pages/settingsScreen/ApiManager/AllPlansApiManager.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/createTaskView.dart';
 import 'package:daly_doc/widgets/socialLoginButton/socialLoginButton.dart';
 import '../../../utils/exportPackages.dart';
 import '../../../utils/exportScreens.dart';
@@ -113,7 +114,7 @@ class _PlanDetailViewState extends State<PlanDetailView> {
                   msg: LocalString.msgCancelPlan,
                   OnTap: () {
                     AllPlansApiManager()
-                        .cancelPlan(planId: widget.data!.plan_id.toString());
+                        .cancelPlan(planId: widget.data!.id.toString());
                   });
             },
           ),
@@ -132,6 +133,13 @@ class _PlanDetailViewState extends State<PlanDetailView> {
           height: 40,
           radius: 4,
           fontSize: 15,
+          onTap: () {
+            Routes.pushSimple(
+                context: context,
+                child: CreateTaskView(
+                  isUpdate: false,
+                ));
+          },
         ),
         const SizedBox(
           height: 80,

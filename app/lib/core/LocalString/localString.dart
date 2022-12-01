@@ -71,19 +71,31 @@ class LocalString {
   static const lblBusinessCongratsDescription =
       "You gain access to proceed your business at next level. ";
   static const lblCreateAnAccount = "Create an account";
-  static const lblCreateAnBusiness = "Create Business";
+  static const lblCreateBusiness = "Create Business";
+  static const lblOnlineBusiness = "Online Booking";
+
   static const lblDc1 =
       "Good morning, Lord! Today's a new day, a chance for a new start. Yesterday is gone and with it any regrets, mistakes, or failures I may have experienced. It's a good day to be glad and give thanks, and I do, Lord. Thank you for today, a new opportunity to love, give, and be all that you want me to be.";
   static const lblAmomentofPrayerDc =
       "Good morning, Lord!\nToday's a new day, a chance for a new start. Yesterday is gone and with it any regrets, mistakes, or failures I may have experienced. It's a good day to be glad and give thanks, and I do, Lord. Thank you for today, a new opportunity to love, give, and be all that you want me to be";
   static const lblAmomentofPrayer = "A moment of Prayer";
-  static const lblPrayer = "Prayer";
-  static const lblLetsPray = "Let's Pray";
+  static const lbltellUsTitle = "Tell Us about yourself?";
+  static const lblHowOldTitle = "How old are your?";
+  static const lblWeight = "What is your Weight?";
+  static const lblLevel = "Physical activity level?";
 
+  static const lblheight = "What is your height?";
+  static const lblExcercisePlanScreenDc =
+      "To give you a better experience and results we need to know your gender.";
+  static const lblExcercisePlanScreenDc2 =
+      "This will  help us to personalize an exercise program plan that suite you.";
+  static const lblExcercisePlanScreenDc3 =
+      "Choose you regular activity level. This will help us to personalize plans for you.";
+  static const lblPrayer = "Prayers";
+  static const lblLetsPray = "Let's Pray";
   static const lblBusinessTiming = "Business Timing ";
   static const lblBusinessDetails = "Business Details";
   static const lblServiceDetail = "Service Detail";
-
   static const lblChangePassword = "Change Password";
   static const lblForgotPasswordNavTitle = "Forgot\nPassword?";
   static const lblForgotPasswordDescription =
@@ -97,7 +109,8 @@ class LocalString {
       "Your new password must be differnet from previous used passwords.";
   static const lblSettingNavTitle = "Settings";
   static const lblBizSettingNavTitle = "Business Settings";
-  //PLACEHOLDER
+
+  static const lblDevSettingNavTitle = "Prayer Settings"; //PLACEHOLDER
   static const plcMobileNo = "Mobile No";
   static const plcEnterMobileNo = "Enter Mobile No";
   static const plcPassword = "Passsword";

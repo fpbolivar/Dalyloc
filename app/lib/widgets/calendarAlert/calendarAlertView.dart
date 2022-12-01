@@ -10,7 +10,12 @@ import 'package:intl/intl.dart';
 class CalendarAlertView extends StatelessWidget {
   Function(DateTime)? onDateSelect;
   DateTime? intialDate;
-  CalendarAlertView({Key? key, this.onDateSelect, required this.intialDate})
+  bool? enablePastDates = true;
+  CalendarAlertView(
+      {Key? key,
+      this.enablePastDates = true,
+      this.onDateSelect,
+      required this.intialDate})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -38,6 +43,7 @@ class CalendarAlertView extends StatelessWidget {
             child: SfDateRangePicker(
               view: DateRangePickerView.month,
               initialDisplayDate: intialDate,
+              enablePastDates: enablePastDates!,
               initialSelectedDate: intialDate,
               selectionMode: DateRangePickerSelectionMode.single,
               showNavigationArrow: true,

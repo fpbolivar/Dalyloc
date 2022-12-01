@@ -90,13 +90,16 @@ class PlanInfoModel {
     if (subPlanlist.length > 0) {
       titleTemp = subPlanlist.first.title ?? "";
     }
-
-    DateTime parseDate = new DateFormat("yyyy-MM-dd").parse(
-      json["end_date"].toString(),
-    );
-    var inputDate = DateTime.parse(parseDate.toString());
-    var outputFormat = DateFormat('MMM dd,yyyy');
-    var outputDate = outputFormat.format(inputDate);
+    var outputDate = "";
+    if (json["end_date"].toString() != "null") {
+      DateTime parseDate = new DateFormat("yyyy-MM-dd").parse(
+        json["end_date"].toString(),
+      );
+      var inputDate = DateTime.parse(parseDate.toString());
+      var outputFormat = DateFormat('MMM dd,yyyy');
+      outputDate = outputFormat.format(inputDate);
+    }
+    // var outputDate = "";
     return PlanInfoModel(
       planList: subPlanlist,
       id: json["id"] ?? 0,

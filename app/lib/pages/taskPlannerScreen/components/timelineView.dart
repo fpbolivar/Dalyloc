@@ -17,8 +17,10 @@ class TimelineView extends StatelessWidget {
       required this.onMarkComplete,
       required this.onSelectItem});
   List<GroupTaskItemModel> taskGroupData;
+
   Function(int, int) onMarkComplete;
   Function(int, int) onSelectItem;
+
   // @override
   // Widget build(BuildContext context) {
   //   return Text("");
@@ -92,9 +94,13 @@ class TimelineView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  time,
-                  style: TextStyle(color: AppColor.halfGrayTextColor),
+                SizedBox(
+                  width: 61,
+                  child: Text(
+                    time,
+                    style: TextStyle(
+                        color: AppColor.halfGrayTextColor, fontSize: 13),
+                  ),
                 ),
                 SizedBox(
                   width: 5,
@@ -110,17 +116,21 @@ class TimelineView extends StatelessWidget {
     // return section == 4
     //     ? SizedBox(height: 60, width: MediaQuery.of(context).size.width + 100)
     //     :
+
     return ListView.separated(
         padding: EdgeInsets.symmetric(vertical: 0),
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
         itemBuilder: (cxt, index) {
           var item = taskGroupData[section].task!;
-          return InkWell(
-              child: itemNormalTask(item[index], section, index),
-              onTap: () {
-                onSelectItem(section, index);
-              });
+          print("item${item}");
+          return item[index].operationType == "wake"
+              ? itemWakeUpTask(taskGroupData[section].time)
+              : InkWell(
+                  child: itemNormalTask(item[index], section, index),
+                  onTap: () {
+                    onSelectItem(section, index);
+                  });
 
           //
           // if (section == 0 && index == 0) {
@@ -171,7 +181,7 @@ class TimelineView extends StatelessWidget {
     );
   }
 
-  Widget itemWakeUpTask() {
+  Widget itemWakeUpTask(time) {
     return Padding(
       padding: const EdgeInsets.only(left: 0, right: 0, top: 20),
       child: Container(
@@ -201,7 +211,7 @@ class TimelineView extends StatelessWidget {
                 height: 10,
               ),
               Text(
-                "6:00 AM",
+                time,
                 textAlign: TextAlign.left,
                 style: TextStyle(
                     fontWeight: FontWeight.w400,
@@ -215,6 +225,32 @@ class TimelineView extends StatelessWidget {
     );
   }
 
+  getBgColor(String operationType) {
+    switch (operationType) {
+      case "meal":
+        return AppColor.mealItemBgColor;
+
+      case "appointment":
+        return AppColor.appointmentItemBgColor;
+
+      default:
+        return AppColor.taskItemBgColor;
+    }
+  }
+
+  getBoderColor(String operationType) {
+    switch (operationType) {
+      case "meal":
+        return Color(0xFF9C735D);
+
+      case "appointment":
+        return Color(0xFFAE9A53);
+
+      default:
+        return AppColor.textGrayBlue;
+    }
+  }
+
   Widget itemNormalTask(TaskModel item, int section, int row) {
     return Padding(
       padding: const EdgeInsets.only(left: 0, right: 0, top: 20),
@@ -222,13 +258,13 @@ class TimelineView extends StatelessWidget {
         height: 80,
         decoration: BoxDecoration(
             color: item.isCompleted == "0"
-                ? AppColor.halfBlueGray
+                ? getBgColor(item.operationType)
                 : Colors.grey[300],
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              width: 1,
+              width: 0.5,
               color: item.isCompleted == "0"
-                  ? AppColor.textGrayBlue
+                  ? getBoderColor(item.operationType)
                   : Colors.black54,
             )),
         child: Padding(
@@ -285,17 +321,29 @@ class TimelineView extends StatelessWidget {
                         ),
                       ],
                     ),
-                  Text(
-                    "${item.startTime} - ${item.endTime}",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14,
-                      color: item.isCompleted == "0"
-                          ? AppColor.textGrayBlue
-                          : Colors.black54,
-                    ),
-                  ),
+                  item.operationType == TaskType.meal.rawValue
+                      ? Text(
+                          "${item.startTime}",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: item.isCompleted == "0"
+                                ? AppColor.textGrayBlue
+                                : Colors.black54,
+                          ),
+                        )
+                      : Text(
+                          "${item.startTime} - ${item.endTime}",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                            color: item.isCompleted == "0"
+                                ? AppColor.textGrayBlue
+                                : Colors.black54,
+                          ),
+                        ),
                 ],
               ),
               Positioned(

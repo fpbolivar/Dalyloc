@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'package:daly_doc/core/localStore/localStore.dart';
+import 'package:daly_doc/pages/dailyDevotinalPlan/Apis/PrayerApis.dart';
+import 'package:daly_doc/pages/dailyDevotinalPlan/components/prayerItemWidget.dart';
+import 'package:daly_doc/pages/dailyDevotinalPlan/models/prayerModel.dart';
 import 'package:daly_doc/pages/dailyDevotinalPlan/views/prayerDetailView.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../utils/exportPackages.dart';
 import '../../../utils/exportWidgets.dart';
-import '../devotionalPlanSetting.dart';
+import 'devotionalPlanSetting.dart';
 import 'addPrayer.dart';
 
 class PrayerView extends StatefulWidget {
@@ -19,6 +22,7 @@ class PrayerView extends StatefulWidget {
 }
 
 class _PrayerViewScreenState extends State<PrayerView> {
+  List<PrayerModel> prayersList = [];
   List data = [
     {
       "prayer": "For Family",
@@ -31,6 +35,18 @@ class _PrayerViewScreenState extends State<PrayerView> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getPrayerList();
+    });
+  }
+
+  getPrayerList() {
+    PrayerApis().getPRAYERLIST((data) {
+      print("objectobjectobjectobject${data}");
+      prayersList = data;
+      setState(() {});
+    });
   }
 
   @override
@@ -40,17 +56,36 @@ class _PrayerViewScreenState extends State<PrayerView> {
       appBar: CustomAppBar(
         title: LocalString.lblPrayer,
         trailingIcon: true,
-        trailingIconData: Icon(Icons.settings),
+        trailingIconData: const Icon(Icons.settings),
         trailingIconOnTap: () {
-          Routes.pushSimple(context: context, child: DevotionalPlanSetting());
+          Routes.pushSimple(
+              context: context,
+              child: DevotionalPlanSetting(),
+              onBackPress: () {
+                print("ffffffffff");
+                getPrayerList();
+              });
         },
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: CustomButton.regular(
+            title: "Add",
+            onTap: () {
+              Routes.pushSimple(
+                  context: context,
+                  child: AddNewPrayerView(),
+                  onBackPress: () {
+                    getPrayerList();
+                  });
+            },
+          ),
+        ),
       ),
       body: BackgroundCurveView(
           child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: bodyDesign(),
-        ),
+        child: bodyDesign(),
       )),
     );
   }
@@ -58,93 +93,82 @@ class _PrayerViewScreenState extends State<PrayerView> {
 //METHID : -   bodyDesign
   Widget bodyDesign() {
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          prayerlist(data),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-          //
-          SizedBox(height: MediaQuery.of(context).size.height - 400),
-          CustomButton.regular(
-            title: "Add",
-            onTap: () {
-              Routes.pushSimple(context: context, child: AddNewPrayerView());
-            },
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            prayerlist(prayersList),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+            SizedBox(
+              height: 50,
+            )
+          ],
+        ),
       ),
     );
   }
 
-  Widget prayerlist(List data) {
-    return Column(children: [
-      SizedBox(
-        height: 20,
-      ),
-      ListView.separated(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            return InkWell(
-              onTap: () {
-                Routes.pushSimple(
-                    context: context,
-                    child: PrayerDetailView(
-                      status: data[index]['status'].toString().toUpperCase(),
-                      title: data[index]['prayer'].toString(),
-                    ));
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey,
-                      offset: Offset(0.0, 1.0), //(x,y)
-                      blurRadius: 6.0,
-                    ),
-                  ],
-                ),
-                child: ListTile(
-                  leading: data[index]['status'] == "answered"
-                      ? Icon(
-                          Icons.circle,
-                          color: Colors.green,
-                          size: 30,
-                        )
-                      : Icon(
-                          Icons.circle,
-                          color: Colors.red,
-                          size: 30,
-                        ),
-                  title: Text(
-                    data[index]['prayer'].toString(),
-                    maxLines: 2,
-                    textAlign: TextAlign.left,
+  Widget prayerlist(List<PrayerModel> data) {
+    return prayersList.length == 0
+        ? Container(
+            height: 400,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Center(
+                  child: Text(
+                    "Click To Add Prayer",
                     style: TextStyle(
-                      fontSize: 16.0,
-                    ),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black),
                   ),
-                  subtitle: data[index]['subTitle'].toString() == ""
-                      ? null
-                      : Text(
-                          data[index]['subTitle'].toString(),
-                          maxLines: 2,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                          ),
-                        ),
                 ),
-              ),
-            );
-          },
-          separatorBuilder: (context, index) {
-            return SizedBox(
-              height: 10,
-            );
-          },
-          itemCount: data.length),
-    ]);
+                SizedBox(
+                  height: 20,
+                ),
+                Text("|"),
+                Text("|"),
+                Text("|"),
+                Text("|"),
+                Text("|"),
+                Icon(Icons.arrow_downward),
+              ],
+            ),
+          )
+        : Column(children: [
+            const SizedBox(
+              height: 20,
+            ),
+            ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return InkWell(
+                      onTap: () {
+                        print(data[index].id);
+                        Routes.pushSimple(
+                            context: context,
+                            child: PrayerDetailView(
+                              prayerData: data[index],
+                            ),
+                            onBackPress: () {
+                              print(" if (value.toString() == true.toString()");
+
+                              getPrayerList();
+                            });
+                      },
+                      child: PrayerItemWidget(
+                        item: data[index],
+                      ));
+                },
+                separatorBuilder: (context, index) {
+                  return const SizedBox(
+                    height: 10,
+                  );
+                },
+                itemCount: data.length),
+          ]);
   }
 }
