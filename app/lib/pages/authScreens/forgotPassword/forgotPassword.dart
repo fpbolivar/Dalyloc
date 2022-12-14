@@ -1,4 +1,5 @@
 import 'package:daly_doc/core/localStore/localStore.dart';
+import 'package:daly_doc/widgets/customTF/phoneTF.dart';
 import 'package:daly_doc/widgets/socialLoginButton/socialLoginButton.dart';
 
 import '../../../utils/exportPackages.dart';
@@ -19,12 +20,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   TextEditingController passwordTFC = TextEditingController();
   TextEditingController cnfPasswordTFC = TextEditingController();
   TextEditingController nameTFC = TextEditingController();
-
+  String countryCode = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.newBgcolor,
       appBar: CustomAppBar(
+        needHomeIcon: false,
         title: LocalString.lblForgotPasswordNavTitle,
       ),
       body: BackgroundCurveView(
@@ -65,9 +67,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 height: 170,
                 width: 170,
               ),
-              CustomTF(
-                  controllr: mobileTFC,
-                  placeholder: LocalString.plcEnterMobileNo),
+
+              PhoneTF(
+                controllr: mobileTFC,
+                keyBoardType: TextInputType.phone,
+                placeholder: LocalString.plcEnterMobileNo,
+                onCountryCodeChange: (code) {
+                  countryCode = code;
+                  print("Choose $countryCode}");
+                },
+              ),
+              // CustomTF(
+              //     controllr: mobileTFC,
+              //     placeholder: LocalString.plcEnterMobileNo),
               const SizedBox(
                 height: 50,
               ),
@@ -75,7 +87,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 title: LocalString.lblSend,
                 onTap: () async {
                   await LocalStore().set_MobileNumberOfUser(mobileTFC.text);
-                  ForgotPasswordApi().forgotPassword(mobileTFC.text);
+                  ForgotPasswordApi()
+                      .forgotPassword(mobileTFC.text, countryCode);
                 },
               ),
               const SizedBox(

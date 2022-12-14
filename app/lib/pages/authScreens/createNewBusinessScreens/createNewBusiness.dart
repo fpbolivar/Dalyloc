@@ -352,60 +352,53 @@ class _CreateNewBusinessScreenScreenState
               ),
           borderRadius: BorderRadius.circular(8),
           color: Colors.transparent),
-      child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-        Expanded(
-          child: DropdownButtonHideUnderline(
-            child: ButtonTheme(
-              //alignedDropdown: true,
-              child: DropdownButton<BusinessCatModel>(
-                hint: Padding(
-                  padding: const EdgeInsets.only(left: 15),
-                  child: new Text(
-                    "Category",
-                    style: TextStyle(fontSize: 15),
-                  ),
-                ),
-                value: _selected,
-                underline: Container(
-                  height: 2,
-                  color: Colors.white,
-                ),
-                onChanged: (BusinessCatModel? newValue) {
-                  setState(() {
-                    _selected = newValue;
-                  });
-                  if (_selected != null) {
-                    businessCategoryId = _selected!.id.toString();
-                  }
-                },
-                items: catData.map((BusinessCatModel map) {
-                  return new DropdownMenuItem<BusinessCatModel>(
-                    value: map,
-                    // value: _mySelection,
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                            padding: EdgeInsets.only(left: 10),
-                            width: MediaQuery.of(context).size.width * 0.6,
-                            child: Text(
-                              map.name!,
-                              overflow: TextOverflow.visible,
-                              // overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: 17),
-                              maxLines: 2,
-                            )),
-                        SizedBox(
-                          width: 20,
-                        )
-                      ],
-                    ),
-                  );
-                }).toList(),
+      child: DropdownButtonHideUnderline(
+        child: ButtonTheme(
+          //alignedDropdown: true,
+          // alignedDropdown: true,
+          child: DropdownButton<BusinessCatModel>(
+            hint: Padding(
+              padding: const EdgeInsets.only(left: 15),
+              child: new Text(
+                "Category",
+                style: TextStyle(fontSize: 15),
               ),
             ),
+            value: _selected,
+            // underline: Container(
+            //   height: 2,
+            //   color: Colors.white,
+            // ),
+            isExpanded: true,
+            onChanged: (BusinessCatModel? newValue) {
+              setState(() {
+                _selected = newValue;
+              });
+              if (_selected != null) {
+                businessCategoryId = _selected!.id.toString();
+              }
+            },
+            items: catData.map((BusinessCatModel map) {
+              return new DropdownMenuItem<BusinessCatModel>(
+                value: map,
+                // value: _mySelection,
+                child: Container(
+                  child: Container(
+                      padding: EdgeInsets.only(left: 10),
+                      // width: MediaQuery.of(context).size.width - 10,
+                      child: Text(
+                        map.name!,
+                        //   overflow: TextOverflow.visible,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 14),
+                        maxLines: 2,
+                      )),
+                ),
+              );
+            }).toList(),
           ),
         ),
-      ]),
+      ),
     );
   }
 
@@ -479,11 +472,15 @@ class _CreateNewBusinessScreenScreenState
                     children: [
                       IconButton(
                           onPressed: () {
-                            showImageSelectDialog("Upload Business Logo");
+                            showFancyCustomDialog(imageUrl == ""
+                                ? "Upload Business Logo"
+                                : "Change Business Logo");
                           },
                           icon: Icon(Icons.add_circle_outline_outlined)),
                       Text(
-                        "Upload Business Image",
+                        imageUrl == ""
+                            ? "Upload Business Image"
+                            : "Change Business Logo",
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -755,6 +752,115 @@ class _CreateNewBusinessScreenScreenState
     }
   }
 
+  void showFancyCustomDialog(msg,
+      {bool pop = false,
+      VoidCallback? onTap,
+      barrierDismiss = false,
+      String btnName = "OK"}) {
+    Dialog fancyDialog = Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        height: 150.0,
+        width: 200.0,
+        child: Stack(
+          children: <Widget>[
+            Container(
+              width: double.infinity,
+              height: 150,
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Text(
+                    msg,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SizedBox(
+                          width: 30,
+                        ),
+                        Expanded(
+                          child: CustomButton.regular(
+                            width: 100,
+                            title: "Gallery",
+                            fontSize: 15,
+                            height: 35,
+                            onTap: () {
+                              pickImageFromGallery();
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: CustomButton.regular(
+                            width: 100,
+                            title: "Camera",
+                            height: 35,
+                            fontSize: 15,
+                            onTap: () {
+                              pickImageFromCamera();
+                            },
+                          ),
+                        ),
+                        SizedBox(
+                          width: 30,
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Align(
+              // These values are based on trial & error method
+              alignment: Alignment(1.05, -1.05),
+              child: InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.close,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    showDialog(
+        context: context, builder: (BuildContext context) => fancyDialog);
+  }
+
   showImageSelectDialog(msg,
       {bool pop = false,
       VoidCallback? onTap,
@@ -767,38 +873,48 @@ class _CreateNewBusinessScreenScreenState
             SizedBox(
               height: 10,
             ),
-            Text(msg)
+            Text(
+              msg,
+              style: TextStyle(fontSize: 15),
+            )
           ],
         ),
       ),
       shape:
           RoundedRectangleBorder(borderRadius: new BorderRadius.circular(15)),
       actions: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            CustomButton.regular(
-              width: 100,
-              title: "Gallery",
-              onTap: () {
-                pickImageFromGallery();
-                Navigator.pop(context);
-              },
-            ),
-            CustomButton.regular(
-              width: 100,
-              title: "Camera",
-              onTap: () {
-                pickImageFromCamera();
-              },
-            )
-          ],
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              CustomButton.regular(
+                width: 100,
+                title: "Gallery",
+                fontSize: 15,
+                height: 35,
+                onTap: () {
+                  pickImageFromGallery();
+                  Navigator.pop(context);
+                },
+              ),
+              CustomButton.regular(
+                width: 100,
+                title: "Camera",
+                height: 35,
+                fontSize: 15,
+                onTap: () {
+                  pickImageFromCamera();
+                },
+              )
+            ],
+          ),
         )
       ],
     );
 
     showDialog(
-        barrierDismissible: false, //barrierDismiss,
+        barrierDismissible: true, //barrierDismiss,
         context: context,
         builder: (BuildContext context) {
           return alert;

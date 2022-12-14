@@ -26,7 +26,7 @@ class NoteTFViewTask extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Note:",
+          "Note: *",
           textAlign: TextAlign.left,
           style: TextStyle(
               fontWeight: FontWeight.w500,

@@ -72,11 +72,11 @@ class _SuccessOrderPageViewState extends State<SuccessOrderPageView> {
           ),
           Spacer(),
           CustomButton.regular(
-            title: "Back To My Meal",
+            title: "Done",
             background: AppColor.theme,
             width: 130,
-            height: 30,
-            fontSize: 14,
+            height: 40,
+            fontSize: 18,
             radius: 4,
             onTap: () {
               Constant.mealProvider.getAllUserData();

@@ -1,4 +1,6 @@
+import 'package:daly_doc/pages/dailyDevotinalPlan/models/prayerCategoryModel.dart';
 import 'package:daly_doc/pages/dailyDevotinalPlan/models/prayerSettingModel.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
 
 import '../../../core/LocalString/localString.dart';
@@ -20,7 +22,7 @@ class PrayerApis {
     var header = {
       "Authorization": token,
     };
-    var param = {"id": id, "prayer_status": "Answered"};
+    var param = {"id": id, "prayer_status": "answered"};
     try {
       // waitDialog();
       Response response = await post(
@@ -57,7 +59,7 @@ class PrayerApis {
     }
   }
 
-  createPrayer({title, note, onSuccess}) async {
+  createPrayer({id, note, onSuccess}) async {
     var token = await LocalStore().getToken();
     if (await internetCheck() == false) {
       showAlert(LocalString.internetNot);
@@ -69,7 +71,16 @@ class PrayerApis {
     var header = {
       "Authorization": token,
     };
-    var param = {"prayer_title": title, "prayer_note": note};
+    DateTime date = DateTime.now();
+    var timeStamp = date.microsecondsSinceEpoch;
+    var dateStr = TaskManager().dateParseyyyyMMdd(date);
+    var param = {
+      "category_id": id,
+      "prayer_note": note,
+      "time_stamp": timeStamp.toString(),
+      "current_date": dateStr
+    };
+    print(param);
     try {
       // waitDialog();
       Response response = await post(
@@ -156,6 +167,50 @@ class PrayerApis {
       dismissWaitDialog();
       print(e.toString());
 
+      // showErrorAlert(e.toString());
+    }
+  }
+
+  Future<List<PrayerCategoryModel>?> getPrayerCategory() async {
+    if (await internetCheck() == false) {
+      showAlert(LocalString.internetNot);
+
+      return null;
+    }
+    waitDialog();
+    var token = await LocalStore().getToken();
+    var header = {
+      "Authorization": token,
+      "content-type": 'application/json',
+    };
+    try {
+      Response response =
+          await get(Uri.parse(HttpUrls.WS_PRAYER_CATEGORY), headers: header);
+
+      var data = json.decode(response.body);
+      print('${data}');
+      dismissWaitDialog();
+      if (data['status'] == true) {
+        print("result ${data["data"]}");
+        var allCat = data["data"] as List;
+        return allCat.map((e) => PrayerCategoryModel.fromJson(e)).toList();
+      } else {
+        dismissWaitDialog();
+        if (data["auth_code"] != null || token == null) {
+          showAlert(LocalString.msgSessionExpired, onTap: () {
+            Routes.gotoMainScreen();
+          });
+        } else {
+          showAlert(data['message'].toString());
+          return null;
+        }
+      }
+      // print('Response status: ${response.statusCode}');
+      // print('Response body: ${response.body}');
+    } catch (e) {
+      dismissWaitDialog();
+      print(e.toString());
+      return null;
       // showErrorAlert(e.toString());
     }
   }

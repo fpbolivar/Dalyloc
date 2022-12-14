@@ -31,7 +31,7 @@ class EmaiViewTask extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 3),
                   child: Text(
-                    "🅰",
+                    "＠",
                     style: TextStyle(fontSize: 23, color: AppColor.theme),
                   ),
                 ),
@@ -47,7 +47,7 @@ class EmaiViewTask extends StatelessWidget {
 
                       decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: LocalString.plcName),
+                          hintText: LocalString.plcEmail),
                       autofocus: false,
                       enabled: true,
                       obscureText: false,

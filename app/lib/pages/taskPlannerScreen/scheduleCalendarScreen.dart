@@ -8,6 +8,7 @@ import 'package:daly_doc/pages/taskPlannerScreen/components/viewDetailTask.dart'
 import 'package:daly_doc/pages/taskPlannerScreen/createTaskView.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/manager/ApisManager/Apis.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/model/AllTaskModel.dart';
 import 'package:daly_doc/widgets/floatingActionButton/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqlite_api.dart';
@@ -47,13 +48,20 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
     headerDateList(calendarSelectedDate);
     super.initState();
     getWakeUpTime();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      var timeformat = await LocalStore().get_TimeFormatUser();
+      Constant.HRS24FORMAT = timeformat;
+      Constant.selectedDateYYYYMMDD = selectedDate!.dateFormatYYYYMMDD ?? "";
       getTaskList();
     });
   }
 
   getWakeUpTime() async {
-    wakeUpTime = await LocalStore().getAge();
+    wakeUpTime = await LocalStore().getWakeTime();
+    if (wakeUpTime == '') {
+      var finalWk = TaskManager().generateUtcTime(time: "06:00");
+      await LocalStore().setWake(finalWk);
+    }
   }
 
   @override
@@ -105,30 +113,7 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
   }
 
   getTaskList() async {
-    manager.isSyncing = true;
-    Constant.taskProvider.notifyListeners();
-    Database db = await DBIntializer.sharedInstance.db;
-    print("db statusss ${db.isOpen}");
-
-    manager.startTaskFetchFromDB();
-
-    await manager.deleteDataFromServer();
-    TaskApiManager().getAllTaskData(
-        date: selectedDate!.dateFormatYYYYMMDD.toString(),
-        onSuccess: (list) async {
-          int value = await manager.syncAllTask(list);
-          print("FRESHER $value");
-          manager.startTaskFetchFromDB();
-          manager.isSyncing = false;
-          Constant.taskProvider.notifyListeners();
-          // manager.taskGroupData = manager.convertGroupTaskByTime(list);
-
-          //setState(() {});
-        });
-    Future.delayed(Duration(seconds: 5), () async {});
-
-    // manager.startTaskFetchFromDB();
-    // print("list${list.length}");
+    manager.fetchAllTaskFromServer();
   }
 
   bodyView() {
@@ -180,9 +165,20 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                       onSelectItem: (section, row) async {
                         TaskModel item =
                             manager.taskGroupData[section].task![row];
+
+                        if (item.operationType == TaskType.exercise.rawValue) {
+                          Routes.gotoExerciseFlow(context: context);
+                          return;
+                        }
+
                         if (item.operationType == TaskType.meal.rawValue) {
                           Routes.pushSimpleRootNav(
                               context: context, child: MyMealPlanView());
+                          return;
+                        }
+                        if (item.operationType == TaskType.prayer.rawValue) {
+                          Routes.pushSimpleRootNav(
+                              context: context, child: MomentOfPrayerView());
                           return;
                         }
                         showDialog(
@@ -270,11 +266,13 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
       activeIcon: Icons.close,
       spacing: 5,
       mini: false,
+      renderOverlay: true,
 
       //openCloseDial: isDialOpen,
       childPadding: const EdgeInsets.all(5),
       spaceBetweenChildren: 4,
-      overlayOpacity: 0.0,
+      overlayOpacity: 0.5,
+      overlayColor: Colors.black,
       onOpen: () => debugPrint('OPENING DIAL'),
       onClose: () => debugPrint('DIAL CLOSED'),
 
@@ -299,7 +297,8 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
             foregroundColor: Colors.white,
             label: 'Appointment',
             onTap: () {
-              Routes.pushSimple(context: context, child: LookingForView());
+              showAlert("Coming soon");
+              //  Routes.pushSimple(context: context, child: LookingForView());
             }),
         SpeedDialChild(
             child: Image.asset("assets/icons/fire.png",
@@ -329,7 +328,7 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
             backgroundColorItem: AppColor.taskItemBgColor,
             label: 'Task',
             onTap: () {
-              Routes.pushSimple(
+              Routes.pushSimpleRootNav(
                   context: context,
                   child: CreateTaskView(
                     isUpdate: false,

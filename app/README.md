@@ -41,3 +41,17 @@ insert task || get task list by date || delete task || update task.
 #Add (+) multi Option On HomeScreen
 #Add Payment Method
 #Manage Card Payment Method
+
+## 14 Dec,2022
+
+#Fix issue Meal Flow.
+#Created Exercise Flow.
+#Height in CM and feet,inches in app.
+#Add Multiple service along business.
+#Show Multiple service list.
+#Deposit option add with each service.
+#admin can return multiple response along each Prayer .
+#Category add in Player.
+#Player , Meal , Exercise show in HomeCalendar
+#Home button in Each Screen
+#Restrict in Age , User enter age >=13

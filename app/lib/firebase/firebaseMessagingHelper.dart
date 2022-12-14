@@ -54,11 +54,12 @@ class _TokenMonitor extends State<TokenMonitor> {
   String? _token;
   late Stream<String> _tokenStream;
 
-  void setToken(String? token) {
+  void setToken(String? token) async {
     print('FCM Token: $token');
     setState(() {
       _token = token;
     });
+    await LocalStore().setFCMToken(token ?? "");
   }
 
   @override

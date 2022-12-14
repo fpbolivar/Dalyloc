@@ -18,18 +18,25 @@ class _ServiceListVCViewState extends State<ServiceListVCView> {
   BusinessApis manager = BusinessApis();
   var goToNext = true;
   var selecteIndex = -1;
+  var isLoading = false;
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getMenu();
+      getServiceList();
     });
   }
 
-  getMenu() async {
+  getServiceList() async {
+    BusinessApis.refreshService = false;
+    isLoading = true;
+    setState(() {});
     List<ServiceItemDataModel>? tempResponse =
         await manager.getUserBusinessServices();
+    isLoading = false;
+
+    setState(() {});
     // await manager.getUserBusinessServices("1");
     if (tempResponse != null) {
       allServices = [];
@@ -58,28 +65,39 @@ class _ServiceListVCViewState extends State<ServiceListVCView> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Add your onPressed code here!
+
           Routes.pushSimple(
-              context: context, child: CreateNewBusinessServiceScreen());
+              context: context,
+              child: CreateNewBusinessServiceScreen(
+                update: false,
+              ),
+              onBackPress: () {
+                if (BusinessApis.refreshService) {
+                  getServiceList();
+                }
+              });
         },
         backgroundColor: AppColor.theme,
         child: const Icon(Icons.add),
       ),
       body: BackgroundCurveView(
           child: SafeArea(
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: allServices.length == 0
-                ? simpleMessageShow(
-                    "Currently,You are not add any service.\nAdd Service by Click + add button.")
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                        Expanded(child: bodyDesign()),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        CustomButton.regular(
+        child: isLoading
+            ? loaderList()
+            : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: allServices.length == 0
+                    ? simpleMessageShow(
+                        "Currently,You are not add any service.\nAdd Service by Click + add button.")
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                            Expanded(child: bodyDesign()),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            /* CustomButton.regular(
                           title: "Add New Service",
                           background: selecteIndex == -1
                               ? Colors.grey[400]
@@ -106,11 +124,13 @@ class _ServiceListVCViewState extends State<ServiceListVCView> {
                             //     }
                             //   }
                           },
+                        
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                      ])),
+                          */
+                            // const SizedBox(
+                            //   height: 20,
+                            // ),
+                          ])),
       )),
     );
   }
@@ -128,9 +148,9 @@ class _ServiceListVCViewState extends State<ServiceListVCView> {
               ),
 
               listView(),
-              const SizedBox(
-                height: 20,
-              ),
+              // const SizedBox(
+              //   height: 20,
+              // ),
 
               //
             ]),
@@ -141,28 +161,35 @@ class _ServiceListVCViewState extends State<ServiceListVCView> {
   Widget listView() {
     return ListView.separated(
       shrinkWrap: true,
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
       physics: const NeverScrollableScrollPhysics(),
       itemCount: allServices.length,
       itemBuilder: (conext, index) {
         return InkWell(
-            onTap: () {},
+            onTap: () {
+              Routes.pushSimple(
+                  context: context,
+                  child: CreateNewBusinessServiceScreen(
+                    update: true,
+                    id: allServices[index].id.toString(),
+                  ),
+                  onBackPress: () {
+                    if (BusinessApis.refreshService) {
+                      getServiceList();
+                    }
+                  });
+            },
             child: ServiceItemView(
               itemData: allServices[index],
               onSelected: () {
-                // allDiet.forEach((element) {
-                //   element.isSelected = false;
-                // });
-                // allDiet[index].isSelected = !allDiet[index].isSelected;
-                // selecteIndex = index;
                 setState(() {});
               },
             ));
       },
       separatorBuilder: (BuildContext context, int index) {
         // ignore: prefer_const_constructors
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
+        return Divider(
+          thickness: 0.7,
         );
       },
     );

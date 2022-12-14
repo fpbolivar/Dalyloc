@@ -22,8 +22,13 @@ class HttpUrls {
   // ignore: constant_identifier_names
   static const WS_GETBUSINESSSERVICES =
       "${WS_BASEURL}api/get-all-user-business-service?business_id=";
+  static const WS_GETBUSINESSSERVICES_BYID =
+      "${WS_BASEURL}api/get-user-business-service-detail?business_service_id=";
   // ignore: constant_identifier_names
   static const WS_GETADMINPRAYER = "${WS_BASEURL}api/admin-prayer";
+  static const WS_GET_PHYSICAL_LEVEL = "${WS_BASEURL}api/get-workout-level";
+  static const WS_GET_WORKOUT_BY_LEVELID =
+      "${WS_BASEURL}api/get-workouts-by-workout-level-id?workout_level_id=";
   // ignore: constant_identifier_names
   static const WS_GETPRAYERLIST = "${WS_BASEURL}api/prayer-list";
   // ignore: constant_identifier_names
@@ -51,7 +56,7 @@ class HttpUrls {
   // ignore: constant_identifier_names
   static const WS_USERREGISTER = "${WS_BASEURL}api/auth/user-register";
   // ignore: constant_identifier_names
-  static const WS_GETUSERDATA = "${WS_BASEURL}api/auth/get-profile";
+  static const WS_GETUSERDATA = "${WS_BASEURL}api/get-profile";
   // ignore: constant_identifier_names
   static const WS_CREATETASK = "${WS_BASEURL}api/create-task";
   // ignore: constant_identifier_names
@@ -99,7 +104,9 @@ class HttpUrls {
   static const WS_CREATE_MEAL = "${WS_BASEURL}api/create-user-meal-detail";
 
   static const WS_PRAYERSETTING = "${WS_BASEURL}api/prayer-setting";
+  static const WS_MEALSETTING = "${WS_BASEURL}api/update-user-meal-setting";
   static const WS_GETPRAYERSETTING = "${WS_BASEURL}api/get-setting";
+  static const WS_GETMEALSETTING = "${WS_BASEURL}api/get-user-meal-setting";
   static const WS_GET_SELECTED_MEALPLAN =
       "${WS_BASEURL}api/get-selected-meal-ids";
   static const WS_GET_RECEIPE = "${WS_BASEURL}api/get-recipes";
@@ -112,6 +119,7 @@ class HttpUrls {
       "${WS_BASEURL}api/get-recipes-by-category?meal_category_id=";
   static const WS_GET_UPDATE_NOTIFICATION =
       "${WS_BASEURL}api/get-notification-setting";
+  static const WS_GET_UPDATE_24TIMEFORMAT = "${WS_BASEURL}api/user-time-format";
   static const WS_GET_UPDATE_PAYMENT_ONLINE =
       "${WS_BASEURL}api/get-online-booking-setting";
   static const WS_GET_SET_WAKEUP_TIME = "${WS_BASEURL}api/user-wake-up";
@@ -123,12 +131,18 @@ class HttpUrls {
 
   static const WS_ACCEPTANCEUPDATE = "${WS_BASEURL}api/acceptance";
   static const WS_UPDATEACTIVEPAYMENT = "${WS_BASEURL}api/active-payment";
-  static const WS_DEPOSITPERCENTAGE = "${WS_BASEURL}api/deposit-percentage";
+  static const WS_DEPOSITPERCENTAGE = "${WS_BASEURL}api/update-deposit";
   static const WS_CreateMealSetup = "${WS_BASEURL}api/create-user-meal-detail";
   static const WS_AddCard = "${WS_BASEURL}api/create-card-token";
   static const WS_GetAllCard = "${WS_BASEURL}api/get-user-stripe-cards";
   static const WS_DefaultCardSet = "${WS_BASEURL}api/update-default-card";
   static const WS_DeleteCard = "${WS_BASEURL}api/delete-card";
+  static const WS_PRAYER_CATEGORY = "${WS_BASEURL}api/get-category";
+  static const WS_GET_EXERCISE_BY_WORKOUTID =
+      "${WS_BASEURL}api/get-exercies-by-workout-id?workout_id=";
+  static const WS_STARTWORKOUT = "${WS_BASEURL}api/create-user-workout";
+  static const WS_COMPLETEWORKOUT =
+      "${WS_BASEURL}api/complete-user-workout?workout_id=";
   static Future<Map<String, String>> headerData() async {
     return {
       "Authorization": await LocalStore().getToken(),

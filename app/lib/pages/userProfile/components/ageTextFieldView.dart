@@ -44,7 +44,10 @@ class AgeTextFieldView extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 30),
                       child: Row(children: [
-                        Expanded(child: writeReview(placehoder: "eg : 25")),
+                        Expanded(
+                            child: writeReview(
+                                placehoder: "eg : 25",
+                                keyboardType: TextInputType.number)),
                         // SizedBox(
                         //   width: 50,
                         // ),
@@ -88,7 +91,8 @@ class AgeTextFieldView extends StatelessWidget {
     );
   }
 
-  Widget writeReview({textController, placehoder = ""}) {
+  Widget writeReview(
+      {textController, placehoder = "", keyboardType = TextInputType.text}) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
@@ -110,12 +114,13 @@ class AgeTextFieldView extends StatelessWidget {
           style: TextStyle(fontSize: 25, color: AppColor.halfGrayTextColor),
           minLines: 1,
           maxLines: 1,
+          maxLength: 3,
           autocorrect: false,
           controller: textController,
           onChanged: (value) async {
             await LocalStore().setAge(value);
           },
-          keyboardType: TextInputType.text,
+          keyboardType: keyboardType,
           decoration: InputDecoration(
             hintText: placehoder,
             border: InputBorder.none,

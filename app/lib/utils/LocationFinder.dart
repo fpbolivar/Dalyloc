@@ -1,6 +1,9 @@
 import 'dart:convert';
 
+import 'dart:io' show Platform;
+import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
+import 'package:daly_doc/widgets/ToastBar/toastMessage.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart';
@@ -57,7 +60,7 @@ class LocationDetector {
         address: "", country: "", lat: "", long: "", state: "", zipCode: "");
   }
 
-  Future<SelectedLocation?> getLocation() async {
+  Future<SelectedLocation?> getLocation({noPermissionHandler}) async {
     initial();
     _error = null;
     serviceEnabled = await location!.serviceEnabled();
@@ -73,7 +76,16 @@ class LocationDetector {
 
     permissionGranted = await location!.hasPermission();
     print("permissionGranted" + permissionGranted.toString());
+
     if (permissionGranted == MobileLOC.PermissionStatus.denied) {
+      if (Platform.isIOS) {
+        // iOS-specific code
+        print("Platform.isIOS");
+        var cxt = Constant.navigatorKey.currentState!.overlay!.context;
+        if (noPermissionHandler != null) noPermissionHandler();
+
+        return null;
+      }
       permissionGranted = await location!.requestPermission();
       print("permissionGranted2" + permissionGranted.toString());
       if (permissionGranted != MobileLOC.PermissionStatus.granted) {
@@ -172,7 +184,7 @@ class LocationDetector {
     print("locData!.country.toString()$code");
     Prediction? p = await PlacesAutocomplete.show(
       context: context!,
-      apiKey: "AIzaSyCObYgbuEEpAktTlfJhGs6LS_xjWam5F3k",
+      apiKey: Constant.KeyGoogleMaps,
       types: [],
       offset: 0,
       radius: 1000,

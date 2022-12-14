@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/pages/dailyDevotinalPlan/Apis/PrayerApis.dart';
+import 'package:daly_doc/pages/dailyDevotinalPlan/components/playerResponseItem.dart';
 import 'package:daly_doc/pages/dailyDevotinalPlan/views/payersListView.dart';
 import 'package:daly_doc/widgets/extension/string+capitalize.dart';
 import 'package:flutter_share/flutter_share.dart';
@@ -47,11 +48,11 @@ class _PrayerDetailViewState extends State<PrayerDetailView> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: CustomButton.regular(
-            title: widget.prayerData!.prayerStatus!.capitalize(),
-            background:
-                widget.prayerData!.prayerStatus!.toLowerCase() != "answered"
-                    ? Color(0XFFD82121)
-                    : Color(0XFF2E7316),
+            title: "Answered", //widget.prayerData!.prayerStatus!.capitalize(),
+            background: Color(0XFF2E7316),
+            // widget.prayerData!.prayerStatus!.toLowerCase() != "answered"
+            //     ? Color(0XFFD82121)
+            //     : Color(0XFF2E7316),
             onTap: () {
               if (widget.prayerData!.prayerStatus!.toLowerCase() !=
                   "answered") {
@@ -61,7 +62,7 @@ class _PrayerDetailViewState extends State<PrayerDetailView> {
                       Navigator.pop(context);
                     });
               } else {
-                showAlert("The Prayer Is Already Answered");
+                showAlert("The Prayer is already answered");
               }
               // Routes.pushSimple(context: context, child: PrayerView());
             },
@@ -80,7 +81,33 @@ class _PrayerDetailViewState extends State<PrayerDetailView> {
         children: [
           data("Note", widget.prayerData!.prayerNote),
           SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-          data("Response", LocalString.lblDc1),
+
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Response",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              widget.prayerData!.response!.length == 0
+                  ? Text("No Response by Administration.",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w400,
+                      ))
+                  : listResponse()
+            ],
+          )
+          // data("Response", widget.prayerData!.response),
         ],
       ),
     );
@@ -110,5 +137,26 @@ class _PrayerDetailViewState extends State<PrayerDetailView> {
         ),
       ],
     );
+  }
+
+  listResponse() {
+    return ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          var item = widget.prayerData!.response![index];
+          return InkWell(
+              onTap: () {},
+              child: PlayerResponseItem(
+                item: item,
+                index: index + 1,
+              ));
+        },
+        separatorBuilder: (context, index) {
+          return const SizedBox(
+            height: 10,
+          );
+        },
+        itemCount: widget.prayerData!.response!.length);
   }
 }

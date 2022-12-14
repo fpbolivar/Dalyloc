@@ -6,15 +6,15 @@ import '../../../../utils/exportWidgets.dart';
 import '../../../smartScheduleScreens/smartScheduleView.dart';
 
 class ForgotPasswordApi {
-  Future<void> forgotPassword(String phone_no) async {
-    var param = {
-      "phone_no": phone_no,
-    };
+  Future<void> forgotPassword(String phone_no, String country_code) async {
     if (await internetCheck() == false) {
       showAlert(LocalString.internetNot);
 
       return;
     }
+    var param = {"phone_no": phone_no, "country_code": country_code};
+    print(HttpUrls.WS_FORGOTPASSWORD);
+    print(param);
     waitDialog();
     try {
       Response response =
@@ -35,6 +35,7 @@ class ForgotPasswordApi {
             context: Constant.navigatorKey.currentState!.overlay!.context,
             child: OtpVerifyScreen(
               forgotPassword: true,
+              country_code: country_code,
             ));
       } else {
         dismissWaitDialog();
@@ -59,6 +60,7 @@ class ForgotPasswordApi {
       return;
     }
     try {
+      print('${param}');
       waitDialog();
       Response response =
           await post(Uri.parse(HttpUrls.WS_RESENDOTPFORGOT), body: param);
@@ -85,11 +87,10 @@ class ForgotPasswordApi {
     }
   }
 
-  otpApi({
-    required String otp,
-  }) async {
+  otpApi({required String otp, required String country_code}) async {
     var number = await LocalStore().get_MobileNumberOfUser();
-    var param = {"phone_no": number, "otp": otp};
+    var param = {"phone_no": number, "otp": otp, "country_code": country_code};
+    print('${param}');
     try {
       if (await internetCheck() == false) {
         showAlert(LocalString.internetNot);
@@ -111,7 +112,9 @@ class ForgotPasswordApi {
         showAlert(data['message'].toString());
         Routes.pushSimple(
             context: Constant.navigatorKey.currentState!.context,
-            child: CreateNewPasswordScreen());
+            child: CreateNewPasswordScreen(
+              country_code: country_code,
+            ));
       } else {
         dismissWaitDialog();
         showAlert(data['message'].toString());
@@ -125,10 +128,10 @@ class ForgotPasswordApi {
     }
   }
 
-  createPassword({
-    required String password,
-    required String passwordConfirmation,
-  }) async {
+  createPassword(
+      {required String password,
+      required String passwordConfirmation,
+      required String country_code}) async {
     if (password.toString().isEmpty) {
       print("pass enter");
       showAlert("Enter Password");
@@ -157,8 +160,12 @@ class ForgotPasswordApi {
     var param = {
       "phone_no": number,
       "password": password,
-      "password_confirmation": passwordConfirmation
+      "password_confirmation": passwordConfirmation,
+      "country_code": country_code
     };
+    print(
+      HttpUrls.WS_CREATENEWPASSWORDAFTERFORGOT,
+    );
     try {
       waitDialog();
       Response response = await post(

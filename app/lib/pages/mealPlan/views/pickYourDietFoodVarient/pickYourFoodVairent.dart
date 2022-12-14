@@ -71,7 +71,7 @@ class _PickYourDientVarientViewState extends State<PickYourDientVarientView> {
                           height: 20,
                         ),
                         CustomButton.regular(
-                          title: "Continue",
+                          title: goToNext ? "Continue" : "Update",
                           background: selecteIndex == -1
                               ? Colors.grey[400]
                               : AppColor.theme,

@@ -1,24 +1,15 @@
 import 'package:daly_doc/core/constant/constants.dart';
-import 'package:daly_doc/core/localStore/localStore.dart';
-import 'package:daly_doc/pages/authScreens/authManager/api/logoutApi.dart';
-import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/createNewBusiness.dart';
 import 'package:daly_doc/pages/mealPlan/manager/mealApi.dart';
-import 'package:daly_doc/pages/paymentPages/savedCardListView.dart';
+import 'package:daly_doc/pages/mealPlan/model/mealSettingModel.dart';
 import 'package:daly_doc/pages/settingsScreen/ApiManager/AllPlansApiManager.dart';
 import 'package:daly_doc/pages/settingsScreen/components/sectionRowListView.dart';
 import 'package:daly_doc/pages/settingsScreen/model/SettingOption.dart';
 import 'package:daly_doc/pages/settingsScreen/model/allPlanMode.dart';
-import 'package:daly_doc/pages/smartScheduleScreens/smartScheduleView.dart';
-import 'package:daly_doc/widgets/socialLoginButton/socialLoginButton.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
 import '../../../../utils/exportPackages.dart';
 import '../../../../utils/exportScreens.dart';
 import '../../../../utils/exportWidgets.dart';
 import 'package:flutter/cupertino.dart';
-
-import '../../../changePassword/changePasswordView.dart';
-import '../../../subscriptionPlansScreen/activePlanView.dart';
-import '../../../subscriptionPlansScreen/planMonthlyYearlyView.dart';
-import '../../../userProfile/userProfile.dart';
 
 class MealSettingView extends StatefulWidget {
   String? red;
@@ -30,13 +21,19 @@ class MealSettingView extends StatefulWidget {
 
 class _MealSettingViewState extends State<MealSettingView> {
   bool getData = false;
+  MealSettingModel? data;
   @override
   void initState() {
     super.initState();
+    data = MealSettingModel(
+        meal_daily_count: 1,
+        meal_end_time: "",
+        meal_notify: "0",
+        meal_start_time: "");
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       getplanList();
-      getNotificationStatus();
+      getMealSetting();
     });
   }
 
@@ -51,6 +48,12 @@ class _MealSettingViewState extends State<MealSettingView> {
   ];
   List<SettingOption> mealAlertOption = [
     SettingOption(title: "Notifications", section: 1, type: SettingType.toggle),
+    SettingOption(
+        title: " Daily", section: 1, type: SettingType.counter, counter: 0),
+    SettingOption(
+        title: "Start Time", section: 1, type: SettingType.time, time: ""),
+    SettingOption(
+        title: "End time", section: 1, type: SettingType.time, time: ""),
     //SettingOption(title: "Reminders", section: 1),
   ];
 
@@ -66,12 +69,49 @@ class _MealSettingViewState extends State<MealSettingView> {
   ];
   MealApis manager = MealApis();
   bool isNotificationLoadStatus = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.newBgcolor,
       appBar: CustomAppBarWithBackButton(
         title: LocalString.lblSettingNavTitle,
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: CustomButton.regular(
+            title: "Save",
+            onTap: () async {
+              var mgr = TaskManager();
+              var counter = mealAlertOption[1].counter;
+              var stime = mealAlertOption[2].time;
+              var etime = mealAlertOption[3].time;
+              stime = TaskManager().convertTo24hrs(stime!);
+              etime = TaskManager().convertTo24hrs(etime!);
+              print("stime ${stime} ");
+              print("etime ${etime} ");
+
+              var stimeUTC = "";
+              var etimeUTC = "";
+              if (stime != null && stime != "") {
+                stimeUTC = mgr.generateUtcTime(time: stime);
+              }
+              var etimeLocal = "";
+              if (etime != null && etime != "") {
+                etimeUTC = mgr.generateUtcTime(time: etime);
+              }
+
+              print(counter);
+              print("stime ${stime}  ${stimeUTC}");
+              print("etime ${etime}  ${etimeUTC}");
+              await manager.mealSetting(
+                  startTime: stimeUTC,
+                  endTime: etimeUTC,
+                  meal_daily_count: counter);
+            },
+          ),
+        ),
       ),
       body: BackgroundCurveView(
           child: SafeArea(
@@ -111,25 +151,78 @@ class _MealSettingViewState extends State<MealSettingView> {
     // }
     // setState(() {});
   }
-
-  getNotificationStatus() async {
+  getMealSetting() async {
     isNotificationLoadStatus = true;
     updateNotificationLoading();
-    bool? status = await manager.getNotification();
+    data = await manager.getMealSetting();
     isNotificationLoadStatus = false;
-    mealAlertOption[0].value = status;
+    print("------");
+    print(data!.meal_notify!);
     updateNotificationLoading();
+    if (data == null) {
+      //onlineItemOption[0].value = false;
+    } else {
+      mealAlertOption[0].value =
+          data!.meal_notify.toString() == "1" ? true : false;
+      print(mealAlertOption[0].value);
+      var mgr = TaskManager();
+
+      var stime = data!.meal_start_time;
+      print(stime);
+      var etime = data!.meal_end_time;
+      print(etime);
+      var stimeLocal = "";
+      if (stime != null && stime != "") {
+        stimeLocal = mgr.generateLocalTime(time: stime);
+        if (!Constant.HRS24FORMAT) {
+          stimeLocal = mgr.timeFromStr12Hrs(stimeLocal);
+        }
+      }
+      var etimeLocal = "";
+      if (etime != null && etime != "") {
+        etimeLocal = mgr.generateLocalTime(time: etime);
+        if (!Constant.HRS24FORMAT) {
+          etimeLocal = mgr.timeFromStr12Hrs(etimeLocal);
+        }
+      }
+
+      mealAlertOption[1].counter = data!.meal_daily_count;
+      mealAlertOption[2].time = stimeLocal;
+      mealAlertOption[3].time = etimeLocal;
+    }
+
     setState(() {});
   }
 
-  updateNotificationStatus(value) async {
-    isNotificationLoadStatus = true;
-    updateNotificationLoading();
-    bool? status =
-        await manager.getNotification(needUpdate: true, value: value);
-    isNotificationLoadStatus = false;
-    mealAlertOption[0].value = status;
-    updateNotificationLoading();
+  // getNotificationStatus() async {
+  //   isNotificationLoadStatus = true;
+  //   updateNotificationLoading();
+  //   bool? status = await manager.getNotification();
+  //   isNotificationLoadStatus = false;
+  //   mealAlertOption[0].value = status;
+  //   updateNotificationLoading();
+  //   setState(() {});
+  // }
+
+  // updateNotificationStatus(value) async {
+  //   isNotificationLoadStatus = true;
+  //   updateNotificationLoading();
+
+  //   bool? status =
+  //       await manager.getNotification(needUpdate: true, value: value);
+  //   isNotificationLoadStatus = false;
+  //   mealAlertOption[0].value = status;
+  //   updateNotificationLoading();
+  //   setState(() {});
+  // }
+
+  updateNotificationStatus(String value) async {
+    bool? status = await manager.mealSetting(isNotificationValue: value);
+    if (status == null || status == false) {
+      //onlineItemOption[0].value = false;
+    } else {
+      //onlineItemOption[0].value = true;
+    }
     setState(() {});
   }
 
@@ -207,15 +300,15 @@ class _MealSettingViewState extends State<MealSettingView> {
               const SizedBox(
                 height: 20,
               ),
-              SectionRowListView(
-                  itemList: paymentMethod,
-                  onTap: (sectionIndex, rowIndex) {
-                    Routes.pushSimple(
-                        context: context, child: SavedCardListView());
-                  }),
-              const SizedBox(
-                height: 20,
-              ),
+              // SectionRowListView(
+              //     itemList: paymentMethod,
+              //     onTap: (sectionIndex, rowIndex) {
+              //       Routes.pushSimple(
+              //           context: context, child: SavedCardListView());
+              //     }),
+              // const SizedBox(
+              //   height: 20,
+              // ),
               SectionRowListView(
                   itemList: mealAlertOption,
                   onSelectionBool: ((boolValue, p1, p2) {
@@ -227,7 +320,7 @@ class _MealSettingViewState extends State<MealSettingView> {
                     // Routes.pushSimple(
                     //     context: context, child: ActivePlanView());
                   }),
-              const SizedBox(
+              /*  const SizedBox(
                 height: 20,
               ),
               SectionRowListView(
@@ -261,6 +354,7 @@ class _MealSettingViewState extends State<MealSettingView> {
                           ));
                     }
                   }),
+                  */
               const SizedBox(
                 height: 20,
               ),

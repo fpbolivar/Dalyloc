@@ -1,3 +1,6 @@
+import 'package:daly_doc/core/constant/constants.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
+
 import '../../pages/authScreens/authManager/models/businessCatModel.dart';
 import '../../utils/exportPackages.dart';
 
@@ -53,7 +56,7 @@ class _TimeSelectorWidgetState extends State<TimeSelectorWidget> {
       children: [
         Expanded(
           child: InkWell(
-            onTap: () {
+            onTap: () async {
               if (widget.data.selected == false) {
                 showAlert("Select Week Days");
                 return;
@@ -67,21 +70,37 @@ class _TimeSelectorWidgetState extends State<TimeSelectorWidget> {
                 });
                 widget.onChangeStartTime(startSelectedTime);
               }
-              alertTimePicker(context, initialTime: startSelectedTime.time,
-                  onSelected: (picked) {
-                if (picked != null) {
-                  var timeFinal = DateFormat("HH:mm").format(picked);
-                  print(DateFormat("HH:mm").format(picked));
-                  setState(() {
-                    startSelectedTime.timeStr = timeFinal;
-                    startTimeTF = TextEditingController(text: timeFinal);
-                    // widget.data.startime!.pickupTime = timeFinal.toString();
-                  });
-                  widget.onChangeStartTime(startSelectedTime);
+              TimeOfDay? picked = await timePickerAlert(context);
+              print(picked);
+              if (picked != null) {
+                var time = picked.format(context);
+                if (Constant.HRS24FORMAT) {
+                  time = TaskManager().timeObj12to24Str(time);
                 }
-              }, onClose: () {
-                widget.onClose();
-              });
+
+                print("time $time");
+                setState(() {
+                  startSelectedTime.timeStr = time;
+                  startTimeTF = TextEditingController(text: time);
+                  // widget.data.startime!.pickupTime = timeFinal.toString();
+                });
+                widget.onChangeStartTime(startSelectedTime);
+              }
+              // alertTimePicker(context, initialTime: startSelectedTime.time,
+              //     onSelected: (picked) {
+              //   if (picked != null) {
+              //     var timeFinal = DateFormat("HH:mm").format(picked);
+              //     print(DateFormat("HH:mm").format(picked));
+              //     setState(() {
+              //       startSelectedTime.timeStr = timeFinal;
+              //       startTimeTF = TextEditingController(text: timeFinal);
+              //       // widget.data.startime!.pickupTime = timeFinal.toString();
+              //     });
+              //     widget.onChangeStartTime(startSelectedTime);
+              //   }
+              // }, onClose: () {
+              //   widget.onClose();
+              // });
             },
             child: writeReview(
                 maxLine: 1,
@@ -94,7 +113,7 @@ class _TimeSelectorWidgetState extends State<TimeSelectorWidget> {
         ),
         Expanded(
           child: InkWell(
-            onTap: () {
+            onTap: () async {
               if (widget.data.selected == false) {
                 showAlert("Select Week Days");
                 return;
@@ -107,20 +126,36 @@ class _TimeSelectorWidgetState extends State<TimeSelectorWidget> {
                 });
                 widget.onChangeEndTime(endSelectedTime);
               }
-              alertTimePicker(context, initialTime: endSelectedTime.time,
-                  onSelected: (picked) {
-                if (picked != null) {
-                  var timeFinal = DateFormat("HH:mm").format(picked);
-                  print(DateFormat("HH:mm").format(picked));
-                  setState(() {
-                    endSelectedTime.timeStr = timeFinal;
-                    endTimeTF = TextEditingController(text: timeFinal);
-                  });
-                  widget.onChangeEndTime(endSelectedTime);
+              TimeOfDay? picked = await timePickerAlert(context);
+              print(picked);
+              if (picked != null) {
+                var time = picked.format(context);
+                if (Constant.HRS24FORMAT) {
+                  time = TaskManager().timeObj12to24Str(time);
                 }
-              }, onClose: () {
-                widget.onClose();
-              });
+
+                print("time $time");
+                setState(() {
+                  endSelectedTime.timeStr = time;
+                  endTimeTF = TextEditingController(text: time);
+                  // widget.data.startime!.pickupTime = timeFinal.toString();
+                });
+                widget.onChangeStartTime(startSelectedTime);
+              }
+              // alertTimePicker(context, initialTime: endSelectedTime.time,
+              //     onSelected: (picked) {
+              //   if (picked != null) {
+              //     var timeFinal = DateFormat("HH:mm").format(picked);
+              //     print(DateFormat("HH:mm").format(picked));
+              //     setState(() {
+              //       endSelectedTime.timeStr = timeFinal;
+              //       endTimeTF = TextEditingController(text: timeFinal);
+              //     });
+              //     widget.onChangeEndTime(endSelectedTime);
+              //   }
+              // }, onClose: () {
+              //   widget.onClose();
+              // });
             },
             child: writeReview(
                 maxLine: 1,

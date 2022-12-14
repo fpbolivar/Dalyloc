@@ -1,33 +1,72 @@
 import 'dart:convert';
 
 import 'package:daly_doc/core/LocalString/localString.dart';
+import 'package:daly_doc/core/Sql/DBIntializer.dart';
 import 'package:daly_doc/core/Sql/createTaskHelper.dart';
 import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/main.dart';
 import 'package:daly_doc/pages/mealPlan/model/mealCategoryModel.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/manager/ApisManager/Apis.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/model/AllTaskModel.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/model/GroupTaskItemModel.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/model/TaskModel.dart';
 import 'package:daly_doc/widgets/ToastBar/toastMessage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/sqlite_api.dart';
 import '../../../core/constant/constants.dart';
 import '../model/subtaskModel.dart';
 
 class TaskManager with ChangeNotifier {
   List<GroupTaskItemModel> taskGroupData = [];
   bool isSyncing = false;
+
+  fetchAllTaskFromServer() async {
+    isSyncing = true;
+    Constant.taskProvider.notifyListeners();
+    Database db = await DBIntializer.sharedInstance.db;
+    print("db statusss ${db.isOpen}");
+
+    startTaskFetchFromDB();
+
+    await deleteDataFromServer();
+
+    TaskApiManager().getAllTaskData(
+        date: Constant.selectedDateYYYYMMDD,
+        onSuccess: (AllTaskModel allist) async {
+          List<TaskModel> list = [];
+
+          list.addAll(allist.alltask!);
+
+          int value = await syncAllTask(list);
+          print("FRESHER $value");
+          startTaskFetchFromDB(dataPendingExercise: allist.pendingTask!);
+          isSyncing = false;
+          Constant.taskProvider.notifyListeners();
+        });
+    Future.delayed(Duration(seconds: 5), () async {});
+  }
+
   saveTaskData(data, onSuccess, {needAlert = true}) async {
+    TaskModel dataTemp = data;
+    if (dataTemp.operationType == TaskType.exercise.rawValue) {
+      return;
+    }
     await CreateTaskHelper.createTask(data);
     Constant.taskProvider.startTaskFetchFromDB();
     // onSuccess();
     if (needAlert) {
       ToastMessage.showSuccessMessage(msg: LocalString.msgCreatedTask);
     }
+    onSuccess();
   }
 
   updateTaskData(data, onSuccess, {needAlert = true}) async {
+    TaskModel dataTemp = data;
+    if (dataTemp.operationType == TaskType.exercise.rawValue) {
+      return;
+    }
     await CreateTaskHelper.updateTask(data);
     Constant.taskProvider.startTaskFetchFromDB();
     onSuccess();
@@ -82,12 +121,12 @@ class TaskManager with ChangeNotifier {
     return await CreateTaskHelper.truncate();
   }
 
-  startTaskFetchFromDB() async {
+  startTaskFetchFromDB({List<TaskModel>? dataPendingExercise}) async {
     var wakeUpTime = await LocalStore().getWakeTime();
     List<TaskModel> list = await getAllTask();
     list.forEach(
       (element) {
-        print("element.serverID ${element.serverID}");
+        print("element.operationType ${element.operationType}");
       },
     );
     taskGroupData = convertGroupTaskByTime(list);
@@ -96,7 +135,7 @@ class TaskManager with ChangeNotifier {
       var fullArray = wakeUpTime.split(":");
       final hr = int.tryParse(fullArray[0]) ?? 0;
       final min = int.tryParse(fullArray[1]) ?? 0;
-      var wakeUPtime = timeFromStr12Hrs(wakeUpTime);
+      var wakeUPtime = wakeUpTime; //timeFromStr12Hrs(wakeUpTime);
 
       taskGroupData.insert(
           0,
@@ -104,6 +143,51 @@ class TaskManager with ChangeNotifier {
               hr: hr,
               time: wakeUPtime,
               task: [TaskModel(operationType: "wake")]));
+    }
+
+    bool isFormat24hr = await LocalStore().get_TimeFormatUser();
+    if (!isFormat24hr) {
+      taskGroupData.forEach((element) {
+        if (element.time.trim().isNotEmpty) {
+          element.time = timeFromStr12Hrs(element.time);
+        }
+        var allTask = element.task;
+        allTask!.forEach((objTask) {
+          if (objTask.startTime.trim().isNotEmpty) {
+            objTask.startTime = timeFromStr12Hrs(objTask.startTime);
+          }
+          if (objTask.endTime.trim().isNotEmpty) {
+            objTask.endTime = timeFromStr12Hrs(objTask.endTime);
+          }
+        });
+      });
+    }
+
+    print("taskGroupData.length${taskGroupData.length}");
+    if (dataPendingExercise != null) {
+      var time = "06:00";
+      if (Constant.HRS24FORMAT) {
+        time = time;
+      } else {
+        time = timeFromStr12Hrs(time);
+      }
+
+      GroupTaskItemModel pendingExercise =
+          GroupTaskItemModel(hr: 6, time: time, task: dataPendingExercise);
+      if (taskGroupData.length > 0) {
+        var found = false;
+        for (int i = 0; i < taskGroupData.length; i++) {
+          if (taskGroupData[i].hr == 6) {
+            taskGroupData[i].task!.addAll(dataPendingExercise);
+            found = true;
+          }
+        }
+        if (!found) {
+          taskGroupData.add(pendingExercise);
+        }
+      } else {
+        taskGroupData.add(pendingExercise);
+      }
     }
     notifyListeners();
   }
@@ -130,45 +214,76 @@ class TaskManager with ChangeNotifier {
   }
 
   List<GroupTaskItemModel> convertGroupTaskByTime(List<TaskModel> taskdata) {
-    Set<int> hrs = Set<int>();
+    for (int i = 0; i < taskdata.length; i++) {
+      print(": taskdata[i].${taskdata[i].taskName}");
+      print(": taskdata[i].startTime${taskdata[i].startTime}");
+      print(": taskdata[i].endTime${taskdata[i].endTime}");
+      if (taskdata[i].startTime.toString() != "null") {
+        taskdata[i].startTime = generateLocalTime(time: taskdata[i].startTime);
+      }
+      if (taskdata[i].endTime.toString() != "null") {
+        taskdata[i].endTime = generateLocalTime(time: taskdata[i].endTime);
+      }
 
+      // taskdata[i].endTime = generateLocalTime(time: taskdata[i].endTime);
+    }
+
+    Set<int> hrs = Set<int>();
+    print("convertGroupTaskByTime ${taskdata.length}");
     taskdata.forEach((element) {
       var sTime = element.startTime;
+      print("1) ###### ${element.startTime}");
       if (sTime != "") {
         var timeSplit = sTime.split(":");
         print(timeSplit);
+        print("2) ###### ${timeSplit}");
         int value = int.tryParse(timeSplit[0]) ?? 0;
         hrs.add(value);
       }
     });
-    print(hrs);
+    print("###) hrs ${hrs}");
     List<GroupTaskItemModel> groupTask = [];
     hrs.forEach((element) {
-      var strTime = "";
-      if (element < 10) {
-        strTime = "0$element:00 AM";
-      } else {
-        strTime = "$element:00 PM";
-      }
+      var strTime = element.toString();
+
       groupTask.add(GroupTaskItemModel(
         hr: element,
-        time: strTime,
+        time: "${strTime}:00",
       ));
     });
     for (int i = 0; i < groupTask.length; i++) {
+      var groupHr = groupTask[i].hr;
+      print("****ALLL **** . GROUP  $groupHr");
+    }
+    for (int i = 0; i < groupTask.length; i++) {
       // print("GRO ${groupTask[i].hr}");
       groupTask[i].task = [];
+
       for (int j = 0; j < taskdata.length; j++) {
         var taskTime = taskdata[j].startTime;
+        print("1 <-->) ###### $taskTime");
         var groupHr = groupTask[i].hr;
-        //print("$taskTime $groupHr");
+        print("1 <- groupHr ->) ###### $groupHr");
+        if (taskTime.startsWith("0")) {
+          if (taskTime.length > 1) {
+            if (taskTime[1] == "0") {
+            } else {
+              taskTime = taskTime.substring(1);
+            }
+          } else {
+            taskTime = taskTime.substring(1);
+          }
+        }
         if (taskTime.startsWith(groupHr.toString())) {
           groupTask[i].task!.add(taskdata[j]);
         }
       }
     }
     groupTask.sort((obj1, obj2) => obj1.hr.compareTo(obj2.hr));
-    print(groupTask.length);
+    groupTask.forEach((element) {
+      print("1%%%%%%% ${element.hr}");
+      print("2%%%%%%% ${element.time}");
+    });
     return groupTask;
   }
 
@@ -244,6 +359,15 @@ class TaskManager with ChangeNotifier {
     return "";
   }
 
+  String yyyyMMdd_To_ddMMYYYY(date) {
+    DateTime parseDate = new DateFormat("YYYY-MM-dd").parse(date);
+    var inputDate = DateTime.parse(parseDate.toString());
+    var outputFormat = DateFormat('dd-MM-YYYY');
+    var outputDate = outputFormat.format(inputDate);
+    print(outputDate);
+    return outputDate;
+  }
+
   String timeFromStr12Hrs(date) {
     DateTime parseDate = new DateFormat("HH:mm").parse(date);
     var inputDate = DateTime.parse(parseDate.toString());
@@ -262,6 +386,37 @@ class TaskManager with ChangeNotifier {
     return inputDate;
   }
 
+  String convertTo24hrs(String date) {
+    if (date.contains("AM") || date.contains("PM")) {
+      DateTime parseDate = new DateFormat("h:mm a").parse(date);
+      var inputDate = DateTime.parse(parseDate.toString());
+      var outputFormat = DateFormat('HH:mm');
+      var outputDate = outputFormat.format(inputDate);
+      print(outputDate);
+      return outputDate;
+    } else {
+      return date;
+    }
+  }
+
+  String timeObj12to24Str(date, {indexAM = 0}) {
+    var dateFinal = date;
+    if (!Constant.HRS24FORMAT) {
+      if (indexAM == 0) {
+        dateFinal = dateFinal + " AM";
+      } else {
+        dateFinal = dateFinal + " PM";
+      }
+    }
+
+    DateTime parseDate = new DateFormat("hh:mm a").parse(dateFinal);
+    var inputDate = DateTime.parse(parseDate.toString());
+    var outputFormat = DateFormat('HH:mm');
+    var outputDate = outputFormat.format(inputDate);
+
+    return outputDate;
+  }
+
   String timeFromDATE(DateTime date) {
     var outputFormat = DateFormat('HH:mm');
     var outputDate = outputFormat.format(date);
@@ -271,6 +426,11 @@ class TaskManager with ChangeNotifier {
 
   String dateParseyyyyMMdd(DateTime date) {
     var _date = DateFormat('yyyy-MM-dd').format(date).toString();
+    return _date;
+  }
+
+  String dateParseMMMDDYYYY(DateTime date) {
+    var _date = DateFormat('MMM dd, yyyy').format(date).toString();
     return _date;
   }
 
@@ -390,9 +550,9 @@ class TaskManager with ChangeNotifier {
       int currentCountTemp = currentCount;
       TaskModel item = taskList[currentCountTemp];
       final subtasks = subtaskJSON(item.subTaskslist!);
-      // if (item.operationType == TaskType.meal.rawValue) {
-      //   return;
-      // }
+      if (item.operationType == TaskType.exercise.rawValue) {
+        return;
+      }
       await TaskApiManager().CreateTaskData(
           data: item,
           subTask: subtasks,

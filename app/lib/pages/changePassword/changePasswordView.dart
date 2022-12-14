@@ -45,10 +45,9 @@ class _ChangePassswordViewState extends State<ChangePassswordView> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // const SizedBox(
-              //   height: 20,
-              // ),
-
+              const SizedBox(
+                height: 20,
+              ),
               CustomTF(
                   password: true,
                   controllr: currentTFC,

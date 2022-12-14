@@ -77,16 +77,16 @@ class _PlanDetailViewState extends State<PlanDetailView> {
           SizedBox(
             height: 20,
           ),
-          CustomButton.regular(
-            title: "Add to Calendar",
-            background: AppColor.stripGreen,
-            height: 40,
-            fontSize: 15,
-            radius: 4,
-          ),
-          SizedBox(
-            height: 20,
-          ),
+          // CustomButton.regular(
+          //   title: "Add to Calendar",
+          //   background: AppColor.stripGreen,
+          //   height: 40,
+          //   fontSize: 15,
+          //   radius: 4,
+          // ),
+          // SizedBox(
+          //   height: 20,
+          // ),
           Divider(),
           SizedBox(
             height: 20,

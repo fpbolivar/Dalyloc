@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:daly_doc/pages/excercisePlan/model/workoutDataModel.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/model/AllTaskModel.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/model/GroupTaskItemModel.dart';
 import 'package:http/http.dart' as http;
 import 'package:daly_doc/utils/exportPackages.dart';
 import 'package:daly_doc/widgets/dialogs/CommonDialogs.dart';
@@ -43,6 +46,9 @@ class TaskApiManager {
         "subNotes": subTask,
         "dateString": data.dateString,
         "startTime": data.startTime,
+        "location": data.location,
+        "lat": data.lat,
+        "lng": data.lng,
         "utcDateTime": data.utcDateTime,
         "endTime": data.endTime
       });
@@ -123,6 +129,9 @@ class TaskApiManager {
         "startTime": data.startTime,
         "endTime": data.endTime,
         "utcDateTime": data.utcDateTime,
+        "location": data.location,
+        "lat": data.lat,
+        "lng": data.lng,
       });
       print(params);
       final url = HttpUrls.WS_EDITTASK + data.serverID.toString();
@@ -165,10 +174,12 @@ class TaskApiManager {
   }
 
   getAllTaskData({required String date, onSuccess}) async {
+    AllTaskModel objAllTask = AllTaskModel(alltask: [], pendingTask: []);
     if (await internetCheck() == false) {
       //showAlert(LocalString.internetNot);
       List<TaskModel> tasks = [];
-      onSuccess(tasks);
+      objAllTask.alltask = tasks;
+      onSuccess(objAllTask);
       return;
     }
 
@@ -196,15 +207,46 @@ class TaskApiManager {
         print(data);
         if (data["status_code"] == true) {
           var allTask = data["allTask"] as List;
+          var allPendingWorkouts = data["allPendingWorkouts"] as List;
+          if (allPendingWorkouts.length > 0) {
+            List<WorkoutPendindDataModel> pendingTemp = allPendingWorkouts
+                .map((e) => WorkoutPendindDataModel.fromJson(e))
+                .toList();
+            List<TaskModel> pendingtasks = [];
+            pendingTemp.forEach(
+              (element) {
+                TaskModel pendingExercise = TaskModel(
+                    taskName: element.task_name.toString(),
+                    subTaskslist: [],
+                    subNotes: "",
+                    email: "",
+                    howLong: "",
+                    serverID: 0,
+                    tid: 0,
+                    startTime: "06:00",
+                    endTime: "08:00",
+                    operationType: "exercise");
+                pendingtasks.add(pendingExercise);
+              },
+            );
+            // List<TaskModel> tasks =
+            //     allTask.map((e) => TaskModel.fromServerJson(e)).toList();
+
+            objAllTask.pendingTask =
+                pendingtasks; //[GroupTaskItemModel(hr: 1, time: "01:00")];
+            // onSuccess(objAllTask);
+          }
           if (allTask.length > 0) {
             List<TaskModel> tasks =
                 allTask.map((e) => TaskModel.fromServerJson(e)).toList();
 
-            onSuccess(tasks);
+            objAllTask.alltask = tasks;
+            onSuccess(objAllTask);
           } else {
             List<TaskModel> tasks = [];
-            onSuccess(tasks);
+            objAllTask.alltask = tasks;
           }
+          onSuccess(objAllTask);
         } else {
           if (data["auth_code"] != null || token == null) {
             showAlert(LocalString.msgSessionExpired, onTap: () {

@@ -50,27 +50,23 @@ class _MomentOfPrayerViewScreenState extends State<MomentOfPrayerView> {
       appBar: CustomAppBar(
         title: LocalString.lblAmomentofPrayer,
       ),
-      bottomNavigationBar: isActive
-          ? SafeArea(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                child: CustomButton.regular(
-                  title: "Continue",
-                  onTap: () {
-                    Routes.pushSimple(context: context, child: PrayerView());
-                  },
-                ),
-              ),
-            )
-          : Container(
-              height: 1,
-            ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: CustomButton.regular(
+            title: "Continue",
+            onTap: () {
+              Routes.pushSimple(context: context, child: PrayerView());
+            },
+          ),
+        ),
+      ),
       body: BackgroundCurveView(
           child: SafeArea(
         child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: isActive
+            child: viewMoment()
+            /*isActive
                 ? viewMoment()
                 : CheckSubscriptionView(
                     activeStatus: (value) {
@@ -81,7 +77,8 @@ class _MomentOfPrayerViewScreenState extends State<MomentOfPrayerView> {
                     },
                     title: "Devotional",
                     typeOfOperation: MealTypePlan.devotional,
-                  )),
+                  )*/
+            ),
       )),
     );
   }

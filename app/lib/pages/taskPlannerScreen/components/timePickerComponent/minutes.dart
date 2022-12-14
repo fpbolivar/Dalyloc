@@ -6,7 +6,12 @@ class MyMinutes extends StatelessWidget {
   int mins;
   int selectedMins;
   String txt;
-  MyMinutes({required this.mins, this.selectedMins = 0, this.txt = ""});
+  bool enable;
+  MyMinutes(
+      {required this.mins,
+      this.selectedMins = 0,
+      this.txt = "",
+      this.enable = true});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +23,11 @@ class MyMinutes extends StatelessWidget {
             txt.toString(),
             style: TextStyle(
               fontSize: mins == selectedMins ? 24 : 20,
-              color: mins == selectedMins ? Colors.transparent : Colors.black,
+              color: enable
+                  ? mins == selectedMins
+                      ? Colors.transparent
+                      : Colors.black
+                  : Colors.grey,
               fontWeight: FontWeight.w400,
             ),
           ),

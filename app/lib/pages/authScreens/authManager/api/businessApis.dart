@@ -4,6 +4,7 @@ import 'package:daly_doc/pages/authScreens/authManager/models/businessCatModel.d
 
 import 'package:daly_doc/pages/authScreens/authManager/models/serviceItemModel.dart';
 import 'package:daly_doc/pages/subscriptionPlansScreen/model/PlanInfoModel.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:daly_doc/utils/exportPackages.dart';
@@ -15,6 +16,7 @@ import '../../../../core/constant/constants.dart';
 import '../models/userBusinesModel.dart';
 
 class BusinessApis {
+  static var refreshService = false;
   getUserBusiness(onSuccess) async {
     if (await internetCheck() == false) {
       showAlert(LocalString.internetNot);
@@ -197,13 +199,13 @@ class BusinessApis {
     print(url);
     List<ServiceItemDataModel> dataList = [];
     try {
-      waitDialog();
+      //  waitDialog();
       Response response = await get(Uri.parse(url), headers: header);
 
       var data = json.decode(response.body);
       print('${data}');
       if (data['status'] == true) {
-        dismissWaitDialog();
+        // dismissWaitDialog();
         print("result ${data["data"]}");
         var list = data["data"] as List;
 
@@ -214,6 +216,56 @@ class BusinessApis {
           return dataList;
         } else {
           dataList = list.map((e) => ServiceItemDataModel.fromJson(e)).toList();
+          return dataList;
+        }
+      } else {
+        //  dismissWaitDialog();
+        showAlert(data['message'].toString());
+        return null;
+      }
+      // print('Response status: ${response.statusCode}');
+      // print('Response body: ${response.body}');
+    } catch (e) {
+      //  dismissWaitDialog();
+      print(e.toString());
+      showErrorAlert(e.toString());
+      return null;
+    }
+  }
+
+  Future<ServiceItemDataModel?> getBusinessServicesByID({id = ""}) async {
+    if (await internetCheck() == false) {
+      showAlert(LocalString.internetNot);
+
+      return null;
+    }
+    var token = await LocalStore().getToken();
+    var header = {
+      "Authorization": token,
+      "content-type": 'application/json',
+    };
+
+    var url = HttpUrls.WS_GETBUSINESSSERVICES_BYID + id;
+    print(url);
+    ServiceItemDataModel? dataList;
+    try {
+      waitDialog();
+      Response response = await get(Uri.parse(url), headers: header);
+
+      var data = json.decode(response.body);
+      print('${data}');
+      if (data['status'] == true) {
+        dismissWaitDialog();
+        print("result ${data["data"]}");
+        var list = data["data"];
+
+        if (list == null) {
+          return dataList;
+        }
+        if (list.isEmpty) {
+          return dataList;
+        } else {
+          dataList = ServiceItemDataModel.fromJson(list);
           return dataList;
         }
       } else {
@@ -316,6 +368,7 @@ class BusinessApis {
     required String serviceName,
     required String price,
     required String Duration,
+    required String deposit_percentage,
   }) async {
     var token = await LocalStore().getToken();
     if (await internetCheck() == false) {
@@ -335,6 +388,10 @@ class BusinessApis {
       showAlert("Enter Duration");
       print("Enter Duration");
       return;
+    } else if (deposit_percentage.toString().isEmpty) {
+      showAlert("Enter Duration");
+      print("Enter Duration");
+      return;
     }
     var id = await LocalStore().getBusinessId();
     var headers = {"Authorization": token, 'Content-Type': 'application/json'};
@@ -346,7 +403,8 @@ class BusinessApis {
       "service_name": serviceName,
       "service_price": price,
       "service_time": Duration,
-      "service_online_booking": "1"
+      "service_online_booking": "1",
+      "deposit_percentage": deposit_percentage
     });
     request.headers.addAll(headers);
     waitDialog();
@@ -355,7 +413,9 @@ class BusinessApis {
 
     Map<String, dynamic> data = jsonDecode(response.body);
     if (response.statusCode == 200) {
+      BusinessApis.refreshService = true;
       onSuccess();
+
       showAlert(
         data['message'],
       );
@@ -372,29 +432,36 @@ class BusinessApis {
 
     if (firstTimeCreated) {
       weekDays.forEach((element) {
+        var st = element.startime!.timeStr.toString();
+        var et = element.endtime!.timeStr.toString();
+
+        st = TaskManager().convertTo24hrs(st);
+        st = TaskManager().generateUtcTime(time: st);
+        et = TaskManager().convertTo24hrs(et);
+        et = TaskManager().generateUtcTime(time: et);
         obj1.add({
           "day": element.name,
           "is_closed": element.selected == true ? "0" : "1",
-          "open_time": element.startime!.timeStr.toString() == ""
-              ? "00:00:00"
-              : element.startime!.timeStr.toString(),
-          "close_time": element.endtime!.timeStr.toString() == ""
-              ? "00:00:00"
-              : element.endtime!.timeStr.toString(),
+          "open_time": st == "" ? "00:00" : st,
+          "close_time": et == "" ? "00:00" : et,
         });
       });
     } else {
       weekDays.forEach((element) {
+        var st = element.startime!.timeStr.toString();
+        var et = element.endtime!.timeStr.toString();
+
+        st = TaskManager().convertTo24hrs(st);
+        st = TaskManager().generateUtcTime(time: st);
+        et = TaskManager().convertTo24hrs(et);
+        et = TaskManager().generateUtcTime(time: et);
+
         obj1.add({
           "day": element.name,
           "timing_id": element.id,
           "is_closed": element.selected == true ? "0" : "1",
-          "open_time": element.startime!.timeStr.toString() == ""
-              ? "00:00:00"
-              : element.startime!.timeStr.toString(),
-          "close_time": element.endtime!.timeStr.toString() == ""
-              ? "00:00:00"
-              : element.endtime!.timeStr.toString(),
+          "open_time": st == "" ? "00:00" : st,
+          "close_time": et == "" ? "00:00" : et,
         });
       });
     }
@@ -445,6 +512,7 @@ class BusinessApis {
     required String price,
     required String Duration,
     required String serviceID,
+    required String deposit_percentage,
   }) async {
     var token = await LocalStore().getToken();
     if (await internetCheck() == false) {
@@ -464,6 +532,10 @@ class BusinessApis {
       showAlert("Enter Duration");
       print("Enter Duration");
       return;
+    } else if (deposit_percentage.toString().isEmpty) {
+      showAlert("Enter Duration");
+      print("Enter Duration");
+      return;
     }
     var id = await LocalStore().getBusinessId();
     var headers = {"Authorization": token, 'Content-Type': 'application/json'};
@@ -477,6 +549,7 @@ class BusinessApis {
       "service_price": price,
       "service_time": Duration,
       "service_online_booking": "1",
+      "deposit_percentage": deposit_percentage
     });
     print(request.body);
     request.headers.addAll(headers);
@@ -486,7 +559,9 @@ class BusinessApis {
 
     Map<String, dynamic> data = jsonDecode(response.body);
     if (response.statusCode == 200) {
+      BusinessApis.refreshService = true;
       onSuccess();
+
       showAlert(
         data['message'],
       );
@@ -819,7 +894,8 @@ class BusinessApis {
     }
   }
 
-  Future<bool?> depositPercentage({String value = ""}) async {
+  Future<bool?> depositPercentage(
+      {String value = "", String serviceID = ""}) async {
     var token = await LocalStore().getToken();
     if (await internetCheck() == false) {
       showAlert(LocalString.internetNot);
@@ -834,7 +910,11 @@ class BusinessApis {
     var url = HttpUrls.WS_DEPOSITPERCENTAGE;
     var header = await HttpUrls.headerData();
 
-    var body = {"user_business_id": id, "deposit_percentage": value};
+    var body = {
+      "business_id": id,
+      "deposit_percentage": value,
+      "id": serviceID
+    };
     var request = json.encode(body);
     print(url);
     try {

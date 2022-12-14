@@ -9,9 +9,11 @@ import '../../../utils/exportPackages.dart';
 // ignore: must_be_immutable
 class WeightTextFieldView extends StatefulWidget {
   String leftTitle;
-
+  Function(String)? onChange;
+  var text = "";
   Widget? child;
-  WeightTextFieldView({super.key, this.leftTitle = "", this.child});
+  WeightTextFieldView(
+      {super.key, this.leftTitle = "", this.child, this.onChange});
 
   @override
   State<WeightTextFieldView> createState() => _WeightTextFieldViewState();
@@ -52,7 +54,11 @@ class _WeightTextFieldViewState extends State<WeightTextFieldView> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 30),
                       child: Row(children: [
-                        Expanded(child: writeReview(placehoder: "Kilogram")),
+                        Expanded(
+                            child: writeReview(
+                                placehoder: "Kilogram",
+                                maxLength: 5,
+                                keyboardType: TextInputType.number)),
                         // SizedBox(
                         //   width: 50,
                         // ),
@@ -73,6 +79,7 @@ class _WeightTextFieldViewState extends State<WeightTextFieldView> {
                         radius: 4,
                         fontSize: 10,
                         onTap: () async {
+                          widget.onChange!(widget.text);
                           Navigator.pop(context);
                         },
                       ),
@@ -96,7 +103,11 @@ class _WeightTextFieldViewState extends State<WeightTextFieldView> {
     );
   }
 
-  Widget writeReview({textController, placehoder = ""}) {
+  Widget writeReview(
+      {textController,
+      placehoder = "",
+      keyboardType = TextInputType.text,
+      maxLength = 100}) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
@@ -117,15 +128,12 @@ class _WeightTextFieldViewState extends State<WeightTextFieldView> {
           style: TextStyle(fontSize: 25, color: AppColor.halfGrayTextColor),
           minLines: 1,
           maxLines: 1,
+          maxLength: maxLength,
           autocorrect: false,
           controller: textController,
-          keyboardType: TextInputType.text,
+          keyboardType: keyboardType,
           onChanged: (value) async {
-            setState(() {
-              weight = value;
-            });
-            await LocalStore().setWeightOfUser(value);
-            print(weight);
+            widget.text = value;
           },
           decoration: InputDecoration(
             hintText: placehoder,

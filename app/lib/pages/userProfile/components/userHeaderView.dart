@@ -9,7 +9,12 @@ import '../../../utils/exportPackages.dart';
 class UserHeaderView extends StatelessWidget {
   String mobile_no = "";
   String userName = "";
-  UserHeaderView({super.key, required this.userName, required this.mobile_no});
+  Function()? onChange;
+  UserHeaderView(
+      {super.key,
+      this.onChange,
+      required this.userName,
+      required this.mobile_no});
 
   @override
   Widget build(BuildContext context) {
@@ -54,32 +59,37 @@ class UserHeaderView extends StatelessWidget {
   }
 
   Widget editButton() {
-    return Container(
-      height: 25,
-      width: 60,
-      decoration: BoxDecoration(
-        color: AppColor.theme,
-        borderRadius: const BorderRadius.all(
-          Radius.circular(5.0),
+    return InkWell(
+      onTap: () {
+        onChange!();
+      },
+      child: Container(
+        height: 25,
+        width: 100,
+        decoration: BoxDecoration(
+          color: AppColor.theme,
+          borderRadius: const BorderRadius.all(
+            Radius.circular(5.0),
+          ),
         ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Image.asset(
-            "assets/icons/ic_edit.png",
-            width: 10,
-            height: 10,
-          ),
-          SizedBox(
-            width: 5,
-          ),
-          Text(
-            "Edit",
-            style: TextStyle(color: Colors.white, fontSize: 11),
-          ),
-        ],
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              "assets/icons/ic_edit.png",
+              width: 10,
+              height: 10,
+            ),
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              "Edit Username",
+              style: TextStyle(color: Colors.white, fontSize: 11),
+            ),
+          ],
+        ),
       ),
     );
   }

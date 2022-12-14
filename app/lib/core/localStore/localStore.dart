@@ -8,10 +8,11 @@ class LocalStore {
   final String _otp = "123456";
   final String _nameofuser = "_nameofuser";
   final String _MobileNumberOfUser = "_MobileNumberOfUser";
+  final String _login_type = "login_type";
   final String _user_id = "1";
   final String _fcmToken = "_fcmToken";
   final String _lat = "_lat";
-
+  final String _dob = "_dob";
   final String _address = "_address";
 
   final String countryCode = "_countryCode";
@@ -31,8 +32,45 @@ class LocalStore {
   final String _feet = "_feet";
   final String _inch = "_inch";
   final String _weight = "_weight";
+  final String _height = "_height";
+  final String _gender = "gender";
   final String _deletedIDS = "_deletedIDS";
   final String _wakeTime = "_wakeTime";
+  final String _timeFormat = "_timeFormat";
+  final String _isExerciseIntroComplete = "_isExerciseIntroComplete";
+
+  Future<bool> setExerciseIntro(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("_isExerciseIntroComplete");
+    print(value);
+    return (prefs.setString(_isExerciseIntroComplete, value));
+  }
+
+  Future<String> getExerciseIntro() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var value = prefs.getString(_isExerciseIntroComplete) ?? '';
+
+    print("GET _isExerciseIntroComplete");
+    print(value);
+    return value;
+  }
+
+  Future<bool> set_TimeFormatUser(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("_timeFormat");
+    print(value);
+    return (prefs.setString(_timeFormat, value));
+  }
+
+  Future<bool> get_TimeFormatUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var value = prefs.getString(_timeFormat) ?? '';
+
+    print("GET _MobileNumberOfUser");
+    print(value);
+    return value == "true";
+  }
+
   Future<bool> set_MobileNumberOfUser(String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     print("set_MobileNumberOfUser");
@@ -156,15 +194,15 @@ class LocalStore {
   Future<bool> removeAll() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    prefs.remove(_userlat);
-    prefs.remove(_userlong);
-    prefs.remove(_useraddress);
-    prefs.remove(_userCity);
-    prefs.remove(_userCountry);
-    prefs.remove(_userPincode);
-    prefs.remove(_userState);
-
-    return prefs.remove(_userState);
+    prefs.remove(_age);
+    prefs.remove(_gender);
+    prefs.remove(_MobileNumberOfUser);
+    //prefs.remove(_fcmToken);
+    prefs.remove(_token);
+    prefs.remove(_login_type);
+    prefs.remove(_gender);
+    prefs.remove(_timeFormat);
+    return prefs.remove(_height);
   }
 
   Future<bool> setLat(lat, long) async {
@@ -225,6 +263,38 @@ class LocalStore {
     return value;
   }
 
+  Future<bool> setDOB(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("_dob");
+    print(value);
+    return (prefs.setString(_dob, value));
+  }
+
+  Future<String> getDOB() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var value = prefs.getString(_dob) ?? '';
+
+    print("GET _dob");
+    print(value);
+    return value;
+  }
+
+  Future<bool> setLoginType(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("setLoginType");
+    print(value);
+    return (prefs.setString(_login_type, value));
+  }
+
+  Future<String> getLoginType() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var value = prefs.getString(_login_type) ?? '';
+
+    print("GET setLoginType");
+    print(value);
+    return value;
+  }
+
   Future<bool> setWeightOfUser(String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     print("set_weight");
@@ -237,6 +307,38 @@ class LocalStore {
     var value = prefs.getString(_weight) ?? '';
 
     print("GET _weight");
+    print(value);
+    return value;
+  }
+
+  Future<bool> setHeightOfUser(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("setHeightOfUser");
+    print(value);
+    return (prefs.setString(_height, value));
+  }
+
+  Future<String> getHeightOfUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var value = prefs.getString(_height) ?? '';
+
+    print("GET HeightOfUser");
+    print(value);
+    return value;
+  }
+
+  Future<bool> setGenderOfUser(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("_gender");
+    print(value);
+    return (prefs.setString(_gender, value));
+  }
+
+  Future<String> getGenderOfUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var value = prefs.getString(_gender) ?? '';
+
+    print("GET _gender");
     print(value);
     return value;
   }

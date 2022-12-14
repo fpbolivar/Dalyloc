@@ -60,6 +60,7 @@ class LocalString {
   static const lblResend = "Resend code?";
   static const lblSignIn = "Sign In";
   static const lblDontHaveAccnt = "You don’t have an account ";
+  static const lblHaveAccnt = "Aready have an account ";
   static const lblSignUp = "SignUp";
 
   static const lblVerify = "Verify";
@@ -104,40 +105,40 @@ class LocalString {
   static const lblOTPVerifyDescription =
       "Please enter your verification code for verify your mobile number";
   static const lblotpTFHint = "OTP Code";
-  static const lblCreateNewPasswordNavTitle = "Create new\nPassword?";
+  static const lblCreateNewPasswordNavTitle = "Create new Password";
   static const lblCreateNewPasswordDescription =
-      "Your new password must be differnet from previous used passwords.";
+      "Your new password must be different from previous used passwords.";
   static const lblSettingNavTitle = "Settings";
   static const lblBizSettingNavTitle = "Business Settings";
 
   static const lblDevSettingNavTitle = "Prayer Settings"; //PLACEHOLDER
-  static const plcMobileNo = "Mobile No";
-  static const plcEnterMobileNo = "Enter Mobile No";
-  static const plcPassword = "Passsword";
-  static const plcCurrentPassword = "Current Passsword";
+  static const plcMobileNo = "Mobile No *";
+  static const plcEnterMobileNo = "Enter Mobile No.";
+  static const plcPassword = "Passsword *";
+  static const plcCurrentPassword = "Current Passsword *";
 
-  static const plcOTP = "Six digits OTP Code";
+  static const plcOTP = "OTP Code";
   static const plcAddress = "Address";
-  static const plcCNFPassword = "Confirm Passsword";
+  static const plcCNFPassword = "Confirm Passsword*";
   static const plcLongLat = "Longitude/Latitude";
-  static const plcEmail = "Email";
-  static const plcName = "Name";
+  static const plcEmail = "Email ";
+  static const plcName = "Name *";
   static const plcEnterTitle = "Enter title ";
   static const plcNeedToAddMoreNotes = "Need to add more notes";
   static const plcBusinessEmail = "Business Email";
   static const plcBusinessName = "Business Name";
 
   static const plcServiceName = "Service Name";
-  static const plcServicePrice = "Business Price";
-  static const plcDuration = "Duration";
-
+  static const plcServicePrice = "Service Price";
+  static const plcDuration = "Service Duration";
+  static const plcDeposit = " Service Deposit";
   //MESSAGES
   static const msgEmail = "Enter email";
   static const msgTaskName = "Enter Task Name";
   static const msgInValidEmail = "Invalid email format";
   static const msgNotes = "Enter Notes";
   static const msgSessionExpired = "Session expired";
-  static const msgUpdateTask = "Successfully,Task has been Update.";
+  static const msgUpdateTask = "Successfully,Task has been Updated.";
   static const msgCreatedTask = "Successfully,Task has been created.";
   static const msgSelectTime = "Select Time";
   static const msgSelectDate = "Select Date";

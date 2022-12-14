@@ -6,7 +6,8 @@ import '../../../../utils/exportWidgets.dart';
 import '../../../userProfile/userProfile.dart';
 
 class LoginApi {
-  void userLogin({required String mobileNumber, required password}) async {
+  void userLogin(
+      {required String mobileNumber, required password, required code}) async {
     print(mobileNumber);
     if (mobileNumber.toString().isEmpty) {
       showAlert("Enter Phone No.");
@@ -27,9 +28,16 @@ class LoginApi {
       return;
     }
     waitDialog();
-
+    var deviceToken = await LocalStore().getFCMToken();
     try {
-      var param = {"phone_no": mobileNumber, "password": password};
+      var param = {
+        "phone_no": mobileNumber,
+        "password": password,
+        "country_code": code,
+        "device_token": deviceToken
+      };
+      print(param);
+      print(HttpUrls.WS_USERLOGIN);
       Response response =
           await post(Uri.parse(HttpUrls.WS_USERLOGIN), body: param);
 
@@ -49,6 +57,7 @@ class LoginApi {
         await LocalStore().set_MobileNumberOfUser(mobile);
         await LocalStore().set_nameofuser(name);
         await LocalStore().setToken(token);
+        await LocalStore().setLoginType(data["details"]['login_type']);
         Routes.pushSimpleAndReplaced(
             context: Constant.navigatorKey.currentState!.overlay!.context,
             child: Routes.setScheduleScreen());

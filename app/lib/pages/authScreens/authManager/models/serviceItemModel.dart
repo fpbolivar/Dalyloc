@@ -8,7 +8,7 @@ class ServiceItemDataModel {
   String? service_time;
   String? service_online_booking;
   String? is_deleted;
-
+  String? deposit_percentage;
   int? id;
   ServiceItemDataModel({
     this.isSelected,
@@ -16,6 +16,7 @@ class ServiceItemDataModel {
     this.business_id,
     this.service_name,
     this.service_price,
+    this.deposit_percentage,
     this.service_time,
     this.service_online_booking,
     this.is_deleted,
@@ -28,6 +29,9 @@ class ServiceItemDataModel {
       user_id: json['user_id'].toString(),
       id: json['id'] ?? 0,
       business_id: json['business_id'].toString(),
+      deposit_percentage: json['deposit_percentage'].toString() == "null"
+          ? "0"
+          : json['deposit_percentage'].toString(),
       service_name: json['service_name'].toString(),
       service_price: json['service_price'].toString(),
       service_time: json['service_time'].toString(),

@@ -59,7 +59,7 @@ class PlanItemView extends StatelessWidget {
         Row(
           children: [
             Text(
-              "${itemData.planList?.first.title} Plan",
+              "${itemData.planList?.first.title}",
               style: const TextStyle(
                   fontSize: 18,
                   color: Colors.black,

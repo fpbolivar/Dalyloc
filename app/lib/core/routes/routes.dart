@@ -1,4 +1,6 @@
 import 'package:daly_doc/core/constant/constants.dart';
+import 'package:daly_doc/pages/excercisePlan/excercisePlanScreen.dart';
+import 'package:daly_doc/pages/excercisePlan/exeercisePlanMainScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import '../../pages/pagesGetStarted/introduction_animation_screen.dart';
@@ -107,6 +109,33 @@ class Routes {
     // });
   }
 
+  static gotoExerciseFlow({
+    required BuildContext context,
+  }) async {
+    var value = await LocalStore().getExerciseIntro();
+    Widget child = Container();
+    if (value == '') {
+      child = ExcercisePlanScreen();
+    } else {
+      child = ExcercisePlanMainScreen();
+    }
+    Navigator.push(
+      context,
+      CupertinoPageRoute(
+          builder: (context) => WillPopScope(
+                child: child,
+                onWillPop: () async {
+                  if (Navigator.of(context).userGestureInProgress) {
+                    return false;
+                  } else {
+                    return true;
+                  }
+                },
+              ),
+          settings: RouteSettings(name: child.runtimeType.toString())),
+    );
+  }
+
   static pushSimpleAndReplaced(
       {required BuildContext context,
       required Widget child,
@@ -122,5 +151,11 @@ class Routes {
     Routes.pushSimpleAndReplaced(
         context: Constant.navigatorKey.currentState!.context,
         child: IntroductionAnimationScreen());
+  }
+
+  static gotoHomeScreen() async {
+    Routes.pushSimpleAndReplaced(
+        context: Constant.navigatorKey.currentState!.context,
+        child: ScheduleCalendarScreen());
   }
 }

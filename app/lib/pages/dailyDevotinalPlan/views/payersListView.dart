@@ -71,7 +71,7 @@ class _PrayerViewScreenState extends State<PrayerView> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: CustomButton.regular(
-            title: "Add",
+            title: "Add New Prayer",
             onTap: () {
               Routes.pushSimple(
                   context: context,

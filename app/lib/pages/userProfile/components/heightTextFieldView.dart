@@ -10,7 +10,10 @@ import '../../../utils/exportPackages.dart';
 class HeightTextFieldView extends StatelessWidget {
   String leftTitle;
   Widget? child;
-  HeightTextFieldView({super.key, this.leftTitle = "", this.child});
+  Function(String)? onChange;
+  var text = "";
+  HeightTextFieldView(
+      {super.key, this.leftTitle = "", this.child, this.onChange});
 
   @override
   Widget build(BuildContext context) {
@@ -46,21 +49,25 @@ class HeightTextFieldView extends StatelessWidget {
                       child: Row(children: [
                         Expanded(
                             child: writeReview(
-                          placehoder: "Feet",
+                          placehoder: "cm",
+                          keyboardType: TextInputType.number,
                           onChanged: (p0) async {
-                            await LocalStore().setfeet(p0);
+                            text = p0;
+                            //await LocalStore().setfeet(p0);
                           },
                         )),
-                        const SizedBox(
-                          width: 50,
-                        ),
-                        Expanded(
-                            child: writeReview(
-                          placehoder: "Inches",
-                          onChanged: (p1) async {
-                            await LocalStore().setInch(p1);
-                          },
-                        ))
+                        // const SizedBox(
+                        //   width: 50,
+                        // ),
+                        // Expanded(
+                        //     child: writeReview(
+                        //   placehoder: "Inches",
+                        //   maxLength: 3,
+                        //   keyboardType: TextInputType.phone,
+                        //   onChanged: (p1) async {
+                        //     await LocalStore().setInch(p1);
+                        //   },
+                        // ))
                       ]),
                     ),
                   ),
@@ -77,6 +84,7 @@ class HeightTextFieldView extends StatelessWidget {
                         radius: 4,
                         fontSize: 10,
                         onTap: () {
+                          onChange!(text);
                           Navigator.pop(context);
                         },
                       ),
@@ -101,7 +109,11 @@ class HeightTextFieldView extends StatelessWidget {
   }
 
   Widget writeReview(
-      {textController, placehoder = "", Function(String)? onChanged}) {
+      {textController,
+      placehoder = "",
+      Function(String)? onChanged,
+      keyboardType = TextInputType.text,
+      maxLength = 100}) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
@@ -122,10 +134,11 @@ class HeightTextFieldView extends StatelessWidget {
           style: TextStyle(fontSize: 25, color: AppColor.halfGrayTextColor),
           minLines: 1,
           maxLines: 1,
+          maxLength: maxLength,
           autocorrect: false,
           controller: textController,
           onChanged: onChanged,
-          keyboardType: TextInputType.text,
+          keyboardType: keyboardType,
           decoration: InputDecoration(
             hintText: placehoder,
             border: InputBorder.none,

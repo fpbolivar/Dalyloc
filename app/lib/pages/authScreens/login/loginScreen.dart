@@ -1,3 +1,6 @@
+import 'package:daly_doc/core/localStore/localStore.dart';
+import 'package:daly_doc/widgets/customTF/phoneTF.dart';
+
 import '../../../socialLoginManager/socialLoginManager.dart';
 import '../../../utils/exportPackages.dart';
 import '../../../utils/exportWidgets.dart';
@@ -16,6 +19,17 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController mobileTFC = TextEditingController();
   TextEditingController passwordTFC = TextEditingController();
+  String countryCode = "";
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      //   getFCMToken();
+      await LocalStore().removeAll();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,6 +42,12 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       )),
     );
+  }
+
+  getFCMToken() async {
+    String token = await LocalStore().getFCMToken();
+    mobileTFC.text = token;
+    setState(() {});
   }
 
 //METHID : -   bodyDesign
@@ -63,10 +83,14 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(
                 height: 40,
               ),
-              CustomTF(
+              PhoneTF(
                 controllr: mobileTFC,
                 keyBoardType: TextInputType.phone,
                 placeholder: LocalString.plcMobileNo,
+                onCountryCodeChange: (code) {
+                  countryCode = code;
+                  print("Choose $countryCode}");
+                },
               ),
               const SizedBox(
                 height: 20,
@@ -88,9 +112,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 title: LocalString.lblSignIn,
                 onTap: () {
                   LoginApi().userLogin(
-                    mobileNumber: mobileTFC.text,
-                    password: passwordTFC.text,
-                  );
+                      mobileNumber: mobileTFC.text,
+                      password: passwordTFC.text,
+                      code: countryCode);
                 },
               ),
               const SizedBox(

@@ -1,5 +1,6 @@
 import 'package:daly_doc/core/LocalString/localString.dart';
 import 'package:daly_doc/core/constant/constants.dart';
+import 'package:daly_doc/core/helpersUtil/shareItemToExternalAppHelper.dart';
 import 'package:daly_doc/pages/notificationScreen/model/rowItemModel.dart';
 import 'package:daly_doc/pages/subscriptionPlansScreen/model/PlanInfoModel.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/createTaskView.dart';
@@ -39,132 +40,141 @@ class ViewTaskDetail extends StatelessWidget {
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Stack(
                 children: [
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    'Name',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-                  ),
-                  Text(
-                    item.taskName.toString() == ""
-                        ? "No Name"
-                        : item.taskName.toString(),
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    'Note',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-                  ),
-                  Text(item.note.toString()),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  DashedLine(
-                    height: 0.5,
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    'Sub Task',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  if (item.subTaskslist!.isEmpty)
-                    Column(
-                      children: [
-                        Text(
-                          'Empty Subtask',
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w300),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                      ],
-                    ),
-                  DashedLine(
-                    height: 0.5,
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  ListTileTheme(
-                      //contentPadding: EdgeInsets.fromLTRB(14.0, 0.0, 24.0, 0.0),
-                      child: ListView.separated(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (cxt, index) {
-                      SubtaskModel itemInfo = item.subTaskslist![index];
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 20,
-                            height: 20,
-                            child: Checkbox(
-                                side: MaterialStateBorderSide.resolveWith(
-                                  (states) => BorderSide(
-                                      width: 1.0, color: Colors.green),
-                                ),
-                                checkColor: Colors.green[900],
-                                activeColor: Colors.transparent,
-                                value: itemInfo
-                                    .isCompleted, //data[index].isSelected,
-                                onChanged: (value) {
-                                  print(value);
-                                  setState(() {
-                                    itemInfo.isCompleted = value;
-                                  });
-
-                                  TaskManager()
-                                      .completeMarkSubtaskTaskData(item);
-                                }),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  itemInfo.description ?? "",
-                                  textAlign: TextAlign.left,
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      );
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return SizedBox(
-                        height: 10,
-                      );
-                    },
-                    itemCount: item.subTaskslist!.length,
-                  )
-
-                      // ListBody(
-                      //   children: provider.serviceByCat.map(_buildItem).toList(),
-                      // ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 5,
                       ),
+                      Text(
+                        'Name',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        item.taskName.toString() == ""
+                            ? "No Name"
+                            : item.taskName.toString(),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w400),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        'Note',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
+                      ),
+                      Text(item.note.toString()),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      DashedLine(
+                        height: 0.5,
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        'Sub Task',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      if (item.subTaskslist!.isEmpty)
+                        Column(
+                          children: [
+                            Text(
+                              'Empty Subtask',
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.w300),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                          ],
+                        ),
+                      DashedLine(
+                        height: 0.5,
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      ListTileTheme(
+                          //contentPadding: EdgeInsets.fromLTRB(14.0, 0.0, 24.0, 0.0),
+                          child: ListView.separated(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (cxt, index) {
+                          SubtaskModel itemInfo = item.subTaskslist![index];
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 20,
+                                height: 20,
+                                child: Checkbox(
+                                    side: MaterialStateBorderSide.resolveWith(
+                                      (states) => BorderSide(
+                                          width: 1.0, color: Colors.green),
+                                    ),
+                                    checkColor: Colors.green[900],
+                                    activeColor: Colors.transparent,
+                                    value: itemInfo
+                                        .isCompleted, //data[index].isSelected,
+                                    onChanged: (value) {
+                                      print(value);
+                                      setState(() {
+                                        itemInfo.isCompleted = value;
+                                      });
+
+                                      TaskManager()
+                                          .completeMarkSubtaskTaskData(item);
+                                    }),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      itemInfo.description ?? "",
+                                      textAlign: TextAlign.left,
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return SizedBox(
+                            height: 10,
+                          );
+                        },
+                        itemCount: item.subTaskslist!.length,
+                      )
+
+                          // ListBody(
+                          //   children: provider.serviceByCat.map(_buildItem).toList(),
+                          // ),
+                          ),
+                    ],
+                  ),
+                  // Positioned(top: 3, right: 4, child: Icon(Icons.share))
                 ],
               ),
             ),
@@ -172,7 +182,7 @@ class ViewTaskDetail extends StatelessWidget {
         ),
         actions: <Widget>[
           Container(
-            height: 100,
+            height: 80,
             //color: Colors.red,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -210,6 +220,16 @@ class ViewTaskDetail extends StatelessWidget {
                       context: context,
                       child: CreateTaskView(isUpdate: true, item: item));
                 }, color: Colors.cyan.withOpacity(0.3))),
+              ],
+            ),
+          ),
+          Container(
+            height: 80,
+            //color: Colors.red,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
                 Expanded(
                   child: SquareOptionWidget(context,
                       iconName: "ic_complete",
@@ -230,7 +250,13 @@ class ViewTaskDetail extends StatelessWidget {
                       color: item.isCompleted == "0"
                           ? Colors.green.withOpacity(0.3)
                           : Colors.grey.withOpacity(0.3)),
-                )
+                ),
+                Expanded(
+                    child: SquareOptionWidget(context,
+                        iconName: "ic_shareArrow", title: "Share", onTap: () {
+                  Navigator.of(context).pop();
+                  shareTask(item);
+                }, color: Colors.purple.withOpacity(0.3))),
               ],
             ),
           ),
@@ -279,11 +305,11 @@ class ViewTaskDetail extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            height: 5,
+            height: 10,
           ),
           Container(
-            width: 30,
-            height: 30,
+            width: 25,
+            height: 25,
             child: Image.asset(
               "assets/icons/${iconName}.png",
               width: 25,
@@ -291,12 +317,12 @@ class ViewTaskDetail extends StatelessWidget {
             ),
           ),
           const SizedBox(
-            height: 10,
+            height: 5,
           ),
           Text(
             title,
             style: const TextStyle(
-                fontSize: 10, color: Colors.black, fontWeight: FontWeight.w500),
+                fontSize: 12, color: Colors.black, fontWeight: FontWeight.w500),
           ),
           // ignore: prefer_const_constructors
           SizedBox(

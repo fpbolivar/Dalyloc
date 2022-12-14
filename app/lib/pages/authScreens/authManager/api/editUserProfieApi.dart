@@ -7,16 +7,16 @@ import '../../../../core/LocalString/localString.dart';
 import '../../../../core/apisUtils/internetCheck.dart';
 
 class EditUserDataApi {
-  EdituserData({
-    String dob = "",
-    String token = "",
-    String name = "",
-    String age = "",
-    String feet = "",
-    String inch = "",
-    String weight = "",
-    String gender = "",
-  }) async {
+  EdituserData(
+      {String dob = "",
+      String token = "",
+      String name = "",
+      String age = "",
+      String height = "",
+      String inch = "",
+      String weight = "",
+      String gender = "",
+      onSuccess}) async {
     if (await internetCheck() == false) {
       showAlert(LocalString.internetNot);
 
@@ -35,8 +35,7 @@ class EditUserDataApi {
       "age": age,
       "date_of_birth": dob,
       "gender": gender,
-      "height_feet": feet,
-      "height_inch": inch,
+      "height": height,
       "weight": weight
     });
     request.headers.addAll(headers2);
@@ -45,7 +44,11 @@ class EditUserDataApi {
 
     if (response.statusCode == 200) {
       dismissWaitDialog();
-      showAlert("Profile is edited Successfully");
+      if (onSuccess != null) {
+        onSuccess();
+      } else {
+        showAlert("Profile is updated Successfully");
+      }
 
       List data = [];
 

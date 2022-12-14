@@ -5,17 +5,25 @@ import '../carousel/carousel_slider.dart';
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   String title;
   bool icon;
+  bool? needHomeIcon;
   bool trailingIcon;
+  bool needLoader;
   Icon? trailingIconData;
+  double fontSize = 20;
+  MainAxisAlignment mainAxisAlignment;
   Function()? onTap;
   Function()? trailingIconOnTap;
   CustomAppBar(
       {super.key,
+      this.needLoader = false,
+      this.needHomeIcon = true,
       this.trailingIconData,
       this.trailingIconOnTap,
+      this.fontSize = 23,
       this.title = "",
       this.icon = true,
       this.onTap,
+      this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
       this.trailingIcon = false});
 
   @override
@@ -23,7 +31,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return SafeArea(
       child: Container(
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: mainAxisAlignment,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             icon == true
@@ -48,14 +56,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 0),
-                        child: Text(
-                          title,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 23,
-                              color: AppColor.textBlackColor),
-                        ),
+                        child: needLoader
+                            ? SizedBox(
+                                width: 15, height: 15, child: loaderList())
+                            : Text(
+                                title,
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: fontSize,
+                                    color: AppColor.textBlackColor),
+                              ),
                       ),
                     ],
                   )
@@ -68,11 +79,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           fontWeight: FontWeight.w700,
-                          fontSize: 23,
+                          fontSize: fontSize,
                           color: AppColor.textBlackColor),
                     ),
                   )
                 : SizedBox(),
+            if (trailingIcon) Spacer(),
             trailingIcon == true
                 ? Padding(
                     padding: const EdgeInsets.only(left: 10),
@@ -84,6 +96,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 : SizedBox(
                     width: 20,
                   ),
+            if (needHomeIcon! && !trailingIcon) Spacer(),
+            if (needHomeIcon!) HomeButton()
           ],
         ),
       ),
@@ -142,8 +156,15 @@ class CustomAppBarWithBackButton extends StatelessWidget
     implements PreferredSizeWidget {
   String title = "";
   bool iconButton;
-  CustomAppBarWithBackButton(
-      {super.key, this.title = "", this.iconButton = true});
+  bool? needHomeIcon;
+  double fontSize = 20;
+  CustomAppBarWithBackButton({
+    super.key,
+    this.title = "",
+    this.fontSize = 20,
+    this.iconButton = true,
+    this.needHomeIcon = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -177,10 +198,12 @@ class CustomAppBarWithBackButton extends StatelessWidget
                 textAlign: TextAlign.left,
                 style: TextStyle(
                     fontWeight: FontWeight.w700,
-                    fontSize: 20,
+                    fontSize: fontSize,
                     color: AppColor.textBlackColor),
               ),
             ),
+            if (needHomeIcon!) Spacer(),
+            if (needHomeIcon!) HomeButton()
           ],
         ),
       ),
@@ -215,15 +238,20 @@ class CustomAppBarPresentCloseButton extends StatelessWidget
   double topPadding = 5;
   double topContainerPadding = 0;
   double topSubPadding = 5;
+  double homeIconTopPadding = 0;
   Color? titleColor;
   Color? subtitleColor;
   Widget? rightWidget;
+  bool? needHomeIcon = true;
+
   CustomAppBarPresentCloseButton(
       {super.key,
       this.title = "",
       this.fontSize = 20,
+      this.homeIconTopPadding = 0,
       this.topContainerPadding = 0,
       this.subfontSize = 25,
+      this.needHomeIcon = true,
       this.topPadding = 5,
       this.needShadow = true,
       this.topSubPadding = 0,
@@ -251,7 +279,7 @@ class CustomAppBarPresentCloseButton extends StatelessWidget
         ),
         padding: const EdgeInsets.only(top: 10, bottom: 10),
         child: Padding(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -299,8 +327,20 @@ class CustomAppBarPresentCloseButton extends StatelessWidget
                   )),
               Spacer(),
               if (rightWidget != null)
-                Container(
-                  child: rightWidget,
+                Row(
+                  children: [
+                    Container(
+                      child: rightWidget,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    if (needHomeIcon!)
+                      Padding(
+                        padding: EdgeInsets.only(top: homeIconTopPadding),
+                        child: HomeButton(),
+                      )
+                  ],
                 )
               // Padding(
               //   padding: const EdgeInsets.only(left: 10, top: 5),
@@ -315,6 +355,16 @@ class CustomAppBarPresentCloseButton extends StatelessWidget
               //     ),
               //   ),
               // ),
+              ,
+              if (rightWidget == null)
+                if (needHomeIcon!)
+                  Padding(
+                    padding: EdgeInsets.only(top: homeIconTopPadding),
+                    child: HomeButton(),
+                  )
+              //   Row(
+              //     children: [Spacer(), HomeButton()],
+              //   )
             ],
           ),
         ),
@@ -338,4 +388,20 @@ class CustomAppBarPresentCloseButton extends StatelessWidget
   // TODO: implement preferredSize
   @override
   Size get preferredSize => const Size.fromHeight(100.0);
+}
+
+Widget HomeButton() {
+  return InkWell(
+    onTap: () {
+      Routes.gotoHomeScreen();
+    },
+    child: Padding(
+      padding: const EdgeInsets.only(right: 20),
+      child: Image.asset(
+        "assets/icons/home.png",
+        width: 25,
+        height: 25,
+      ),
+    ),
+  );
 }

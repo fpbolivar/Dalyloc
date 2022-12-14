@@ -1,31 +1,41 @@
 class UserDetailModel {
-  String? id;
+  int? id;
   String? name;
-  String? age;
+  int? age;
   String? dateOfBirth;
   String? weight;
 
-  String? feet;
+  String? height;
   String? inchse;
-
+  String? gender;
+  String? mobile_no;
+  String? login_type;
+  String? country_code;
   UserDetailModel(
       {this.age,
       this.dateOfBirth,
+      this.mobile_no,
+      this.login_type,
       this.id,
-      this.feet,
+      this.height,
       this.inchse,
+      this.gender,
       this.name,
+      this.country_code,
       this.weight});
 
   factory UserDetailModel.fromJson(Map<String, dynamic> json) {
     return UserDetailModel(
-      age: json['category_id'].toString(),
-      id: json['service_id'].toString(),
-      name: json['description'].toString(),
-      dateOfBirth: json['category_type'].toString(),
-      feet: json['tag'].toString(),
-      inchse: json['type'].toString(),
-      weight: json['id'].toString(),
+      age: json['age'] ?? "",
+      id: json['id'] ?? "",
+      name: json['name'] ?? "",
+      gender: json['gender'] ?? "",
+      mobile_no: json['phone_no'] ?? "",
+      dateOfBirth: json['date_of_birth'] ?? "",
+      country_code: json['country_code'] ?? "",
+      height: json['height'] ?? "",
+      weight: json['weight'] ?? "",
+      login_type: json['login_type'] ?? "manual",
     );
   }
 }

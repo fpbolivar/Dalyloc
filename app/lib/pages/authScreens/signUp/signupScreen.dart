@@ -1,3 +1,5 @@
+import 'package:daly_doc/widgets/customTF/phoneTF.dart';
+
 import '../../../utils/exportPackages.dart';
 import '../../../utils/exportWidgets.dart';
 
@@ -14,13 +16,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController passwordTFC = TextEditingController();
   TextEditingController cnfPasswordTFC = TextEditingController();
   TextEditingController nameTFC = TextEditingController();
+  String countryCode = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.newBgcolor,
       appBar: CustomAppBar(
+        needHomeIcon: false,
         title: LocalString.lblCreateAnAccount,
       ),
+      bottomNavigationBar: SafeArea(child: haveAccoutWidget()),
       body: BackgroundCurveView(
           child: SafeArea(
         child: Padding(
@@ -60,10 +65,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
               const SizedBox(
                 height: 20,
               ),
-              CustomTF(
+
+              PhoneTF(
                 controllr: mobileTFC,
-                placeholder: LocalString.plcMobileNo,
                 keyBoardType: TextInputType.phone,
+                placeholder: LocalString.plcMobileNo,
+                onCountryCodeChange: (code) {
+                  countryCode = code;
+                  print("Choose $countryCode}");
+                },
               ),
               const SizedBox(
                 height: 20,
@@ -92,6 +102,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   // Routes.pushSimple(context: context, child: OtpVerifyScreen());
                   RegisterApis().userRegister(
                       mobileNumber: mobileTFC.text,
+                      country_code: countryCode,
                       name: nameTFC.text,
                       password: passwordTFC.text,
                       confirmPassword: cnfPasswordTFC.text);
@@ -101,6 +112,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 height: 100,
               ),
             ]),
+      ),
+    );
+  }
+
+  haveAccoutWidget() {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).pop();
+      },
+      child: Container(
+        height: 44,
+        child: Center(
+          child: RichText(
+            text: TextSpan(
+              text: LocalString.lblHaveAccnt,
+              style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  color: AppColor.borderColor,
+                  fontSize: 15),
+              children: <TextSpan>[
+                TextSpan(
+                    text: LocalString.lblSignIn,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.textBlackColor,
+                    )),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

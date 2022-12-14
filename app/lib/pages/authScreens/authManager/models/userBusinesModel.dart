@@ -1,4 +1,6 @@
+import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/pages/authScreens/authManager/models/serviceItemModel.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
 import 'package:daly_doc/utils/exportPackages.dart';
 
 import 'businessCatModel.dart';
@@ -58,13 +60,23 @@ class UserBusinessModel {
       data.forEach(
         (element) {
           print(index);
+          var endTime = element['close_time'].toString();
+          var stTime = element['open_time'].toString();
+          endTime = TaskManager().generateLocalTime(time: endTime);
+          stTime = TaskManager().generateLocalTime(time: stTime);
+          if (!Constant.HRS24FORMAT) {
+            endTime = TaskManager().timeFromStr12Hrs(endTime);
+            stTime = TaskManager().timeFromStr12Hrs(stTime);
+          }
+          print("endTime T $endTime");
+          print("stTime T $stTime");
           tempTiminglist.add(WeekDaysModel(
             value: index.toString(),
             name: element['day'].toString(),
             userid: element['user_id'].toString(),
             id: element['id'].toString(),
-            endtime: PickUpDateTime(timeStr: element['close_time'].toString()),
-            startime: PickUpDateTime(timeStr: element['open_time'].toString()),
+            endtime: PickUpDateTime(timeStr: endTime),
+            startime: PickUpDateTime(timeStr: stTime),
             selected: element['isClosed'] == "0"
                 ? true
                 : element['isClosed'] == "1"

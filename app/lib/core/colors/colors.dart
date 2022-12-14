@@ -33,10 +33,13 @@ class AppColor {
   static var taskItemBgColor = const Color(0xFFDFECF4);
   static var prayerItemBgColor = const Color(0xFFD1E5C8);
   static var appointmentItemBgColor = const Color(0xFFFCF5DD);
+  static var exerciseItemBgColor = const Color(0xFFccc4fc);
   static var newBgcolor = const Color(0xFFEEF9FF);
   static var dailyLblcolor = const Color.fromARGB(255, 58, 225, 91);
   static var textWhiteColor = const Color(0xFFffffff);
   static var brownYearColor = const Color(0xFFAA6C3D);
   static var curveViewBgColor = const Color.fromARGB(164, 12, 4, 123);
   static var textBG = const Color(0xFFEEEEEE);
+  static var textSubtitle = const Color(0xFF8C8CA1);
+  static var bgGenderGrayCircle = const Color(0xFFD9D9D9);
 }

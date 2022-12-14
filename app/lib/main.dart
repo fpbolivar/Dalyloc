@@ -6,22 +6,16 @@ import 'package:daly_doc/core/colors/colors.dart';
 import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/core/stripe/stripeHelper.dart';
-import 'package:daly_doc/firebase/firebaseMessagingHelper.dart';
-import 'package:daly_doc/pages/excercisePlan/excercisePlanScreen.dart';
+
 import 'package:daly_doc/pages/pagesGetStarted/introduction_animation_screen.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/exportPackages.dart';
-import 'core/Sql/DBIntializer.dart';
 import 'firebase/firebase_options.dart';
-import 'pages/mealPlan/manager/mealcontroller.dart';
-import 'pages/onboardingScreen.dart';
-import 'package:splash_screen_view/SplashScreenView.dart';
 
-import 'pages/paymentPages/addCardView.dart';
-import 'widgets/floatingActionButton/flutter_speed_dial.dart';
+import 'package:splash_screen_view/SplashScreenView.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -83,8 +77,9 @@ class _DalyDocAppState extends State<DalyDocApp> {
 
   late Stream<String> _tokenStream;
 
-  void setToken(String? token) {
-    print('FCM Token: $token');
+  void setToken(String? token) async {
+    print('FCM Token2: $token');
+    await LocalStore().setFCMToken(token ?? "");
   }
 
   @override
@@ -107,6 +102,11 @@ class _DalyDocAppState extends State<DalyDocApp> {
           var settingProvider = Constant.settingProvider;
 
           return settingProvider;
+        }),
+        ChangeNotifierProvider(create: (_) {
+          var videoProvider = Constant.videoProvider;
+
+          return videoProvider;
         }),
 
         // ChangeNotifierProvider(create: (_) => TaskManager()),

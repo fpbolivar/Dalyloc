@@ -59,6 +59,72 @@ alertTimePicker(BuildContext context,
   // onSelected(picked);
 }
 
+Future<TimeOfDay?> timePickerAlert(context) async {
+  return await showTimePicker(
+    context: context,
+    initialEntryMode: TimePickerEntryMode.dial,
+    builder: (context, child) {
+      return Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: ColorScheme.light(
+            primary: AppColor.theme, // header background color
+            onPrimary: Colors.white, // header text color
+            onSurface: Colors.black, // body text color
+          ),
+          // textButtonTheme: TextButtonThemeData(
+          //   style: TextButton.styleFrom(
+          //     primary: Colors.red, // button text color
+          //   ),
+          // ),
+        ),
+        child: MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(alwaysUse24HourFormat: Constant.HRS24FORMAT),
+            child: child!),
+      );
+    },
+    initialTime: TimeOfDay.now(),
+  );
+}
+// alertCustomTimePicker(BuildContext context,
+//     {TimeOfDay? initialTime,
+//     onSelected,
+//     heading = "Select time",
+//     onClose}) async {
+//   print("_selectDate");
+//   var now = DateTime.now();
+//   var today = new DateTime(now.year, now.month, now.day, now.hour, 0);
+//   showCalendarModalSheet() {
+//     return showModalBottomSheet<void>(
+//       context: context,
+//       shape: const RoundedRectangleBorder(
+//         borderRadius: BorderRadius.vertical(
+//           top: Radius.circular(20),
+//         ),
+//       ),
+//       clipBehavior: Clip.antiAliasWithSaveLayer,
+//       builder: (BuildContext context) {
+//         return Container(
+//             color: Colors.transparent,
+//             height: 350,
+//             child:    },
+//     );
+//   }
+//DateTime selectedDate = DateTime.now();
+// final TimeOfDay picked = await showTimePicker(
+//   initialEntryMode: TimePickerEntryMode.dial,
+//   context: context,
+//   initialTime: initialTime,
+//   builder: (BuildContext context, Widget child) {
+//     return MediaQuery(
+//       data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+//       child: child,
+//     );
+//   },
+// );
+
+// onSelected(picked);
+
 TimePicker(BuildContext context,
     {TimeOfDay? initialTime,
     onSelected,

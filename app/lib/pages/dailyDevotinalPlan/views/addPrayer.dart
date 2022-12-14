@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/pages/dailyDevotinalPlan/Apis/PrayerApis.dart';
+import 'package:daly_doc/pages/dailyDevotinalPlan/models/prayerCategoryModel.dart';
 import 'package:daly_doc/widgets/ToastBar/toastMessage.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:url_launcher/link.dart';
@@ -20,10 +21,26 @@ class AddNewPrayerView extends StatefulWidget {
 class _AddNewPrayerViewScreenState extends State<AddNewPrayerView> {
   TextEditingController titleTFC = TextEditingController();
   TextEditingController noteTFC = TextEditingController();
+  PrayerCategoryModel? _selected;
+  List<PrayerCategoryModel> catData = [];
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getCategory();
+    });
+  }
+
+  getCategory() async {
+    List<PrayerCategoryModel>? list = await PrayerApis().getPrayerCategory();
+    if (list == null) {
+      catData = [];
+    } else {
+      catData = list;
+    }
+    setState(() {});
   }
 
   @override
@@ -55,8 +72,8 @@ class _AddNewPrayerViewScreenState extends State<AddNewPrayerView> {
   }
 
   validationForm() {
-    if (titleTFC.text.isEmpty) {
-      ToastMessage.showErrorwMessage(msg: "Enter title.");
+    if (_selected == null) {
+      ToastMessage.showErrorwMessage(msg: "Select category.");
       return;
     }
     if (noteTFC.text.isEmpty) {
@@ -65,7 +82,7 @@ class _AddNewPrayerViewScreenState extends State<AddNewPrayerView> {
     }
     PrayerApis().createPrayer(
         note: noteTFC.text,
-        title: titleTFC.text,
+        id: _selected == null ? "" : _selected!.id,
         onSuccess: () {
           Navigator.pop(context);
         });
@@ -77,10 +94,11 @@ class _AddNewPrayerViewScreenState extends State<AddNewPrayerView> {
       child: Column(
         children: [
           SizedBox(height: 20),
-          CustomTF(
-            controllr: titleTFC,
-            placeholder: LocalString.plcEnterTitle,
-          ),
+          // CustomTF(
+          //   controllr: titleTFC,
+          //   placeholder: LocalString.plcEnterTitle,
+          // ),
+          dropDown(),
           SizedBox(height: 20),
           CustomTF(
             controllr: noteTFC,
@@ -89,6 +107,63 @@ class _AddNewPrayerViewScreenState extends State<AddNewPrayerView> {
             height: 100,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget dropDown() {
+    return Container(
+      padding: EdgeInsets.all(5),
+      height: 55,
+      decoration: BoxDecoration(
+          border: Border.all(width: 1, color: AppColor.textBlackColor
+              //                   <--- border width here
+              ),
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.transparent),
+      child: DropdownButtonHideUnderline(
+        child: ButtonTheme(
+          //alignedDropdown: true,
+          // alignedDropdown: true,
+          child: DropdownButton<PrayerCategoryModel>(
+            hint: Padding(
+              padding: const EdgeInsets.only(left: 15),
+              child: new Text(
+                "Category",
+                style: TextStyle(fontSize: 15),
+              ),
+            ),
+            value: _selected,
+            // underline: Container(
+            //   height: 2,
+            //   color: Colors.white,
+            // ),
+            isExpanded: true,
+            onChanged: (PrayerCategoryModel? newValue) {
+              setState(() {
+                _selected = newValue;
+              });
+            },
+            items: catData.map((PrayerCategoryModel map) {
+              return new DropdownMenuItem<PrayerCategoryModel>(
+                value: map,
+                // value: _mySelection,
+                child: Container(
+                  child: Container(
+                      padding: EdgeInsets.only(left: 10),
+                      // width: MediaQuery.of(context).size.width - 10,
+                      child: Text(
+                        map.name!,
+                        //   overflow: TextOverflow.visible,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 14),
+                        maxLines: 2,
+                      )),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
       ),
     );
   }

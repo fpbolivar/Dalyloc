@@ -6,6 +6,7 @@ import 'package:daly_doc/pages/mealPlan/manager/mealEnum.dart';
 import 'package:daly_doc/pages/mealPlan/model/foodDietVarientModel.dart';
 import 'package:daly_doc/pages/mealPlan/model/foodTagModel.dart';
 import 'package:daly_doc/pages/mealPlan/model/mealCategoryModel.dart';
+import 'package:daly_doc/pages/mealPlan/model/mealSettingModel.dart';
 import 'package:daly_doc/pages/mealPlan/model/receipeDetailModel.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/manager/ApisManager/Apis.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
@@ -661,6 +662,100 @@ class MealApis {
       }
     } catch (e) {
       //dismissWaitDialog();
+      print(e.toString());
+      showErrorAlert(e.toString());
+      return null;
+    }
+  }
+
+  Future<MealSettingModel?> getMealSetting() async {
+    var token = await LocalStore().getToken();
+    if (await internetCheck() == false) {
+      showAlert(LocalString.internetNot);
+      return null;
+    }
+    waitDialog();
+
+    var url = HttpUrls.WS_GETMEALSETTING;
+    var header = await HttpUrls.headerData();
+    print(url);
+    try {
+      Response response = await get(Uri.parse(url), headers: header);
+      dismissWaitDialog();
+      var data = jsonDecode(response.body);
+      print('${data}');
+
+      if (data['status'] == true) {
+        var obj = data["data"];
+        return MealSettingModel.fromJson(obj);
+      } else {
+        if (data["auth_code"] != null || token == null) {
+          showAlert(LocalString.msgSessionExpired, onTap: () {
+            Routes.gotoMainScreen();
+          });
+          return null;
+        } else {
+          showAlert(data['message'].toString());
+          return null;
+        }
+      }
+    } catch (e) {
+      dismissWaitDialog();
+      print(e.toString());
+      showErrorAlert(e.toString());
+      return null;
+    }
+  }
+
+  Future<bool?> mealSetting(
+      {isNotificationValue, meal_daily_count, startTime, endTime}) async {
+    var token = await LocalStore().getToken();
+    if (await internetCheck() == false) {
+      showAlert(LocalString.internetNot);
+      return null;
+    }
+    waitDialog();
+
+    var url = HttpUrls.WS_MEALSETTING;
+    var header = await HttpUrls.headerData();
+    print(url);
+    try {
+      var param = {};
+      if (startTime != null && startTime != "") {
+        param["meal_start_time"] = startTime;
+      }
+      if (endTime != null && endTime != "") {
+        param["meal_end_time"] = endTime;
+      }
+      if (meal_daily_count != null) {
+        param["meal_daily_count"] = meal_daily_count;
+      }
+      if (isNotificationValue != null) {
+        param["meal_notify"] = isNotificationValue;
+      }
+      print(param);
+      Response response =
+          await post(Uri.parse(url), body: json.encode(param), headers: header);
+      dismissWaitDialog();
+      var data = jsonDecode(response.body);
+      print('${data}');
+
+      if (data['status'] == true) {
+        showAlert("Meal setting has been updated.");
+        return true;
+      } else {
+        if (data["auth_code"] != null || token == null) {
+          showAlert(LocalString.msgSessionExpired, onTap: () {
+            Routes.gotoMainScreen();
+          });
+          return null;
+        } else {
+          showAlert(data['message'].toString());
+          return null;
+        }
+      }
+    } catch (e) {
+      dismissWaitDialog();
       print(e.toString());
       showErrorAlert(e.toString());
       return null;

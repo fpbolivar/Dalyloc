@@ -30,9 +30,9 @@ class LoginApis extends ChangeNotifier {
     var param = {
       'access_token': accessToken,
       'device_type': Platform.isIOS ? 'ios' : 'android',
-      'device_token': "fcmToken",
+      'device_token': fcmToken == '' ? "No FCM TOKEN" : fcmToken,
       "login_type": type,
-      "device_id": fcmToken == '' ? "No FCM TOKEN" : fcmToken,
+      "device_id": "",
     };
     print(jsonEncode(param));
 
@@ -55,9 +55,12 @@ class LoginApis extends ChangeNotifier {
         var token = data["access_token"];
         var name = data["details"]['name'];
         var mobile = data["details"]['phone_no'];
+        var login_type = data["details"]['login_type'];
         await LocalStore().set_MobileNumberOfUser(mobile.toString());
         await LocalStore().set_nameofuser(name.toString());
         await LocalStore().setToken(token.toString());
+        await LocalStore().setLoginType(login_type.toString());
+
         Routes.pushSimpleAndReplaced(
             context: Constant.navigatorKey.currentState!.overlay!.context,
             child: Routes.setScheduleScreen());

@@ -1,3 +1,4 @@
+import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/bookingLinkScreen.dart';
 import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/timeSlotsAvailabilty.dart';
 import 'package:daly_doc/pages/dailyDevotinalPlan/Apis/PrayerApis.dart';
@@ -67,15 +68,19 @@ class _DevotionalPlanSettingState extends State<DevotionalPlanSetting> {
               var counter = prayerOption[0].counter;
               var stime = prayerOption[1].time;
               var etime = prayerOption[2].time;
+              stime = TaskManager().convertTo24hrs(stime!);
+              etime = TaskManager().convertTo24hrs(etime!);
               var stimeUTC = mgr.generateUtcTime(time: stime);
               var etimeUTC = mgr.generateUtcTime(time: etime);
 
               print(counter);
               print("stime ${stime}  ${stimeUTC}");
               print("etime ${etime}  ${etimeUTC}");
+              bool value = onlineItemOption[0].value!;
               await PrayerApis().prayerSetting(
                   startTime: stimeUTC,
                   endTime: etimeUTC,
+                  isNotificationValue: value ? "1" : "0",
                   paryer_daily_count: counter);
             },
           ),
@@ -106,7 +111,12 @@ class _DevotionalPlanSettingState extends State<DevotionalPlanSetting> {
       var etime = data!.prayer_end_time;
       var stimeLocal = mgr.generateLocalTime(time: stime);
       var etimeLocal = mgr.generateLocalTime(time: etime);
-
+      if (!Constant.HRS24FORMAT) {
+        etimeLocal = mgr.timeFromStr12Hrs(etimeLocal);
+      }
+      if (!Constant.HRS24FORMAT) {
+        stimeLocal = mgr.timeFromStr12Hrs(stimeLocal);
+      }
       prayerOption[0].counter = data!.paryer_daily_count;
       prayerOption[1].time = stimeLocal;
       prayerOption[2].time = etimeLocal;
@@ -141,7 +151,7 @@ class _DevotionalPlanSettingState extends State<DevotionalPlanSetting> {
                   borderEnable: borderEnable,
                   onSelectionBool: ((boolValue, p1, p2) {
                     onlineItemOption[p2].value = boolValue;
-                    setNotification(boolValue ? "1" : "0");
+                    //setNotification(boolValue ? "1" : "0");
                     setState(() {});
                   }),
                   onTap: (sectionIndex, rowIndex) {

@@ -68,6 +68,7 @@ class _ShowAllMealCookListViewState extends State<ShowAllMealCookListView> {
           subfontSize: 17,
           topPadding: 5,
           topContainerPadding: 3,
+          homeIconTopPadding: 5,
           needShadow: false,
           subtitleColor: AppColor.textGrayBlue),
       body: BackgroundCurveView(
@@ -87,7 +88,9 @@ class _ShowAllMealCookListViewState extends State<ShowAllMealCookListView> {
                     ),
                   if (categoryList != null)
                     Expanded(
-                        child: mealList(context, categoryItem: categoryList)),
+                        child: SingleChildScrollView(
+                            child:
+                                mealList(context, categoryItem: categoryList))),
                   const SizedBox(
                     height: 20,
                   ),

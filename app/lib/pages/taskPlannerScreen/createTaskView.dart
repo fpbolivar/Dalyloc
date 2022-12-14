@@ -1,6 +1,10 @@
+import 'package:daly_doc/pages/taskPlannerScreen/components/LocationTFView.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/components/howOftenView.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/components/taskNameTFView.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/components/timePickerView.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
+import 'package:daly_doc/widgets/GooglePlacesComponents/GooglePlacesList.dart';
+import 'package:daly_doc/widgets/GooglePlacesComponents/searchPlaceModel.dart';
 import 'package:daly_doc/widgets/ToastBar/toastMessage.dart';
 import 'package:intl/intl.dart';
 import '../../../utils/exportPackages.dart';
@@ -37,6 +41,7 @@ class _CreateTaskViewState extends State<CreateTaskView> {
   int indexHrsSelected = 0;
   int indexMinSelected = 0;
   int indexAMPMSelected = 0;
+
   //var hrsData = [];
   List<TimeModel> hrsData = [];
   List<TimeModel> minutesData = [];
@@ -53,14 +58,21 @@ class _CreateTaskViewState extends State<CreateTaskView> {
   var etime24 = "";
   var _dateYYYYMMDD = "";
   var utcDateTime = "";
+
+  var lastHR = "";
+
+  var lastMin = "";
   List<SubtaskModel> subTaskdata = [];
   TextEditingController nameTF = TextEditingController();
+  TextEditingController emailTF = TextEditingController();
   TextEditingController noteTF = TextEditingController();
   bool update = false;
   TaskModel? itemTask;
   SegmentType selectedLongData = SegmentType.first;
   SegmentOftenType selectedOftenData = SegmentOftenType.once;
   DateTime? calenderDefaultDate;
+  SearchPlacesModel locationSelected =
+      SearchPlacesModel(address: "", lat: "", long: "");
   @override
   void initState() {
     // TODO: implement initState
@@ -110,9 +122,17 @@ class _CreateTaskViewState extends State<CreateTaskView> {
     displayTimeText = itemTask!.startTime + " - " + itemTask!.endTime;
     interval = itemTask!.howLong.segmenttype.interval;
     howOften = itemTask!.howOften;
-    stime = itemTask!.startTime;
-    etime = itemTask!.endTime;
+    stime24 = itemTask!.startTime;
+    etime24 = itemTask!.endTime;
+
+    stime = manager.timeFromStr12Hrs(stime24);
+    etime = manager.timeFromStr12Hrs(etime24);
+
     _dateYYYYMMDD = itemTask!.dateString;
+    emailTF.text = itemTask!.email == "null" ? "" : itemTask!.email;
+    locationSelected.address = itemTask!.location;
+    locationSelected.lat = itemTask!.lat;
+    locationSelected.long = itemTask!.lng;
     // emailTF.text = itemTask!.email;
     // emailTF.text = itemTask!.email;
     // emailTF.text = itemTask!.email;
@@ -130,8 +150,14 @@ class _CreateTaskViewState extends State<CreateTaskView> {
               const SizedBox(
                 height: 20,
               ),
-              EmaiViewTask(
+              TaskNameTFView(
                 controller: nameTF,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              EmaiViewTask(
+                controller: emailTF,
               ),
               const SizedBox(
                 height: 20,
@@ -180,6 +206,9 @@ class _CreateTaskViewState extends State<CreateTaskView> {
                           timeDisabe();
                         });
                       } else {
+                        Future.delayed(Duration(milliseconds: 300), () {
+                          //  timeDisabe();
+                        });
                         setState(() {
                           indexHrsSelected = indexHrsSelectedTemp;
                           indexMinSelected = indexMinSelectedTemp;
@@ -207,6 +236,27 @@ class _CreateTaskViewState extends State<CreateTaskView> {
                     print(data);
                     howOften = data;
                   }),
+              const SizedBox(
+                height: 20,
+              ),
+              InkWell(
+                onTap: () {
+                  Routes.presentSimple(
+                      context: context,
+                      child: GooglePlaceListView(
+                        onSelection: (selectedPlace) async {
+                          locationSelected = selectedPlace;
+                          setState(() {});
+                          // String pincode = await PlacesSearchManager.getPincode(
+                          //     latitude: selectedPlace.lat,
+                          //     longitude: selectedPlace.long);
+                          // zipcodeTF.text = pincode;
+                          // _getLatLng(selectedPlace);
+                        },
+                      ));
+                },
+                child: LocationTFViewTask(data: locationSelected),
+              ),
               const SizedBox(
                 height: 20,
               ),
@@ -248,28 +298,37 @@ class _CreateTaskViewState extends State<CreateTaskView> {
 
     if (nameTF.text.isEmpty) {
       ToastMessage.showMessage(msg: LocalString.msgTaskName);
+      return;
     }
-    // else if (!Validator.isValidEmail(emailTF.text)) {
-    //   ToastMessage.showMessage(msg: LocalString.msgInValidEmail);
-    // }
-    else if (noteTF.text.isEmpty) {
+    if (!emailTF.text.isEmpty) {
+      // ToastMessage.showMessage(msg: LocalString.msgEmail);
+      if (!Validator.isValidEmail(emailTF.text)) {
+        ToastMessage.showMessage(msg: LocalString.msgInValidEmail);
+        return;
+      }
+    }
+
+    if (noteTF.text.isEmpty) {
       ToastMessage.showMessage(msg: LocalString.msgNotes);
+      return;
     } else {
       if (update) {
         final subtasks = manager.subtaskJSON(this.subTaskdata);
         final subtasksStr = json.encode(subtasks);
         final utcDateTimeTask =
             manager.generateUtcDateTime(date: _dateYYYYMMDD, time: stime24);
-
+        etime24 = manager.generateUtcTime(time: etime24);
+        stime24 = manager.generateUtcTime(time: stime24);
         TaskModel data = TaskModel();
         data.tid = itemTask!.tid;
         data.taskName = nameTF.text;
         data.dateString = _dateYYYYMMDD;
-        data.endTime = etime;
-        data.startTime = stime;
+        data.endTime = etime24;
+        data.startTime = stime24;
         data.note = noteTF.text;
-        data.email = "";
+        data.email = emailTF.text;
         data.howLong = howLong;
+
         data.howOften = howOften;
         data.isCompleted = itemTask!.isCompleted;
         data.serverID = itemTask!.serverID;
@@ -277,7 +336,14 @@ class _CreateTaskViewState extends State<CreateTaskView> {
         data.createTimeStamp = DateTime.now().microsecondsSinceEpoch;
 
         data.subNotes = subtasksStr;
-        manager.updateTaskData(data, () {});
+        data.location = locationSelected.address ?? "";
+        data.lat = locationSelected.lat ?? "";
+        data.lng = locationSelected.long ?? "";
+        manager.updateTaskData(data, () {
+          Routes.pushSimpleAndReplaced(
+              context: context, child: ScheduleCalendarScreen());
+          ToastMessage.showSuccessMessage(msg: LocalString.msgUpdateTask);
+        }, needAlert: false);
         // TaskApiManager().updateTaskApi(
         //     data: data,
         //     subTask: subtasks,
@@ -294,22 +360,27 @@ class _CreateTaskViewState extends State<CreateTaskView> {
         final subtasksStr = json.encode(subtasks);
         final utcDateTimeTask =
             manager.generateUtcDateTime(date: _dateYYYYMMDD, time: stime24);
-
+        etime24 = manager.generateUtcTime(time: etime24);
+        stime24 = manager.generateUtcTime(time: stime24);
         TaskModel data = TaskModel();
         data.taskName = nameTF.text;
-        data.email = "";
+        data.email = emailTF.text;
         data.utcDateTime = utcDateTimeTask;
         data.tid = DateTime.now().microsecondsSinceEpoch;
         data.howLong = howLong;
         data.howOften = howOften;
         data.note = noteTF.text;
-        data.endTime = etime;
+        data.endTime = etime24;
         data.createTimeStamp = DateTime.now().microsecondsSinceEpoch;
-        data.startTime = stime;
+        data.startTime = stime24;
         data.dateString = _dateYYYYMMDD;
         data.subNotes = subtasksStr;
         data.isCompleted = "0";
         data.serverID = 0;
+
+        data.location = locationSelected.address ?? "";
+        data.lat = locationSelected.lat ?? "";
+        data.lng = locationSelected.long ?? "";
         print("${subtasksStr}");
         TaskApiManager().CreateTaskData(
             data: data,
@@ -320,7 +391,16 @@ class _CreateTaskViewState extends State<CreateTaskView> {
                 noteTF.text = "";
                 nameTF.text = "";
                 setState(() {});
-              });
+
+                Routes.pushSimpleAndReplaced(
+                    context: context, child: ScheduleCalendarScreen());
+                // Navigator.of(context).popUntil((route) =>
+                //     route.settings.name ==
+                //     ScheduleCalendarScreen().runtimeType.toString());
+
+                ToastMessage.showSuccessMessage(
+                    msg: LocalString.msgCreatedTask);
+              }, needAlert: false);
               // if (value != 0) {
 
               // }
@@ -413,16 +493,27 @@ class _CreateTaskViewState extends State<CreateTaskView> {
       var ff = time24.split(":");
       var hr = ff[0].trim();
       var min = ff[1].trim();
+      lastHR = hr;
+      lastMin = min;
       var indexHrCalculate = int.parse(hr);
       var indexMinCalculate = int.parse(min);
       if (indexMinCalculate <= 30) {
         indexHrCalculate = indexHrCalculate - 1;
       }
       timecController.jumpToItem(indexHrCalculate);
-      print("timeDisabe ${indexHrCalculate}");
+      print("HR timeDisabe ${indexHrCalculate}");
       for (int i = 0; i < indexHrCalculate; i++) {
         hrsData[i].enable = false;
       }
+      // var hrGobal = int.tryParse(lastHR) ?? 0;
+      // var minGobal = int.tryParse(lastHR) ?? 0;
+      // print("HR 2 timeDisabe ${hrGobal}");
+      // if (hrGobal == indexHrsSelected) {
+      //   for (int i = 0; i < indexMinCalculate; i++) {
+      //     minutesData[i].enable = false;
+      //   }
+      // }
+      // minController.jumpToItem(indexMinCalculate + 1);
       calculateTimeUseInterval(
           index: indexHrCalculate, needHideSomeIndex: true);
       setState(() {});
@@ -431,6 +522,12 @@ class _CreateTaskViewState extends State<CreateTaskView> {
         element.enable = true;
       }
       setState(() {});
+    }
+  }
+
+  unHideMinute() {
+    for (int i = 0; i < minutesData.length; i++) {
+      minutesData[i].enable = true;
     }
   }
 

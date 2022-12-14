@@ -25,6 +25,7 @@ class _WakeUpTimeViewScreenState extends State<WakeUpTimeViewScreen> {
   var manager = TaskManager();
   var timecController = FixedExtentScrollController();
   var minController = FixedExtentScrollController();
+  var ampmController = FixedExtentScrollController();
   var interval = 1;
   int indexHrsSelected = 0;
   int indexMinSelected = 0;
@@ -42,6 +43,7 @@ class _WakeUpTimeViewScreenState extends State<WakeUpTimeViewScreen> {
   var _dateYYYYMMDD = "";
   var utcDateTime = "";
   //DateTime? calenderDefaultDate;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -59,8 +61,19 @@ class _WakeUpTimeViewScreenState extends State<WakeUpTimeViewScreen> {
     });
   }
 
+  Future<bool> _onWillPop() async {
+    return false; //<-- SEE HERE
+  }
+
   hrsSetup() {
-    for (var i = 1; i <= 23; i += 1) {
+    var hr = 12;
+    var initial = 1;
+    if (Constant.HRS24FORMAT) {
+      hr = 23;
+      initial = 0;
+    }
+
+    for (var i = initial; i <= hr; i += 1) {
       TimeModel obj = TimeModel();
       obj.enable = true;
       if (10 > i) {
@@ -93,11 +106,21 @@ class _WakeUpTimeViewScreenState extends State<WakeUpTimeViewScreen> {
 
   setup() async {
     var savedTime = await LocalStore().getWakeTime();
+
     print("savedTime$savedTime");
     if (savedTime != "") {
       var ff = savedTime.split(":");
       var hr = ff[0].trim();
       var min = ff[1].trim();
+      min.replaceAll("AM", "");
+      min.replaceAll("PM", "");
+      min.trim();
+      if (!Constant.HRS24FORMAT) {
+        savedTime = TaskManager().timeFromStr12Hrs(savedTime);
+        ff = savedTime.split(":");
+        hr = ff[0].trim();
+      }
+      print("hr savedTime$hr");
       print("min savedTime$min");
       int min2 = int.parse(min);
       for (var i = 0; i < minutesData.length; i++) {
@@ -125,6 +148,15 @@ class _WakeUpTimeViewScreenState extends State<WakeUpTimeViewScreen> {
       timecController.jumpToItem(indexHrsSelected);
 
       minController.jumpToItem(indexMinSelected);
+
+      if (savedTime.contains("AM")) {
+        indexAMPMSelected = 0;
+        ampmController.jumpToItem(indexAMPMSelected);
+      }
+      if (savedTime.contains("PM")) {
+        indexAMPMSelected = 1;
+        ampmController.jumpToItem(indexAMPMSelected);
+      }
       setState(() {});
     } else {
       indexHrsSelected = 7;
@@ -148,10 +180,13 @@ class _WakeUpTimeViewScreenState extends State<WakeUpTimeViewScreen> {
         title: "What time do you wake up?",
       ),
       body: BackgroundCurveView(
-          child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: bodyDesign(),
+          child: WillPopScope(
+        onWillPop: _onWillPop,
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: bodyDesign(),
+          ),
         ),
       )),
     );
@@ -183,8 +218,10 @@ class _WakeUpTimeViewScreenState extends State<WakeUpTimeViewScreen> {
             Container(
                 height: MediaQuery.of(context).size.height * 0.6,
                 child: CustomTimePicker(
+                  need12HrsFormat: !Constant.HRS24FORMAT,
                   interval: interval,
                   controller: timecController,
+                  ampmController: ampmController,
                   minController: minController,
                   displayTimeText: displayTimeText,
                   wakeUpTimeEnabled: true,
@@ -210,7 +247,13 @@ class _WakeUpTimeViewScreenState extends State<WakeUpTimeViewScreen> {
                 var hr = hrsData[indexHrsSelected].title;
                 var time = minutesData[indexMinSelected].title;
                 var finalWk = hr + ":" + time;
+                if (!Constant.HRS24FORMAT) {
+                  finalWk = TaskManager()
+                      .timeObj12to24Str(finalWk, indexAM: indexAMPMSelected);
+                }
                 print("finalWk${finalWk}");
+                print("{indexAMPMSelected}${indexAMPMSelected}");
+
                 finalWk = TaskManager().generateUtcTime(time: finalWk);
                 TaskApiManager()
                     .getSetWakeUpTime(needUpdate: true, value: finalWk);

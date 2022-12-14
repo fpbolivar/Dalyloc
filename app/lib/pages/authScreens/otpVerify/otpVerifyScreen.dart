@@ -10,7 +10,9 @@ import '../../allowLocation/allowLocation.dart';
 class OtpVerifyScreen extends StatefulWidget {
   String? red;
   bool forgotPassword;
-  OtpVerifyScreen({Key? key, this.red, this.forgotPassword = false})
+  String country_code;
+  OtpVerifyScreen(
+      {Key? key, this.red, this.forgotPassword = false, this.country_code = ""})
       : super(key: key);
 
   @override
@@ -21,7 +23,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
   var userOTP = "";
 
   TextEditingController otpTFC = TextEditingController();
-  @override
+
   @override
   void initState() {
     super.initState();
@@ -38,13 +40,19 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
     userOTP = await LocalStore().getotp();
   }
 
+  Future<bool> _onWillPop() async {
+    return false; //<-- SEE HERE
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.newBgcolor,
       appBar: CustomAppBar(
+        needHomeIcon: false,
         title: LocalString.lblOTPVerify,
-        icon: false,
+        mainAxisAlignment: MainAxisAlignment.start,
+        icon: true,
       ),
       body: BackgroundCurveView(
           child: SafeArea(
@@ -56,66 +64,66 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
     );
   }
 
-  Future<bool> _onWillPop() async {
-    return false; //<-- SEE HERE
-  }
-
 //METHID : -   bodyDesign
   Widget bodyDesign() {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: SingleChildScrollView(
-        child: Center(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  LocalString.lblOTPVerifyDescription,
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(
+                height: 20,
+              ),
+              Text(
+                LocalString.lblOTPVerifyDescription,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 15,
+                    color: AppColor.textBlackColor),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              otpTF(),
+              const SizedBox(
+                height: 10,
+              ),
+              resendWidget(),
+              const SizedBox(
+                height: 50,
+              ),
+              CustomButton.regular(
+                title: LocalString.lblVerify,
+                onTap: () {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  widget.forgotPassword == false
+                      ? RegisterApis().otpApi(
+                          otp: otpTFC.text, country_code: widget.country_code)
+                      : ForgotPasswordApi().otpApi(
+                          otp: otpTFC.text, country_code: widget.country_code);
+                },
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Text(
+                  "OTP Code is $userOTP",
                   textAlign: TextAlign.left,
                   style: TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 15,
-                      color: AppColor.textBlackColor),
+                      color: AppColor.subTitleColor),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                otpTF(),
-                const SizedBox(
-                  height: 10,
-                ),
-                resendWidget(),
-                const SizedBox(
-                  height: 50,
-                ),
-                CustomButton.regular(
-                  title: LocalString.lblVerify,
-                  onTap: () {
-                    widget.forgotPassword == false
-                        ? RegisterApis().otpApi(otp: otpTFC.text)
-                        : ForgotPasswordApi().otpApi(otp: otpTFC.text);
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(
-                    "Your OTP Code is $userOTP",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 15,
-                        color: AppColor.subTitleColor),
-                  ),
-                ),
-                const SizedBox(
-                  height: 100,
-                ),
-              ]),
-        ),
+              ),
+              const SizedBox(
+                height: 100,
+              ),
+            ]),
       ),
     );
   }

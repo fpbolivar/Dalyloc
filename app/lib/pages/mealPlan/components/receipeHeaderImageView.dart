@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/pages/mealPlan/model/foodDietVarientModel.dart';
 import 'package:daly_doc/pages/mealPlan/model/receipeDetailModel.dart';
+import 'package:daly_doc/utils/exportWidgets.dart';
 import '../../../core/colors/colors.dart';
 import '../../../utils/exportPackages.dart';
 
@@ -56,6 +57,7 @@ class ReceipeHeaderImagView extends StatelessWidget {
               ),
             ),
             blurButtonView(),
+            homeButtonView()
           ],
         ),
         decoration: BoxDecoration(
@@ -92,6 +94,43 @@ class ReceipeHeaderImagView extends StatelessWidget {
                 child: Icon(
                   Icons.arrow_back,
                   color: Colors.black,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget homeButtonView() {
+    return Positioned(
+      right: 0,
+      top: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: InkWell(
+          onTap: () {
+            Routes.gotoHomeScreen();
+          },
+          child: ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+              child: Container(
+                width: 45.0,
+                height: 45.0,
+                decoration: BoxDecoration(
+                  color: AppColor.newBgcolor,
+                  //color: Colors.grey.shade700.withOpacity(0.3),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Image.asset(
+                    "assets/icons/home.png",
+                    width: 25,
+                    height: 25,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),

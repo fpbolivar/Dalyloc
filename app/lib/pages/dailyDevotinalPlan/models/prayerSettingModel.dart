@@ -16,7 +16,9 @@ class PrayerSettingModel {
   factory PrayerSettingModel.fromJson(Map<String, dynamic> json) {
     return PrayerSettingModel(
       id: json['id'].toString(),
-      prayer_notify: json['prayer_notify'] == null ? "0" : "1",
+      prayer_notify: json['prayer_notify'] == null
+          ? "0"
+          : json['prayer_notify'].toString(),
       paryer_daily_count: json['paryer_daily_count'] ?? 0,
       prayer_end_time: json['prayer_end_time'] ?? "",
       prayer_start_time: json['prayer_start_time'] ?? "",

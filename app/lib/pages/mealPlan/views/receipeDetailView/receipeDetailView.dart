@@ -15,7 +15,7 @@ import 'package:daly_doc/widgets/customRoundButton/customButton.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-enum InstructionType { check, numeric }
+enum InstructionType { check, numeric, cook }
 
 class ReceipeDetailView extends StatefulWidget {
   bool fromMyMealScrren = false;
@@ -160,7 +160,7 @@ class _ReceipeDetailViewState extends State<ReceipeDetailView>
                                         return InstructionItemView(
                                           type: InstructionType.check,
                                           description: data!
-                                              .cookWareList![index].description
+                                              .cookWareList![index].name
                                               .toString(),
                                         );
                                       },

@@ -68,7 +68,7 @@ class _LikesFoodListViewState extends State<LikesFoodListView> {
                           height: 20,
                         ),
                         CustomButton.regular(
-                          title: "Continue",
+                          title: goToNext ? "Continue" : "Update",
                           background: selecteIndex == -1
                               ? Colors.grey[400]
                               : AppColor.theme,

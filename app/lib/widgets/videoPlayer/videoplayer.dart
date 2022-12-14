@@ -1,4 +1,5 @@
 import 'package:chewie/chewie.dart';
+import 'package:daly_doc/utils/exportWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -22,16 +23,29 @@ class ChewieListItem extends StatefulWidget {
 
 class _ChewieListItemState extends State<ChewieListItem> {
   late ChewieController _chewieController;
-
+  double val = 0.5;
   @override
   void initState() {
     super.initState();
     // Wrapper on top of the videoPlayerController
+    double videoContainerRatio = 0.5;
+
+    double videoRatio = widget.videoPlayerController.value.aspectRatio;
+    if (videoRatio < videoContainerRatio) {
+      ///for tall videos, we just return the inverse of the controller aspect ratio
+      val = videoContainerRatio / videoRatio;
+    } else {
+      ///for wide videos, divide the video AR by the fixed container AR
+      ///so that the video does not over scale
+
+      val = videoRatio / videoContainerRatio;
+    }
     _chewieController = ChewieController(
       showControls: true,
       fullScreenByDefault: false,
       videoPlayerController: widget.videoPlayerController,
-      aspectRatio: widget.wAspect / widget.wAspect,
+
+      // aspectRatio: videoRatio, //widget.wAspect / widget.wAspect,
       // Prepare the video to be played and display the first frame
       autoInitialize: true,
       looping: false,
@@ -67,9 +81,11 @@ class _ChewieListItemState extends State<ChewieListItem> {
       ),
       height: widget.wAspect - 40,
       // width: 350,
-      child: Chewie(
-        controller: _chewieController,
-      ),
+      child: _chewieController == null
+          ? loaderList()
+          : Chewie(
+              controller: _chewieController,
+            ),
     );
   }
 

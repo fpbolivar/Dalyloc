@@ -7,6 +7,7 @@ import 'package:daly_doc/pages/mealPlan/model/mealCategoryModel.dart';
 import 'package:daly_doc/pages/mealPlan/views/successOrderPage/successOrderPage.dart';
 import 'package:daly_doc/pages/settingsScreen/ApiManager/AllPlansApiManager.dart';
 import 'package:daly_doc/pages/settingsScreen/model/allPlanMode.dart';
+import 'package:daly_doc/pages/subscriptionPlansScreen/model/PlanInfoModel.dart';
 import 'package:daly_doc/pages/subscriptionPlansScreen/planMonthlyYearlyView.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/manager/ApisManager/Apis.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
@@ -26,6 +27,7 @@ class _ReviewAllMealPlanViewState extends State<ReviewAllMealPlanView> {
   MealApis manager = MealApis();
   bool isActive = false;
   bool isCheckingPlanLoading = false;
+  bool isFreePlan = true;
   var _dateYYYYMMDD = "";
   var displayDateText = "";
   DateTime selectedDate = DateTime.now();
@@ -37,6 +39,7 @@ class _ReviewAllMealPlanViewState extends State<ReviewAllMealPlanView> {
       setDate(selectedDate);
       allList = widget.data!;
       setState(() {});
+      // getplanList(needPush: false);
     });
   }
 
@@ -50,12 +53,16 @@ class _ReviewAllMealPlanViewState extends State<ReviewAllMealPlanView> {
       isActive = false;
     } else {
       isActive = status;
-      if (isActive) {
+      if (isFreePlan) {
         orderMealSubmit();
-      }
-      if (isActive == false) {
-        noPlanWidget();
-        //orderMealSubmit();
+      } else {
+        if (isActive) {
+          orderMealSubmit();
+        }
+        if (isActive == false) {
+          noPlanWidget();
+          //orderMealSubmit();
+        }
       }
     }
     isCheckingPlanLoading = false;
@@ -84,7 +91,8 @@ class _ReviewAllMealPlanViewState extends State<ReviewAllMealPlanView> {
     if (wakeTime == "") {
       wakeTime = "09:00 AM";
     } else {
-      wakeTime = manager.timeFromStr12Hrs(wakeTime);
+      wakeTime = manager.convertTo24hrs(wakeTime);
+      wakeTime = manager.generateUtcTime(time: wakeTime);
     }
     TaskModel data = TaskModel();
     data.taskName = "Meal";
@@ -148,7 +156,8 @@ class _ReviewAllMealPlanViewState extends State<ReviewAllMealPlanView> {
                       : ReviewCalendarButton(
                           date: displayDateText,
                           onConfirm: () {
-                            getActiveStatus();
+                            //  getActiveStatus();
+                            orderMealSubmit();
                           },
                           onCalender: () {
                             showCalendarModalSheet();
@@ -338,7 +347,7 @@ class _ReviewAllMealPlanViewState extends State<ReviewAllMealPlanView> {
         });
   }
 
-  getplanList() {
+  getplanList({bool needPush = true}) {
     isCheckingPlanLoading = true;
     setState(() {});
     AllPlansApiManager().getAllPlans(
@@ -350,17 +359,24 @@ class _ReviewAllMealPlanViewState extends State<ReviewAllMealPlanView> {
           data.forEach((element) {
             if (element.typeOfOperation == "meal") {
               mealplan = element;
-
+              if (mealplan!.subscriptionSubPlans!.length > 0) {
+                if (mealplan!.subscriptionSubPlans!.first.periodDuration ==
+                    PlanType.free) {
+                  isFreePlan = true;
+                }
+              }
               // Routes.pushSimple(context: context, child: MealSettingView());
             }
           });
           if (mealplan != null) {
-            Routes.pushSimpleRootNav(
-                context: context,
-                child: PlanMonthlyYearlyView(
-                  title: "Meal",
-                  subscriptionSubPlans: mealplan!.subscriptionSubPlans!,
-                ));
+            if (needPush) {
+              Routes.pushSimpleRootNav(
+                  context: context,
+                  child: PlanMonthlyYearlyView(
+                    title: "Meal",
+                    subscriptionSubPlans: mealplan!.subscriptionSubPlans!,
+                  ));
+            }
           }
         },
         onError: () {});

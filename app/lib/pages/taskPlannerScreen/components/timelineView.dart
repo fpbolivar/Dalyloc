@@ -27,6 +27,14 @@ class TimelineView extends StatelessWidget {
   // }
   @override
   Widget build(BuildContext context) {
+    print("taskGroupDaTA L ${taskGroupData.length}");
+    taskGroupData.forEach(
+      (element) {
+        print("taskGroupDataerr ${element.hr}");
+        print("taskGroupDataerrt ${element.time}");
+      },
+    );
+
     return viewNodeList2();
   }
 
@@ -37,6 +45,9 @@ class TimelineView extends StatelessWidget {
         // physics: NeverScrollableScrollPhysics(),
         itemBuilder: (cxt, index) {
           double top = index == 0 ? 18.0 : 0.0;
+          print("CAT $index");
+          print("CAT ${taskGroupData[index].time}");
+
           return Stack(
             children: [
               Container(
@@ -116,6 +127,8 @@ class TimelineView extends StatelessWidget {
     // return section == 4
     //     ? SizedBox(height: 60, width: MediaQuery.of(context).size.width + 100)
     //     :
+    print("section$section");
+    print("   taskGroupData[section].task!${taskGroupData[section].task!}");
 
     return ListView.separated(
         padding: EdgeInsets.symmetric(vertical: 0),
@@ -123,7 +136,7 @@ class TimelineView extends StatelessWidget {
         physics: NeverScrollableScrollPhysics(),
         itemBuilder: (cxt, index) {
           var item = taskGroupData[section].task!;
-          print("item${item}");
+          print("itemKKKK${item}");
           return item[index].operationType == "wake"
               ? itemWakeUpTask(taskGroupData[section].time)
               : InkWell(
@@ -230,8 +243,13 @@ class TimelineView extends StatelessWidget {
       case "meal":
         return AppColor.mealItemBgColor;
 
+      case "prayer":
+        return AppColor.prayerItemBgColor;
+
       case "appointment":
         return AppColor.appointmentItemBgColor;
+      case "exercise":
+        return AppColor.exerciseItemBgColor;
 
       default:
         return AppColor.taskItemBgColor;
@@ -242,9 +260,12 @@ class TimelineView extends StatelessWidget {
     switch (operationType) {
       case "meal":
         return Color(0xFF9C735D);
-
+      case "prayer":
+        return Color(0xFF12aa68D);
       case "appointment":
         return Color(0xFFAE9A53);
+      case "exercise":
+        return Color(0xFF7a66ff);
 
       default:
         return AppColor.textGrayBlue;
@@ -303,25 +324,42 @@ class TimelineView extends StatelessWidget {
                     height: 5,
                   ),
                   if (item.getAllSubtaskCount() > 0)
-                    Column(
-                      children: [
-                        Text(
-                          "☑ ${item.getCompleteTaskCount()}/${item.getAllSubtaskCount()}",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 10,
-                            color: item.isCompleted == "0"
-                                ? AppColor.textGrayBlue
-                                : Colors.black54,
+                    item.operationType == TaskType.meal.rawValue
+                        ? Column(children: [
+                            Text(
+                              "☑ ${item.getAllSubtaskCount()}",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 10,
+                                color: item.isCompleted == "0"
+                                    ? AppColor.textGrayBlue
+                                    : Colors.black54,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                          ])
+                        : Column(
+                            children: [
+                              Text(
+                                "☑ ${item.getCompleteTaskCount()}/${item.getAllSubtaskCount()}",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 10,
+                                  color: item.isCompleted == "0"
+                                      ? AppColor.textGrayBlue
+                                      : Colors.black54,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                            ],
                           ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                      ],
-                    ),
-                  item.operationType == TaskType.meal.rawValue
+                  item.operationType == TaskType.exercise.rawValue
                       ? Text(
                           "${item.startTime}",
                           textAlign: TextAlign.left,
@@ -333,42 +371,56 @@ class TimelineView extends StatelessWidget {
                                 : Colors.black54,
                           ),
                         )
-                      : Text(
-                          "${item.startTime} - ${item.endTime}",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                            color: item.isCompleted == "0"
-                                ? AppColor.textGrayBlue
-                                : Colors.black54,
-                          ),
-                        ),
+                      : item.operationType == TaskType.meal.rawValue
+                          ? Text(
+                              "${item.startTime}",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                color: item.isCompleted == "0"
+                                    ? AppColor.textGrayBlue
+                                    : Colors.black54,
+                              ),
+                            )
+                          : Text(
+                              "${item.startTime} - ${item.endTime}",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                color: item.isCompleted == "0"
+                                    ? AppColor.textGrayBlue
+                                    : Colors.black54,
+                              ),
+                            ),
                 ],
               ),
-              Positioned(
-                right: 0,
-                top: 15,
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  child: Checkbox(
-                      side: MaterialStateBorderSide.resolveWith(
-                        (states) =>
-                            BorderSide(width: 1.0, color: AppColor.theme),
-                      ),
-                      checkColor: AppColor.theme,
-                      activeColor: Colors.transparent,
-                      value: item.isCompleted == "1",
-                      onChanged: (value) {
-                        print(value);
-                        onMarkComplete(section, row);
-                        // setState(() {
-                        //   data[index].isSelected = value;
-                        // });
-                      }),
-                ),
-              )
+              if (item.operationType != TaskType.exercise.rawValue &&
+                  item.operationType != TaskType.prayer.rawValue)
+                Positioned(
+                  right: 0,
+                  top: 15,
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    child: Checkbox(
+                        side: MaterialStateBorderSide.resolveWith(
+                          (states) =>
+                              BorderSide(width: 1.0, color: AppColor.theme),
+                        ),
+                        checkColor: AppColor.theme,
+                        activeColor: Colors.transparent,
+                        value: item.isCompleted == "1",
+                        onChanged: (value) {
+                          print(value);
+                          onMarkComplete(section, row);
+                          // setState(() {
+                          //   data[index].isSelected = value;
+                          // });
+                        }),
+                  ),
+                )
             ],
           ),
         ),

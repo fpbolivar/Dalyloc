@@ -10,6 +10,7 @@ import '../../../../core/apisUtils/internetCheck.dart';
 import '../../../../core/helpersUtil/validator.dart';
 import '../../../../utils/exportPackages.dart';
 import '../../../../widgets/dialogs/CommonDialogs.dart';
+import '../../../wakeUptimeView/wakeupTimeView.dart';
 import '../../otpVerify/otpVerifyScreen.dart';
 
 class RegisterApis {
@@ -17,6 +18,7 @@ class RegisterApis {
       {required String mobileNumber,
       required name,
       required password,
+      required country_code,
       required confirmPassword}) async {
     if (name.toString().isEmpty) {
       showAlert("Enter Name");
@@ -60,8 +62,11 @@ class RegisterApis {
         "name": name,
         "phone_no": mobileNumber,
         "password": password,
+        "country_code": country_code,
         "confirm_password": confirmPassword
       };
+      print('${param}');
+      print('${HttpUrls.WS_USERREGISTER}');
       Response response =
           await post(Uri.parse(HttpUrls.WS_USERREGISTER), body: param);
 
@@ -78,7 +83,9 @@ class RegisterApis {
         await LocalStore().setuid(uid);
         Routes.pushSimple(
             context: Constant.navigatorKey.currentState!.context,
-            child: OtpVerifyScreen());
+            child: OtpVerifyScreen(
+              country_code: country_code,
+            ));
       } else {
         dismissWaitDialog();
         showAlert(data['message'].toString());
@@ -98,8 +105,10 @@ class RegisterApis {
 
       return;
     }
-    waitDialog();
     var uid = await LocalStore().getuid();
+    print(HttpUrls.WS_RESENDOTP + uid);
+    waitDialog();
+
     try {
       Response response = await get(
         Uri.parse(HttpUrls.WS_RESENDOTP + uid),
@@ -128,16 +137,25 @@ class RegisterApis {
     }
   }
 
-  otpApi({
-    required String otp,
-  }) async {
+  otpApi({required String otp, required String country_code}) async {
     if (await internetCheck() == false) {
       showAlert(LocalString.internetNot);
 
       return;
     }
     var uid = await LocalStore().getuid();
-    var param = {"user_id": uid, "otp": otp};
+    var deviceToken = await LocalStore().getFCMToken();
+    var param = {
+      "user_id": uid,
+      "otp": otp,
+      "country_code": country_code,
+      "device_token": deviceToken
+    };
+
+    print(param);
+    print(
+      HttpUrls.WS_OTPVERIFICATION,
+    );
     try {
       Response response = await post(
           Uri.parse(
@@ -156,7 +174,7 @@ class RegisterApis {
         await LocalStore().setToken(token);
         Routes.pushSimple(
             context: Constant.navigatorKey.currentState!.context,
-            child: AllowLocationScreen());
+            child: WakeUpTimeViewScreen());
         dismissWaitDialog();
         showAlert(data['message'].toString());
       } else {

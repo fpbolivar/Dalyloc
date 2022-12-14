@@ -47,11 +47,11 @@ class _BusinessSettingViewState extends State<BusinessSettingView> {
 
   List<SettingOption> businessOption = [
     SettingOption(
-      title: "Booking link",
+      title: "Booking Link",
       section: 1,
     ),
-    SettingOption(title: "Business details", section: 1),
-    SettingOption(title: "Business timing", section: 1),
+    SettingOption(title: "Business Details", section: 1),
+    SettingOption(title: "Business Timing", section: 1),
   ];
   List<SettingOption> businessServiceOption = [
     SettingOption(
@@ -62,7 +62,7 @@ class _BusinessSettingViewState extends State<BusinessSettingView> {
   List<SettingOption> paymentOption = [
     SettingOption(
         title: "Activate payment ", section: 2, type: SettingType.toggle),
-    SettingOption(title: "Deposits ", section: 2),
+    // SettingOption(title: "Deposits ", section: 2),
   ];
   List<SettingOption> businessOtherOption = [
     SettingOption(title: "Booking acceptance", section: 3),
@@ -186,10 +186,7 @@ class _BusinessSettingViewState extends State<BusinessSettingView> {
                   itemList: businessServiceOption,
                   onTap: (sectionIndex, rowIndex) {
                     Routes.pushSimple(
-                        context: context,
-                        child: CreateNewBusinessServiceScreen(
-                          update: true,
-                        ));
+                        context: context, child: ServiceListVCView());
                   }),
               const SizedBox(
                 height: 20,

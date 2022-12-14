@@ -16,8 +16,10 @@ class CustomTimePicker extends StatelessWidget {
   CustomTimePicker(
       {Key? key,
       this.interval = 1,
+      this.ampmController,
       required this.controller,
       this.indexHrsSelected = 0,
+      this.need12HrsFormat = false,
       this.wakeUpTimeEnabled = false,
       this.indexMinSelected = 0,
       this.indexAMPMSelected = 0,
@@ -30,10 +32,13 @@ class CustomTimePicker extends StatelessWidget {
 
   FixedExtentScrollController controller;
   FixedExtentScrollController minController;
+  FixedExtentScrollController? ampmController;
+
   int indexHrsSelected = 0;
   bool? wakeUpTimeEnabled;
   int indexMinSelected = 0;
   int indexAMPMSelected = 0;
+  bool need12HrsFormat = false;
   List<TimeModel> hrsData = [];
   List<TimeModel> minutesData = [];
   Function(int, int, int, String)? onRefresh;
@@ -205,6 +210,7 @@ class CustomTimePicker extends StatelessWidget {
                           )
                         : MyMinutes(
                             mins: index,
+                            enable: minutesData[index].enable!,
                             txt: minutesData[index].title,
                             selectedMins: indexMinSelected,
                           );
@@ -218,40 +224,42 @@ class CustomTimePicker extends StatelessWidget {
             ),
 
             // am or pm
-            // Container(
-            //   width: 50,
-            //   child: ListWheelScrollView.useDelegate(
-            //     itemExtent: 38,
-            //     perspective: 0.005,
-            //     diameterRatio: 1.2,
-            //     onSelectedItemChanged: (value) {
-            //       print(value);
-            //       //  setState(() {
-            //       indexAMPMSelected = value;
-            //       // });
-            //       makeTimeFormat();
-            //     },
-            //     physics: FixedExtentScrollPhysics(),
-            //     childDelegate: ListWheelChildBuilderDelegate(
-            //       childCount: 2,
-            //       builder: (context, index) {
-            //         if (index == 0) {
-            //           return AmPm(
-            //             isItAm: true,
-            //             index: index,
-            //             selectedAMPMIndex: indexAMPMSelected,
-            //           );
-            //         } else {
-            //           return AmPm(
-            //             isItAm: false,
-            //             index: index,
-            //             selectedAMPMIndex: indexAMPMSelected,
-            //           );
-            //         }
-            //       },
-            //     ),
-            //   ),
-            // ),
+            if (need12HrsFormat)
+              Container(
+                width: 50,
+                child: ListWheelScrollView.useDelegate(
+                  itemExtent: 38,
+                  perspective: 0.005,
+                  diameterRatio: 1.2,
+                  controller: ampmController,
+                  onSelectedItemChanged: (value) {
+                    print(value);
+                    //  setState(() {
+                    indexAMPMSelected = value;
+                    // });
+                    makeTimeFormat();
+                  },
+                  physics: FixedExtentScrollPhysics(),
+                  childDelegate: ListWheelChildBuilderDelegate(
+                    childCount: 2,
+                    builder: (context, index) {
+                      if (index == 0) {
+                        return AmPm(
+                          isItAm: true,
+                          index: index,
+                          selectedAMPMIndex: indexAMPMSelected,
+                        );
+                      } else {
+                        return AmPm(
+                          isItAm: false,
+                          index: index,
+                          selectedAMPMIndex: indexAMPMSelected,
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ),
           ],
         ),
       ],

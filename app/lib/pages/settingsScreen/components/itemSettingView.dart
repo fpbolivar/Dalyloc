@@ -1,3 +1,5 @@
+import 'package:daly_doc/core/constant/constants.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:intl/intl.dart';
@@ -140,19 +142,34 @@ class _SettingItemViewState extends State<SettingItemView> {
                   child: Transform.scale(
                     scale: 0.9,
                     child: InkWell(
-                      onTap: () {
-                        TimePicker(context, initialTime: SelectedTime.time,
-                            onSelected: (picked) {
-                          if (picked != null) {
-                            var timeFinal = DateFormat("HH:mm").format(picked);
-                            print(DateFormat("HH:mm").format(picked));
-                            setState(() {
-                              widget.itemData!.time = timeFinal;
-                              TimeTF = TextEditingController(text: timeFinal);
-                              // widget.data.startime!.pickupTime = timeFinal.toString();
-                            });
+                      onTap: () async {
+                        TimeOfDay? picked = await timePickerAlert(context);
+                        print(picked);
+                        if (picked != null) {
+                          var time = picked.format(context);
+                          if (Constant.HRS24FORMAT) {
+                            time = TaskManager().timeObj12to24Str(time);
                           }
-                        }, onClose: () {});
+
+                          print("time $time");
+                          setState(() {
+                            widget.itemData!.time = time;
+                            TimeTF = TextEditingController(text: time);
+                            // widget.data.startime!.pickupTime = timeFinal.toString();
+                          });
+                        }
+                        // TimePicker(context, initialTime: SelectedTime.time,
+                        //     onSelected: (picked) {
+                        //   if (picked != null) {
+                        //     var timeFinal = DateFormat("HH:mm").format(picked);
+                        //     print(DateFormat("HH:mm").format(picked));
+                        //     setState(() {
+                        //       widget.itemData!.time = timeFinal;
+                        //       TimeTF = TextEditingController(text: timeFinal);
+                        //       // widget.data.startime!.pickupTime = timeFinal.toString();
+                        //     });
+                        //   }
+                        // }, onClose: () {});
                       },
                       child: Container(
                         decoration: BoxDecoration(

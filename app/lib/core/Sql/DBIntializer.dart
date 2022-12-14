@@ -23,7 +23,7 @@ class DBIntializer {
     var path = await getPathDB();
     print("DB path ${path}");
     var db = await openDatabase(path,
-        version: 5, onCreate: _onCreate, onUpgrade: _onUpgrade);
+        version: 6, onCreate: _onCreate, onUpgrade: _onUpgrade);
 
     // var db = await openDatabase(path,
     //   version: 4, onCreate: _onCreate, onUpgrade: _onUpgrade);
@@ -73,6 +73,12 @@ class DBIntializer {
       batch.execute(
           'ALTER TABLE $TASKTABLE ADD ${TASK_TABLE_KEY.OPERATIONTYPE} TEXT');
     }
+    if (oldVersion == 5) {
+      batch.execute(
+          'ALTER TABLE $TASKTABLE ADD ${TASK_TABLE_KEY.location} TEXT');
+      batch.execute('ALTER TABLE $TASKTABLE ADD ${TASK_TABLE_KEY.lat} TEXT');
+      batch.execute('ALTER TABLE $TASKTABLE ADD ${TASK_TABLE_KEY.lng} TEXT');
+    }
 
     await batch.commit();
   }
@@ -86,7 +92,7 @@ class DBIntializer {
     print("DB Create ");
     // id INTEGER PRIMARY KEY AUTOINCREMENT,
     return await db.execute(
-        "CREATE TABLE $TASKTABLE (${TASK_TABLE_KEY.ID} integer primary key,${TASK_TABLE_KEY.SERVERID} integer, ${TASK_TABLE_KEY.EMAIL} TEXT, ${TASK_TABLE_KEY.TASK_TIME_STAMP} integer, ${TASK_TABLE_KEY.CREATE_TIME_STAMP} integer, ${TASK_TABLE_KEY.HOW_LONG} TEXT, ${TASK_TABLE_KEY.HOW_OFTEN} TEXT,${TASK_TABLE_KEY.NOTE} TEXT,${TASK_TABLE_KEY.SUBNOTESNOTE} TEXT,${TASK_TABLE_KEY.DATETEXT} TEXT,${TASK_TABLE_KEY.ENDTIME} TEXT,${TASK_TABLE_KEY.STARTTIME} TEXT,${TASK_TABLE_KEY.ISCOMPELETED} TEXT, ${TASK_TABLE_KEY.TASKNAME} TEXT,  ${TASK_TABLE_KEY.UTCDATETIME} TEXT , ${TASK_TABLE_KEY.ISDELETED} TEXT,${TASK_TABLE_KEY.OPERATIONTYPE} TEXT)");
+        "CREATE TABLE $TASKTABLE (${TASK_TABLE_KEY.ID} integer primary key,${TASK_TABLE_KEY.SERVERID} integer, ${TASK_TABLE_KEY.EMAIL} TEXT, ${TASK_TABLE_KEY.TASK_TIME_STAMP} integer, ${TASK_TABLE_KEY.CREATE_TIME_STAMP} integer, ${TASK_TABLE_KEY.HOW_LONG} TEXT, ${TASK_TABLE_KEY.HOW_OFTEN} TEXT,${TASK_TABLE_KEY.NOTE} TEXT,${TASK_TABLE_KEY.SUBNOTESNOTE} TEXT,${TASK_TABLE_KEY.DATETEXT} TEXT,${TASK_TABLE_KEY.ENDTIME} TEXT,${TASK_TABLE_KEY.STARTTIME} TEXT,${TASK_TABLE_KEY.ISCOMPELETED} TEXT, ${TASK_TABLE_KEY.TASKNAME} TEXT,  ${TASK_TABLE_KEY.UTCDATETIME} TEXT , ${TASK_TABLE_KEY.ISDELETED} TEXT,${TASK_TABLE_KEY.OPERATIONTYPE} TEXT, ${TASK_TABLE_KEY.location} TEXT, ${TASK_TABLE_KEY.lat} TEXT, ${TASK_TABLE_KEY.lng} TEXT)");
   }
 }
 
@@ -109,4 +115,7 @@ class TASK_TABLE_KEY {
   static String UTCDATETIME = 'utcDateTime';
   static String ISDELETED = 'isDeleted';
   static String OPERATIONTYPE = 'operationType';
+  static String location = 'location';
+  static String lat = 'lat';
+  static String lng = 'lng';
 }

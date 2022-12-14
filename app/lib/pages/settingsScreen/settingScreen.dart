@@ -50,8 +50,9 @@ class _SettingScreenState extends State<SettingScreen> {
   bool isBusinessActive = false;
   List<SettingOption> accountOption = [
     SettingOption(title: "My Profile", section: 0),
-    SettingOption(title: "Change Password", section: 0),
     SettingOption(title: "Wake Time", section: 0),
+    SettingOption(
+        title: "Time Format 24 Hour", section: 1, type: SettingType.toggle),
   ];
 
   List<SettingOption> paymentMethod = [
@@ -96,11 +97,41 @@ class _SettingScreenState extends State<SettingScreen> {
     super.initState();
     Constant.settingProvider.businessOption = [];
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      setToggle12Hrs();
+      var loginType = await LocalStore().getLoginType();
+      if (loginType == "" || loginType == "manual") {
+        accountOption.insert(
+          1,
+          SettingOption(title: "Change Password", section: 0),
+        );
+      }
       getplanList();
       await Constant.settingProvider.refreshList();
       setState(() {});
+
       // getActivePlan();
     });
+  }
+
+  setToggle12Hrs() async {
+    var timeformat = await LocalStore().get_TimeFormatUser();
+    for (var element in accountOption) {
+      if (element.type == SettingType.toggle) {
+        element.value = timeformat;
+      }
+    }
+    Constant.HRS24FORMAT = timeformat;
+    setState(() {});
+    bool? value = await Constant.settingProvider.timeSetGet24Hrs(needGet: true);
+    if (value != null) {
+      Constant.HRS24FORMAT = value;
+      for (var element in accountOption) {
+        if (element.type == SettingType.toggle) {
+          element.value = value;
+        }
+      }
+      setState(() {});
+    }
   }
 
   // getActivePlan() {
@@ -247,14 +278,24 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
               SectionRowListView(
                   itemList: accountOption,
+                  onSelectionBool: ((boolValue, p1, p2) async {
+                    accountOption[p2].value = boolValue;
+                    await LocalStore().set_TimeFormatUser(boolValue.toString());
+                    Constant.HRS24FORMAT = boolValue;
+                    setState(() {});
+                    Constant.taskProvider.startTaskFetchFromDB();
+                    await Constant.settingProvider.timeSetGet24Hrs(
+                        needGet: false, value: boolValue ? "1" : "0");
+                  }),
                   onTap: (sectionIndex, rowIndex) {
                     if (rowIndex == 0) {
                       Routes.pushSimple(
                           context: context, child: UserProfileViewScreen());
-                    } else if (rowIndex == 1) {
+                    } else if (accountOption[rowIndex].title ==
+                        "Change Password") {
                       Routes.pushSimple(
                           context: context, child: ChangePassswordView());
-                    } else if (rowIndex == 2) {
+                    } else if (accountOption[rowIndex].title == "Wake Time") {
                       Routes.pushSimple(
                           context: context,
                           child: WakeUpTimeViewScreen(
@@ -308,8 +349,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       Routes.pushSimple(
                           context: context, child: MomentOfPrayerView());
                     } else if (data.first.operationType == "exercise") {
-                      Routes.pushSimple(
-                          context: context, child: ExcercisePlanScreen());
+                      Routes.gotoExerciseFlow(context: context);
                     } else {
                       Routes.pushSimple(
                           context: context,

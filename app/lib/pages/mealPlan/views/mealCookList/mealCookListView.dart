@@ -68,6 +68,7 @@ class _MealCookListViewState extends State<MealCookListView> {
           subtitle: "today?",
           fontSize: 16,
           subfontSize: 17,
+          homeIconTopPadding: 5,
           topPadding: 5,
           topSubPadding: 5,
           topContainerPadding: 2,
@@ -161,37 +162,44 @@ class _MealCookListViewState extends State<MealCookListView> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              categoryItem!.categoryName.toString(),
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1!
-                  .copyWith(fontSize: 15, fontWeight: FontWeight.w600),
+            Expanded(
+              child: Text(
+                categoryItem!.categoryName.toString(),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1!
+                    .copyWith(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
             ),
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    print("sss");
+            Container(
+              width: 80,
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      print("sss");
 
-                    Routes.pushSimpleRootNav(
-                        context: context,
-                        child: ShowAllMealCookListView(
-                          category: categoryItem,
-                        ));
-                    // Get.toNamed(Routes.Matches);
-                  },
-                  child: Text("Show All",
-                      style: TextStyle(
-                          fontSize: 13,
-                          color: AppColor.showAllColor,
-                          fontWeight: FontWeight.w500)),
-                ),
-                Icon(
-                  Icons.arrow_forward_rounded,
-                  color: AppColor.showAllColor,
-                )
-              ],
+                      Routes.pushSimpleRootNav(
+                          context: context,
+                          child: ShowAllMealCookListView(
+                            category: categoryItem,
+                          ));
+                      // Get.toNamed(Routes.Matches);
+                    },
+                    child: Text("Show All",
+                        style: TextStyle(
+                            fontSize: 13,
+                            color: AppColor.showAllColor,
+                            fontWeight: FontWeight.w500)),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_rounded,
+                    color: AppColor.showAllColor,
+                  )
+                ],
+              ),
             )
           ],
         ),

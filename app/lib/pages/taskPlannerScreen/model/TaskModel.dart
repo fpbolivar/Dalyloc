@@ -19,6 +19,10 @@ class TaskModel {
   String operationType = "";
   String user_id = "";
 
+  String lat = "";
+  String lng = "";
+  String location = "";
+
   int createTimeStamp = 0;
   int serverID = 0;
   int tid = 0;
@@ -26,7 +30,10 @@ class TaskModel {
 
   List<SubtaskModel>? subTaskslist = [];
   TaskModel(
-      {this.email = "",
+      {this.location = "",
+      this.lng = "",
+      this.lat = "",
+      this.email = "",
       this.taskTimeStamp = 0,
       this.operationType = "",
       this.endTime = "",
@@ -73,6 +80,9 @@ class TaskModel {
         dateString: json["date_format"].toString(),
         endTime: json["end_task_time"].toString(),
         operationType: json["task_type"] ?? "",
+        location: json["location"] ?? "",
+        lat: json["lat"] == null ? "" : json["lat"].toString(),
+        lng: json["lng"] == null ? "" : json["lng"].toString(),
         createTimeStamp: json["create_time_stamp"] ?? 0,
         tid: json["t_id"] ?? 0,
         taskName: json["task_name"] ?? "",
@@ -120,6 +130,9 @@ class TaskModel {
         utcDateTime: json["utcDateTime"] ?? "",
         isDeleted: json["isDeleted"] ?? "0",
         taskName: json["taskName"] ?? "",
+        location: json["location"] ?? "",
+        lat: json["lat"] ?? "",
+        lng: json["lng"] ?? "",
         isCompleted:
             json["isCompleted"] == null ? "0" : json["isCompleted"].toString());
   }
@@ -153,6 +166,9 @@ class TaskModel {
       TASK_TABLE_KEY.UTCDATETIME: utcDateTime,
       TASK_TABLE_KEY.ISDELETED: isDeleted,
       TASK_TABLE_KEY.OPERATIONTYPE: operationType,
+      TASK_TABLE_KEY.location: location,
+      TASK_TABLE_KEY.lat: lat,
+      TASK_TABLE_KEY.lng: lng,
     };
   }
 
@@ -174,22 +190,26 @@ class TaskModel {
       TASK_TABLE_KEY.UTCDATETIME: utcDateTime,
       TASK_TABLE_KEY.ISDELETED: isDeleted,
       TASK_TABLE_KEY.OPERATIONTYPE: operationType,
+      TASK_TABLE_KEY.location: location,
+      TASK_TABLE_KEY.lat: lat,
+      TASK_TABLE_KEY.lng: lng,
     };
   }
 }
 
-enum TaskType {
-  meal,
-  appointment,
-}
+enum TaskType { meal, appointment, prayer, exercise }
 
 extension TopicExtension on TaskType {
   String get rawValue {
     switch (this) {
       case TaskType.meal:
         return 'meal';
+      case TaskType.prayer:
+        return 'prayer';
       case TaskType.appointment:
         return 'appointment';
+      case TaskType.exercise:
+        return 'exercise';
     }
   }
 }

@@ -11,10 +11,10 @@ import '../authManager/models/userBusinesModel.dart';
 class CreateNewBusinessServiceScreen extends StatefulWidget {
   bool update;
 
-  String? red;
+  String? id;
   CreateNewBusinessServiceScreen({
     Key? key,
-    this.red,
+    this.id,
     this.update = false,
   }) : super(key: key);
 
@@ -28,7 +28,8 @@ class _CreateNewBusinessServiceScreenState
   TextEditingController durationTFC = TextEditingController();
   TextEditingController priceTCF = TextEditingController();
   TextEditingController nameTFC = TextEditingController();
-  List<ServiceItemDataModel>? data = [];
+  TextEditingController depositTF = TextEditingController();
+  ServiceItemDataModel? data;
   UserBusinessModel? UserBusinessData;
 
   WeekDaysModel? singleSelection;
@@ -39,13 +40,13 @@ class _CreateNewBusinessServiceScreenState
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      data = await BusinessApis().getUserBusinessServices();
-      if (data != null) {
-        if (data!.isNotEmpty) {
+      if (widget.update == true) {
+        data = await BusinessApis().getBusinessServicesByID(id: widget.id);
+        if (data != null) {
           setState(() {
-            nameTFC.text = data!.first.service_name.toString();
-            priceTCF.text = data!.first.service_price.toString();
-            durationTFC.text = data!.first.service_time.toString();
+            nameTFC.text = data!.service_name.toString();
+            priceTCF.text = data!.service_price.toString();
+            durationTFC.text = data!.service_time.toString();
           });
         }
       }
@@ -99,6 +100,14 @@ class _CreateNewBusinessServiceScreenState
                     placeholder: LocalString.plcDuration,
                     keyBoardType: TextInputType.number,
                   ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  CustomTF(
+                    controllr: depositTF,
+                    placeholder: LocalString.plcDeposit,
+                    keyBoardType: TextInputType.number,
+                  ),
                 ],
               ),
               const SizedBox(
@@ -110,27 +119,29 @@ class _CreateNewBusinessServiceScreenState
               CustomButton.regular(
                 title: LocalString.lblSave,
                 onTap: () async {
-                  data!.isEmpty
+                  data == null
                       ? BusinessApis().createNewService(
                           context: context,
                           serviceName: nameTFC.text,
                           price: priceTCF.text,
                           Duration: durationTFC.text,
+                          deposit_percentage: depositTF.text,
                           onSuccess: () {
-                            // // Navigator.pop(context);
+                            Navigator.pop(context);
 
-                            Navigator.of(context).popUntil((route) =>
-                                route.settings.name ==
-                                SettingScreen().runtimeType.toString());
-                            Constant.settingProvider.getUserBusinessDetail();
+                            // Navigator.of(context).popUntil((route) =>
+                            //     route.settings.name ==
+                            //     SettingScreen().runtimeType.toString());
+                            // Constant.settingProvider.getUserBusinessDetail();
                           },
                         )
                       : BusinessApis().createUpdateService(
                           context: context,
                           serviceName: nameTFC.text,
                           price: priceTCF.text,
-                          serviceID: data!.first.id.toString(),
+                          serviceID: data!.id.toString(),
                           Duration: durationTFC.text,
+                          deposit_percentage: depositTF.text,
                           onSuccess: () {
                             Navigator.pop(context);
                             // Navigator.of(context).popUntil((route) =>
