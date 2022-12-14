@@ -39,16 +39,20 @@
                                         <td>{{($key->exercise_time)?$key->exercise_time:'N/A'}}</td>
                                         <td><a href="#myModal" data-toggle="modal" data-gallery="example-gallery"
                                                 class="col-sm-3 image" data-img-url="{{asset($key->exercise_image)}}">
-                                                <img src="{{($key->exercise_image)?asset($key->exercise_image):asset('/images/business/default.jpg')}}"
+                                                <img src="{{($key->exercise_image)?asset($key->exercise_image):asset('/images/business/download.png')}}"
                                                     class="img-fluid image-control" width="100" height="100">
                                             </a></td>
                                         <td>
+                                            @if($key->exercise_video)
                                             <a data-link="{{ asset($key->exercise_video) }}"
                                                 data-name="{{ $key->exercise_video }}"
                                                 class="view-video btn bg-blue-custom btn-sm"
                                                 onclick="getId('{{ $key->id }}', '{{ asset($key->exercise_video) }}') ">
                                                 Video
                                             </a>
+                                            @else
+                                            No Video
+                                            @endif
                                         </td>
                                         <!-- <td>
                                             <a title="Edit Allergies" class="btn bg-blue-custom btn-sm"

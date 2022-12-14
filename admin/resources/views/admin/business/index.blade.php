@@ -13,8 +13,8 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">View Business Category</div>
-                        <div class="ml-auto"><a href="{{ url('/admin/add-business-category') }}" title="Add Business Category"
-                                data-toggle="tooltip" class="btn bg-blue-custom">Add</a>
+                        <div class="ml-auto"><a href="{{ url('/admin/add-business-category') }}"
+                                title="Add Business Category" data-toggle="tooltip" class="btn bg-blue-custom">Add</a>
                         </div>
                     </div>
                     <div class="card-body">
@@ -33,12 +33,12 @@
                                     <tr>
                                         <td>{{$loop->iteration}}</td>
                                         <td>{{($key->business_category_name)?$key->business_category_name:'N/A'}}</td>
-                                        <td><img src="{{($key->image)?asset($key->image):asset('/images/business/default.jpg')}}"
+                                        <td><img src="{{($key->image)?asset($key->image):asset('/images/business/download.png')}}"
                                                 width="100" height="100"></td>
                                         <td>
                                             <a title="Edit Business Category" class="btn bg-blue-custom btn-sm"
                                                 href="{{ url('/admin/edit-business-category/'.$key->id) }}"
-                                            data-toggle="tooltip">Edit</a>
+                                                data-toggle="tooltip">Edit</a>
                                             @if($key->is_deleted == '0')
                                             <a title="Block Business Category" class="btn btn-danger-custom btn-sm"
                                                 href="{{ url('/admin/destroy-business-category/'.$key->id) }}"
@@ -69,7 +69,7 @@
 
 @section('js')
 <script type="text/javascript">
-$('#usersTable').DataTable({
+    $('#usersTable').DataTable({
     // dom: 'Bfrtip',
     dom: 'frtip',
     // buttons: [{

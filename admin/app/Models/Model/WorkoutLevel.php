@@ -9,8 +9,12 @@ use App\Models\Model\Workout;
 class WorkoutLevel extends Model
 {
     use HasFactory;
-    public function Workout()
+    public function AllWorkout()
 	{
-	    return $this->hasMany(Workout::class ,'level_id','id');
+	    return $this->hasMany(Workout::class ,'level_id','id')->select('*');
+	}
+	public function ActiveWorkout()
+	{
+	    return $this->hasMany(Workout::class ,'level_id','id')->select('*')->where('is_deleted','0');
 	}
 }

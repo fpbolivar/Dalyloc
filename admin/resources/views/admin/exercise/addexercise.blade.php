@@ -23,22 +23,23 @@
                         @include('admin.layouts.message')
                         <div class="row">
                             <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Exercise Name</label>
-                                        <input type="text" class="form-control" placeholder="Enter Exercise name" name="exercise_name">
-                                        @error("exercise_name")
-                                        <span class="help-block  text text-danger">{{$message}}</span>
-                                        @enderror
-                                    </div>
+                                <div class="form-group">
+                                    <label class="form-label">Exercise Name *</label>
+                                    <input type="text" class="form-control" placeholder="Enter Exercise name"
+                                        name="exercise_name">
+                                    @error("exercise_name")
+                                    <span class="help-block  text text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Exercise Time (minutes)</label>
-                                        <input type="type" class="form-control"  name="exercise_time">
-                                        @error("exercise_time")
-                                        <span class="help-block  text text-danger">{{$message}}</span>
-                                        @enderror
-                                    </div>
+                                <div class="form-group">
+                                    <label class="form-label">Exercise Time (minutes) *</label>
+                                    <input type="type" class="form-control" name="exercise_time">
+                                    @error("exercise_time")
+                                    <span class="help-block  text text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -46,8 +47,8 @@
                                 <div class="form-group">
                                     <div class="body">
                                         <label class="form-label">Exercise Video</label>
-                                        <input name="exercise_video" type="file" class="dropify-event" data-default-file=""
-                                            data-allowed-file-extensions="mp4">
+                                        <input name="exercise_video" type="file" class="dropify-event"
+                                            data-default-file="" data-allowed-file-extensions="mp4">
                                         @error("exercise_video")
                                         <span class="help-block  text text-danger">{{$message}}</span>
                                         @enderror
@@ -58,8 +59,8 @@
                                 <div class="form-group">
                                     <div class="body">
                                         <label class="form-label"> Exercise Image</label>
-                                        <input name="exercise_image" type="file" class="dropify-event" data-default-file=""
-                                            data-allowed-file-extensions="jpeg jpg png">
+                                        <input name="exercise_image" type="file" class="dropify-event"
+                                            data-default-file="" data-allowed-file-extensions="jpeg jpg png">
                                         @error("exercise_image")
                                         <span class="help-block  text text-danger">{{$message}}</span>
                                         @enderror
@@ -80,7 +81,7 @@
 @endsection
 @section('js')
 <script type="text/javascript">
-$('.dropify-event').dropify();
+    $('.dropify-event').dropify();
 var design = 0;
 $("#is_list_on_menu").click(function() {
     if (this.checked) {

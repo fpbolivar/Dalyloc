@@ -13,7 +13,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">View Allergies </div>
-                        <div class="ml-auto"><a href="{{ url('/admin/add-allergies') }}" title="Add Allergies"
+                        <div class="ml-auto"><a href="{{ url('/admin/add-allergies') }}" title="Add Allergy"
                                 data-toggle="tooltip" class="btn bg-blue-custom">Add</a>
                         </div>
                     </div>
@@ -29,26 +29,26 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                               
-                                    
+
+
                                     @foreach($getData as $key)
-                                    
+
                                     <tr>
                                         <td>{{$loop->iteration}}</td>
                                         <td>{{($key->name)?$key->name:'N/A'}}</td>
-                                        <td><img src="{{($key->image)?asset($key->image):asset('/images/business/default.jpg')}}"
+                                        <td><img src="{{($key->image)?asset($key->image):asset('/images/business/download.png')}}"
                                                 width="100" height="100"></td>
                                         <td>
-                                            <a title="Edit Allergies" class="btn bg-blue-custom btn-sm"
+                                            <a title="Edit Allergy" class="btn bg-blue-custom btn-sm"
                                                 href="{{ url('/admin/edit-allergies',$key->id) }}"
-                                            data-toggle="tooltip">Edit</a>
+                                                data-toggle="tooltip">Edit</a>
 
                                             @if($key->is_deleted == '0')
-                                            <a title="Block Allergies" class="btn btn-danger-custom btn-sm"
+                                            <a title="Delete Allergy" class="btn btn-danger-custom btn-sm"
                                                 href="{{ url('/admin/destroy-allergies/'.$key->id) }}"
-                                                onclick="return confirm('Are you sure you want to block this Allergies ?');"
-                                                data-toggle="tooltip">Block</a>
-                                
+                                                onclick="return confirm('Are you sure you want to delete this Allergy ?');"
+                                                data-toggle="tooltip">Delete</a>
+
                                             @endif
                                         </td>
                                     </tr>
@@ -69,7 +69,7 @@
 
 @section('js')
 <script type="text/javascript">
-$('#usersTable').DataTable({
+    $('#usersTable').DataTable({
     // dom: 'Bfrtip',
     dom: 'frtip',
     // buttons: [{

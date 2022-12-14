@@ -3,6 +3,11 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Database\Seeders\PrayerSeeder;
+use Database\Seeders\AdminSeeder;
+use Database\Seeders\SubscriptionPlansSeeder;
+use Database\Seeders\SubscriptionSubPlansSeeder;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,6 +18,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        $this->call([
+            PrayerSeeder::class,
+            AdminSeeder::class,
+            SubscriptionPlansSeeder::class,
+            SubscriptionSubPlansSeeder::class
+        ]);
     }
 }

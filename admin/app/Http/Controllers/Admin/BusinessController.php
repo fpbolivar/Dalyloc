@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\File;
 class BusinessController extends Controller
 {
     public function Index(){
-        $allBusiness = BusinessCategory::orderBy('created_at','DESC')->get();
+        $allBusiness = BusinessCategory::orderBy('business_category_name')->get();
         return view('admin.business.index',compact('allBusiness'));
     }
 

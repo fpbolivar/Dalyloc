@@ -6,9 +6,9 @@
         <div class="page-header">
             <h6 class="page-title">Add View Menu Type</h6>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{env('BACK_URL').'business-category'}}"> <i class="fa fa-arrow-left "></i>
-                        Go
-                        Back</a></li>
+                <li class="breadcrumb-item"> <a href="{{env('BACK_URL').'business-category'}}"> <i
+                            class="fa fa-arrow-left "> </i>
+                        GoBack</a></li>
             </ol>
         </div>
         <!--Page-Header-->
@@ -24,13 +24,13 @@
                         @include('admin.layouts.message')
                         <div class="row">
                             <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label class="form-label">Menu Type Name</label>
-                                        <input type="text" class="form-control" placeholder="Menu Type  name" name="name">
-                                        @error("business_category_name")
-                                        <span class="help-block  text text-danger">{{$message}}</span>
-                                        @enderror
-                                    </div>
+                                <div class="form-group">
+                                    <label class="form-label">Menu Type Name</label>
+                                    <input type="text" class="form-control" placeholder="Menu Type  name" name="name">
+                                    @error("business_category_name")
+                                    <span class="help-block  text text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -38,7 +38,8 @@
                                 <div class="form-group">
                                     <div class="body">
                                         <label class="form-label">Description</label>
-                                        <textarea rows="8" cols="2" class="form-control" name="description" placeholder="Description" ></textarea>
+                                        <textarea rows="8" cols="2" class="form-control" name="description"
+                                            placeholder="Description"></textarea>
                                         <!-- <input name="image" type="file" class="dropify-event" data-default-file=""
                                             data-allowed-file-extensions="jpeg jpg png"> -->
                                         @error("image")
@@ -81,7 +82,7 @@
 @endsection
 @section('js')
 <script type="text/javascript">
-$('.dropify-event').dropify();
+    $('.dropify-event').dropify();
 var design = 0;
 $("#is_list_on_menu").click(function() {
     if (this.checked) {

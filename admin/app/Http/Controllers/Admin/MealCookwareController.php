@@ -19,7 +19,8 @@ class MealCookwareController extends Controller
         if($request->isMethod('post')){
            
             $this->validate($request, [
-                'name' => 'required',
+                'name' => 'required|max:50',
+                'description' => 'required',
                 'image' => 'mimes:jpeg,png,jpg'
             ]);
 

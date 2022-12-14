@@ -4,7 +4,7 @@
 <div class="app-content  my-3 my-md-5">
     <div class="side-app">
         <div class="page-header">
-            <h6 class="page-title">Edit Allergies</h6>
+            <h6 class="page-title">Edit Allergy</h6>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{env('BACK_URL').'allergies'}}"> <i class="fa fa-arrow-left "></i>
                         Go
@@ -18,20 +18,20 @@
                     @csrf
                     <div class="card-header">
                         <!-- <h5><a href="{{env('BACK_URL').'category'}}"> <i class="fa fa-arrow-left "></i> Go Back</a> -->
-                        <h3 class="card-title">Edit Allergies</h3>
+                        <h3 class="card-title">Edit Allergy</h3>
                     </div>
                     <div class="card-body">
                         @include('admin.layouts.message')
                         <div class="row">
                             <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Name</label>
-                                        <input type="text" class="form-control" placeholder="Enter Allergies name" name="allergies_name"
-                                            value="{{$getAllergy->name}}">
-                                        @error("name")
-                                        <span class="help-block  text text-danger">{{$message}}</span>
-                                        @enderror
-                                    </div>
+                                <div class="form-group">
+                                    <label class="form-label">Allergy Name *</label>
+                                    <input type="text" class="form-control" placeholder="Enter Allergy name"
+                                        name="allergies_name" value="{{$getAllergy->name}}" maxlength="50">
+                                    @error("allergies_name")
+                                    <span class="help-block  text text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="body">
@@ -60,7 +60,7 @@
 @endsection
 @section('js')
 <script type="text/javascript">
-$('.dropify-event').dropify();
+    $('.dropify-event').dropify();
 
 $('.dropify-clear').click(function(e) {
                 e.preventDefault();

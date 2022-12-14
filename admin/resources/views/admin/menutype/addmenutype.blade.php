@@ -7,10 +7,10 @@
             <h6 class="page-title">Add Menu Type</h6>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-					<a href="{{env('BACK_URL').'menu-type'}}"> 
-						<i class="fa fa-arrow-left "></i>Go Back
-					</a>
-				</li>
+                    <a href="{{env('BACK_URL').'menu-type'}}">
+                        <i class="fa fa-arrow-left "></i>Go Back
+                    </a>
+                </li>
             </ol>
         </div>
         <!--Page-Header-->
@@ -27,8 +27,9 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label class="form-label">Menu Type Name</label>
-                                    <input type="text" class="form-control" placeholder="Enter menu type name" name="name">
+                                    <label class="form-label">Menu Type Name *</label>
+                                    <input type="text" class="form-control" placeholder="Enter menu type name"
+                                        name="name" maxlength="50">
                                     @error("name")
                                     <span class="help-block  text text-danger">{{$message}}</span>
                                     @enderror
@@ -39,8 +40,9 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <div class="body">
-                                        <label class="form-label">Description</label>
-                                        <textarea rows="8" cols="2" class="form-control" name="description" placeholder="Description" ></textarea>
+                                        <label class="form-label">Description *</label>
+                                        <textarea rows="8" cols="2" class="form-control" name="description"
+                                            placeholder="Description" maxlength="80"></textarea>
                                         @error("description")
                                         <span class="help-block  text text-danger">{{$message}}</span>
                                         @enderror
@@ -50,7 +52,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <div class="body">
-                                        <label class="form-label">Image</label>
+                                        <label class="form-label">Image *</label>
                                         <input name="image" type="file" class="dropify-event" data-default-file=""
                                             data-allowed-file-extensions="jpeg jpg png">
                                         @error("image")
@@ -72,7 +74,7 @@
 @endsection
 @section('js')
 <script type="text/javascript">
-$('.dropify-event').dropify();
+    $('.dropify-event').dropify();
 var design = 0;
 $("#is_list_on_menu").click(function() {
     if (this.checked) {

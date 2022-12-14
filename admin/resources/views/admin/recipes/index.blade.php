@@ -14,8 +14,8 @@
                     <div class="card-header">
                         <div class="card-title">View Recipe</div>
                         <div class="ml-auto">
-                            <a href="{{ url('/admin/add-recipe') }}" title="Add Recipe"
-                                data-toggle="tooltip" class="btn bg-blue-custom" style="background-color:#f5127b;color:white">Add</a>
+                            <a href="{{ url('/admin/add-recipe') }}" title="Add Recipe" data-toggle="tooltip"
+                                class="btn bg-blue-custom" style="background-color:#f5127b;color:white">Add</a>
                         </div>
                     </div>
                     <div class="card-body">
@@ -38,7 +38,7 @@
                                         <td>{{($key->meal_name)?$key->meal_name:'N/A'}}</td>
                                         <td>{{($key->meal_cooking_timing)?$key->meal_cooking_timing:'N/A'}}</td>
                                         <td>{{($key->meal_calories)?$key->meal_calories:'N/A'}}</td>
-                                        <td><img src="{{($key->meal_image)?asset($key->meal_image):asset('/images/business/default.jpg')}}"
+                                        <td><img src="{{($key->meal_image)?asset($key->meal_image):asset('/images/business/download.png')}}"
                                                 width="100" height="100"></td>
                                         <td>
                                             <a title="View Recipe" class="btn bg-blue-custom btn-sm"
@@ -70,7 +70,7 @@
 
 @section('js')
 <script type="text/javascript">
-$('#usersTable').DataTable({
+    $('#usersTable').DataTable({
     // dom: 'Bfrtip',
     dom: 'frtip',
     // buttons: [{

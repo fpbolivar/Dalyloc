@@ -16,7 +16,7 @@ class BusinessApiController extends Controller
 {
     public function GetAllBusinessCategory(Request $request){
 
-        $allBusinessCategory = BusinessCategory::where('is_deleted','0')->get();
+        $allBusinessCategory = BusinessCategory::where('is_deleted','0')->orderBy('business_category_name')->get();
         // $allSubTask = CreateSubtask::where('user_id',$userId)->where('date_format',$date)->get();
             return response()->json([
                 'status' => true,
@@ -50,7 +50,7 @@ class BusinessApiController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => true,
-                'message' => 'Already has a business.'
+                'message' => 'Already Has a Business.'
             ]);
         }else{
             $checkBusinessSlug = UserBusiness::where('slug',\Str::slug($request->business_name))->first();
@@ -60,6 +60,7 @@ class BusinessApiController extends Controller
                 $createUserBusiness->slot_interval = $request->slot_interval;
             }     
             $createUserBusiness->business_name = $request->business_name;
+            // $createUserBusiness->online_booking = $request->online_booking;
             if($checkBusinessSlug){
                 $createUserBusiness->slug = \Str::slug($request->business_name).'_'.rand(10,100);
             }else{
@@ -82,7 +83,7 @@ class BusinessApiController extends Controller
                 return response()->json([
                     'status' => true,
                     'status_code' => true,
-                    'message' =>'Business created successfully.',
+                    'message' =>'Business Created Successfully.',
                     'user_business' => $createUserBusiness,
                     'booking_url'=>$booking_url
                 ]);
@@ -90,12 +91,13 @@ class BusinessApiController extends Controller
                 return response()->json([
                     'status' => false,
                     'status_code' => true,
-                    'message' =>'Something went wrong.',
+                    'message' =>'Something Went Wrong.',
                 ]);
             }
        }
 
     }
+
 
       //user update business
       public function UpdateUserBusiness(Request $request, ImageHelper $imageHelper){
@@ -126,6 +128,7 @@ class BusinessApiController extends Controller
             $updateUserBusiness->slot_interval = $request->slot_interval;
         }     
         $updateUserBusiness->business_name = $request->business_name;
+
         if($checkBusinessSlug){
             $updateUserBusiness->slug = \Str::slug($request->business_name).'_'.rand(10,100);
         }else{
@@ -148,7 +151,7 @@ class BusinessApiController extends Controller
             return response()->json([
                 'status' => true,
                 'status_code' => true,
-                'message' =>'Business Updated successfully.',
+                'message' =>'Business Updated Successfully.',
                 'user_business' => $updateUserBusiness,
                 'booking_url'=>$booking_url
             ]);
@@ -156,21 +159,22 @@ class BusinessApiController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => true,
-                'message' =>'Something went wrong.',
+                'message' =>'Something Went Wrong.',
             ]);
         }
            }else{
             return response()->json([
                 'status' => false,
                 'status_code' => true,
-                'message' => 'Data not found'
+                'message' => 'Data Not Found'
             ]);
            }
            
    }
 
+    //get user business
     public function GetUserBusiness(){
-        $userBusiness = UserBusiness::with('UserBusinessCategory','UserBusinessTiming')->where('user_id',auth()->user()->id)->first();
+        $userBusiness = UserBusiness::with('UserBusinessCategory','UserBusinessTiming','UserBusinessService')->where('user_id',auth()->user()->id)->first();
         if($userBusiness != null){
             return response()->json([
                 'status' => true,
@@ -181,11 +185,230 @@ class BusinessApiController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => true,
+                'message' =>'Data Not Found.',
+            ]);
+        }
+    }
+    
+    //add or update deposit percentage
+    public function DepositPercentage(Request $request){
+        // validate
+        $validator = Validator::make($request->all(),[
+            'user_business_id'=>'required|exists:user_business,id',
+            'deposit_percentage' =>'required'
+       ]);
+        // if validation fails
+         if ($validator->fails()) {
+           $error = $validator->messages()->all();
+           return response()->json([
+               'status' => false,
+               'status_code' => true,
+               'message' =>$error[0]
+           ]);
+       }
+        $userBusiness = UserBusiness::where('user_id',auth()->user()->id)->where('id',$request->user_business_id)->first();
+        if($userBusiness){
+               $userBusiness->deposit_percentage = $request->deposit_percentage;
+                if($userBusiness->save()){
+                        return response()->json([
+                        'status' => true,
+                        'status_code' => true,
+                        'deposit_percentage' => $userBusiness['deposit_percentage'],
+                    ]);
+                }else{
+                       return response()->json([
+                        'status' => false,
+                        'status_code' => true,
+                        'message' =>'Something Went Wrong.',
+                    ]); 
+                }
+        }else{
+             return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' =>'Data Not Found.',
+            ]);
+        }
+    }
+    
+        //get deposit percentage
+    public function GetDepositPercentage(Request $request){
+         // validate
+        $validator = Validator::make($request->all(),[
+            'user_business_id'=>'required|exists:user_business,id',
+       ]);
+        // if validation fails
+         if ($validator->fails()) {
+           $error = $validator->messages()->all();
+           return response()->json([
+               'status' => false,
+               'status_code' => true,
+               'message' =>$error[0]
+           ]);
+       }
+        $userBusiness = UserBusiness::where('user_id',auth()->user()->id)->where('id',$request->user_business_id)->first();
+        if($userBusiness){
+                        return response()->json([
+                        'status' => true,
+                        'status_code' => true,
+                        'deposit_percentage' => $userBusiness['deposit_percentage'],
+                    ]);
+   
+        }else{
+             return response()->json([
+                'status' => false,
+                'status_code' => true,
                 'message' =>'No data found.',
             ]);
         }
     }
+      //get get acceptance
+      public function GetAcceptance(Request $request){
+        // validate
+        $validator = Validator::make($request->all(),[
+            'user_business_id'=>'required|exists:user_business,id',
+       ]);
+        // if validation fails
+         if ($validator->fails()) {
+           $error = $validator->messages()->all();
+           return response()->json([
+               'status' => false,
+               'status_code' => true,
+               'message' =>$error[0]
+           ]);
+       }
+        $userBusiness = UserBusiness::where('user_id',auth()->user()->id)->where('id',$request->user_business_id)->first();
+        if($userBusiness){
+                        return response()->json([
+                        'status' => true,
+                        'status_code' => true,
+                        'acceptance' => $userBusiness['is_acceptance'],
+                    ]);
+   
+        }else{
+             return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' =>'Data Not Found.',
+            ]);
+        }
+      }
+      
+    //add or update acceptance
+    public function Acceptance(Request $request){
+         // validate
+        $validator = Validator::make($request->all(),[
+            'user_business_id'=>'required|exists:user_business,id',
+            'acceptance' =>'required'
+       ]);
+        // if validation fails
+         if ($validator->fails()) {
+           $error = $validator->messages()->all();
+           return response()->json([
+               'status' => false,
+               'status_code' => true,
+               'message' =>$error[0]
+           ]);
+       }
+          $userBusiness = UserBusiness::where('user_id',auth()->user()->id)->where('id',$request->user_business_id)->first();
+        if($userBusiness){
+               $userBusiness->is_acceptance = $request->acceptance;
+                if($userBusiness->save()){
+                    //dd($userBusiness);
+                        return response()->json([
+                        'status' => true,
+                        'status_code' => true,
+                        'acceptance' => $userBusiness['is_acceptance'],
+                    ]);
+                }else{
+                       return response()->json([
+                        'status' => false,
+                        'status_code' => true,
+                        'message' =>'Something Went Wrong.',
+                    ]); 
+                }
+        }else{
+             return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' =>'Data Not Found.',
+            ]);
+        }
+    }
 
+      //add or update payment active for business setting
+    public function ActivePayment(Request $request){
+         // validate
+        $validator = Validator::make($request->all(),[
+            'user_business_id'=>'required|exists:user_business,id',
+            'is_active_payment' =>'required'
+       ]);
+        // if validation fails
+         if ($validator->fails()) {
+           $error = $validator->messages()->all();
+           return response()->json([
+               'status' => false,
+               'status_code' => true,
+               'message' =>$error[0]
+           ]);
+       }
+        $userBusiness = UserBusiness::where('user_id',auth()->user()->id)->where('id',$request->user_business_id)->first();
+        if($userBusiness){
+             $userBusiness->is_active_payment = $request->is_active_payment;
+                if($userBusiness->save()){
+                    //dd($userBusiness);
+                        return response()->json([
+                        'status' => true,
+                        'status_code' => true,
+                        'is_active_payment' => $userBusiness['is_active_payment'],
+                    ]);
+                }else{
+                       return response()->json([
+                        'status' => false,
+                        'status_code' => true,
+                        'message' =>'Something Went Wrong.',
+                    ]); 
+                }
+        }else{
+             return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' =>'Data Not Found.',
+            ]);
+        }
+    }
+         
+    //get active payment of business setting
+    public function GetActivePayment(Request $request){
+         // validate
+        $validator = Validator::make($request->all(),[
+            'user_business_id'=>'required|exists:user_business,id',
+       ]);
+        // if validation fails
+         if ($validator->fails()) {
+           $error = $validator->messages()->all();
+           return response()->json([
+               'status' => false,
+               'status_code' => true,
+               'message' =>$error[0]
+           ]);
+       }
+        $userBusiness = UserBusiness::where('user_id',auth()->user()->id)->where('id',$request->user_business_id)->first();
+        if($userBusiness){
+                        return response()->json([
+                        'status' => true,
+                        'status_code' => true,
+                        'is_active_payment' => $userBusiness['is_active_payment'],
+                    ]);
+   
+        }else{
+             return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' =>'Data Not Found.',
+            ]);
+        }
+    } 
     //edit user business slot interval
     public function EditUserBusinessSlotInterval(Request $request){
         // validate
@@ -209,7 +432,7 @@ class BusinessApiController extends Controller
                 return response()->json([
                     'status' => false,
                     'status_code' => true,
-                    'message' => 'Business slot interval already exists. Please choose a different one',
+                    'message' => 'Business Slot Interval Already Exists. Please Choose a Different One.',
                 ]);
             }else{
                 $userBusiness->slot_interval = $request->slot_interval;
@@ -217,13 +440,13 @@ class BusinessApiController extends Controller
                     return response()->json([
                         'status' => true,
                         'status_code' => true,
-                        'message' => 'Slot interval is updated successfully',
+                        'message' => 'Slot Interval Is Updated Successfully.',
                     ]);
                 }else{
                     return response()->json([
                         'status' => false,
                         'status_code' => true,
-                        'message' => 'Something went wrong',
+                        'message' => 'Something Went Wrong.',
                     ]);
                 }
     
@@ -232,7 +455,35 @@ class BusinessApiController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => true,
-                'message' => 'Data not found',
+                'message' => 'Data Not Found.',
+            ]);
+        }
+    }
+
+    //get online booking setting
+    public function GetOnlineBookingSetting(Request $request){
+        $userBusiness = UserBusiness::where('user_id',auth()->user()->id)->first();
+        if($request->has('online_booking')){
+            //update
+            $userBusiness->online_booking = $request->online_booking;
+            if($userBusiness->save()){
+                return response()->json([
+                    'status' => true,
+                    'status_code' => true,
+                    'data' =>$userBusiness
+                ]);
+            }else{
+                return response()->json([
+                    'status' => false,
+                    'status_code' => true,
+                    'message' =>'Something Went Wrong.'
+                ]);
+            }
+        }else{
+            return response()->json([
+                'status' => true,
+                'status_code' => true,
+                'data' =>$userBusiness
             ]);
         }
     }
@@ -265,7 +516,7 @@ class BusinessApiController extends Controller
             $createService->service_name = $request->service_name;
             $createService->service_price = $request->service_price;
             $createService->service_time = $request->service_time;
-            $createService->service_time = $request->service_time;
+            $createService->deposit_percentage = $request->deposit_percentage;
             if($request->has('service_online_booking')){
                 $createService->service_online_booking = $request->service_online_booking;
             }
@@ -273,13 +524,13 @@ class BusinessApiController extends Controller
                 return response()->json([
                     'status' => true,
                     'status_code' => true,
-                    'message' => 'Business service created successfully.',
+                    'message' => 'Business Service Created Successfully.',
                 ]);
             }else{
                 return response()->json([
                     'status' => false,
                     'status_code' => true,
-                    'message' => 'Something went wrong.',
+                    'message' => 'Something Went Wrong.',
                 ]);
             }
 
@@ -287,7 +538,7 @@ class BusinessApiController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => true,
-                'message' => 'Business not found.',
+                'message' => 'Business Not Found.',
             ]);
         }
 
@@ -315,13 +566,13 @@ class BusinessApiController extends Controller
         }
         $userBusinessService = UserBusinessService::where('id',$request->business_service_id)->where('user_id',auth()->user()->id)->where('business_id',$request->business_id)->first();
         if($userBusinessService){
-            $userBusinessService = new UserBusinessService;
             $userBusinessService->user_id = auth()->user()->id;
             $userBusinessService->business_id = $request->business_id;
             $userBusinessService->service_name = $request->service_name;
             $userBusinessService->service_price = $request->service_price;
             $userBusinessService->service_time = $request->service_time;
-            $userBusinessService->service_time = $request->service_time;
+            $userBusinessService->deposit_percentage = $request->deposit_percentage;
+            
             if($request->has('service_online_booking')){
                 $userBusinessService->service_online_booking = $request->service_online_booking;
             }
@@ -329,20 +580,20 @@ class BusinessApiController extends Controller
                 return response()->json([
                     'status' => true,
                     'status_code' => true,
-                    'message' => 'Business service updated successfully.',
+                    'message' => 'Business Service Updated Successfully.',
                 ]);
             }else{
                 return response()->json([
                     'status' => false,
                     'status_code' => true,
-                    'message' => 'Something went wrong.',
+                    'message' => 'Something Went Wrong.',
                 ]);
             }
         }else{
             return response()->json([
                 'status' => false,
                 'status_code' => true,
-                'message' => 'Business service not found.',
+                'message' => 'Business Service Not Found.',
             ]);
         }
 
@@ -371,20 +622,20 @@ class BusinessApiController extends Controller
                         return response()->json([
                             'status' => true,
                             'status_code' => true,
-                            'message' => 'Business service deleted successfully.',
+                            'message' => 'Business Service Deleted Successfully.',
                         ]);
                     }else{
                         return response()->json([
                             'status' => false,
                             'status_code' => true,
-                            'message' => 'Something went wrong.',
+                            'message' => 'Something Went Wrong.',
                         ]);
                     }
                 }else{
                     return response()->json([
                         'status' => false,
                         'status_code' => true,
-                        'message' => 'Business service not found.',
+                        'message' => 'Business Service Not Found.',
                     ]);
                 }
 
@@ -417,12 +668,72 @@ class BusinessApiController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => true,
-                'message' => 'Business services not found.',
+                'message' => 'Business Services Not Found.',
             ]);
         }
 
     }
 
+    /**
+    * update deposite
+    */
+    public function UpdateDeposite(Request $req){
+        //get in  request  id , businessid , deposit percentage
+        if($req->business_id && $req->id && $req->deposit_percentage){
+           $updateDeposit = UserBusinessService::where('is_deleted','0')->where('business_id',$req->business_id)->where('id',$req->id)->first();
+           if($updateDeposit){
+               $updateDeposit->deposit_percentage = $req->deposit_percentage;
+               //save deposit percentage
+               $updateDeposit->save();
+               return response()->json([
+                 'status' => true,
+                 'status_code' => true,
+                 'data' =>$updateDeposit,
+             ]);
+           }else{
+              return response()->json([
+                  'status' => false,
+                  'status_code' => true,
+                  'error' =>'error'
+              ]);
+           }
+           
+        }
+      
+     }
+
+
+    //get user business service detail
+    public function GetUserBusinessServiceDetail(Request $request){
+           // validate
+    	 $validator = Validator::make($request->all(),[
+            'business_service_id' => 'required|exists:user_business_services,id',
+        ]);
+         // if validation fails
+    	  if ($validator->fails()) {
+            $error = $validator->messages()->all();
+            return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' =>$error[0]
+            ]);
+        }
+
+        $data = UserBusinessService::where('user_id',auth()->user()->id)->where('id',$request->business_service_id)->first();
+        if($data){
+            return response()->json([
+                'status' => true,
+                'status_code' => true,
+                'data' => $data,
+            ]);
+        }else{
+            return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' => 'Business Services Not Found.',
+            ]);
+        }
+    }
     //create user business timing
     public function CreateUserBusinessTiming(Request $request){
         // validate
@@ -453,7 +764,7 @@ class BusinessApiController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => true,
-                'message' => 'You have already scheduled your business.'
+                'message' => 'You Have Already Scheduled Your Business.'
             ]);
         }
         if($userBusiness){
@@ -472,14 +783,14 @@ class BusinessApiController extends Controller
                 return response()->json([
                     'status' => true,
                     'status_code' => true,
-                    'message' => 'Business timing created successfully.',
+                    'message' => 'Business Timing Created Successfully.',
                 ]);
             
         }else{
             return response()->json([
                 'status' => false,
                 'status_code' => true,
-                'message' => 'Business not found.',
+                'message' => 'Business Not Found.',
             ]);
         }
 
@@ -555,20 +866,20 @@ class BusinessApiController extends Controller
                 return response()->json([
                     'status' => true,
                     'status_code' => true,
-                    'message' => 'Business timing updated successfully.',
+                    'message' => 'Business Timing Updated Successfully.',
                 ]);
             }else{
                 return response()->json([
                     'status' => false,
                     'status_code' => true,
-                    'message' => 'Business Timings not found.',
+                    'message' => 'Business Timings Not Found.',
                 ]);
             }
         }else{
             return response()->json([
                 'status' => false,
                 'status_code' => true,
-                'message' => 'Business not found.',
+                'message' => 'Business Not Found.',
             ]);
         }
 

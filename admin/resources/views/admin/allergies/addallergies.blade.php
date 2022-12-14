@@ -4,7 +4,7 @@
 <div class="app-content  my-3 my-md-5">
     <div class="side-app">
         <div class="page-header">
-            <h6 class="page-title">Add Allergies</h6>
+            <h6 class="page-title">Add Allergy</h6>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{env('BACK_URL').'allergies'}}"> <i class="fa fa-arrow-left "></i>
                         Go
@@ -17,19 +17,20 @@
                 <form class="card" method="post" action="" enctype="multipart/form-data">
                     @csrf
                     <div class="card-header">
-                        <h3 class="card-title">Add Allergies</h3>
+                        <h3 class="card-title">Add Allergy</h3>
                     </div>
                     <div class="card-body">
                         @include('admin.layouts.message')
                         <div class="row">
                             <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Business Name</label>
-                                        <input type="text" class="form-control" placeholder="Enter Allergies name" name="allergies_name">
-                                        @error("business_category_name")
-                                        <span class="help-block  text text-danger">{{$message}}</span>
-                                        @enderror
-                                    </div>
+                                <div class="form-group">
+                                    <label class="form-label">Allergy Name *</label>
+                                    <input type="text" class="form-control" placeholder="Enter Allergies name"
+                                        name="allergies_name" maxlength="50">
+                                    @error("allergies_name")
+                                    <span class="help-block  text text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
                             </div>
 
                             <div class="col-md-6">
@@ -63,7 +64,7 @@
 @endsection
 @section('js')
 <script type="text/javascript">
-$('.dropify-event').dropify();
+    $('.dropify-event').dropify();
 var design = 0;
 $("#is_list_on_menu").click(function() {
     if (this.checked) {

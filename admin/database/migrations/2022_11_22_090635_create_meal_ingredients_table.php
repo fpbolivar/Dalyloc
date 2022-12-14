@@ -16,7 +16,7 @@ class CreateMealIngredientsTable extends Migration
         Schema::create('meal_ingredients', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('recipe_id');
-            $table->string('ingredient_id');
+            $table->string('ingredient');
             $table->string('quantity');
             $table->enum('is_deleted',['0','1'])->default(0);
             $table->timestamps();

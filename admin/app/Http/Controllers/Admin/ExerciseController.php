@@ -13,7 +13,7 @@ class ExerciseController extends Controller
      /**
      * index view file
      */
-    public function index(){
+    public function Index(){
         //get all allergy list 
         $getData = Exercise::where('is_deleted','0')->get();
         // index view  file     
@@ -23,7 +23,7 @@ class ExerciseController extends Controller
     /**
      *  add exercise  view file 
      */
-    public function addExercise(Request $req, ImageHelper $imageHelper)
+    public function AddExercise(Request $req, ImageHelper $imageHelper)
     {
 
         if($req->isMethod('post')){

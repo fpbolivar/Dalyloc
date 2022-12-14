@@ -15,7 +15,6 @@ class CreateWorkoutExercisesTable extends Migration
     {
         Schema::create('workout_exercises', function (Blueprint $table) {
             $table->id();
-            
             $table->unsignedBigInteger('workout_id')->nullable();
             $table->string('exercise_id')->nullable();
             $table->enum('is_deleted',['0','1'])->default(0);

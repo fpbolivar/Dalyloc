@@ -7,10 +7,10 @@
             <h6 class="page-title">Edit Meal Category</h6>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-					<a href="{{env('BACK_URL').'menu-type'}}"> 
-						<i class="fa fa-arrow-left "></i>Go Back
-					</a>
-				</li>
+                    <a href="{{env('BACK_URL').'menu-type'}}">
+                        <i class="fa fa-arrow-left "></i>Go Back
+                    </a>
+                </li>
             </ol>
         </div>
         <!--Page-Header-->
@@ -26,8 +26,9 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Name</label>
-                                    <input type="text" class="form-control" placeholder="Enter meal category name" name="name" value="{{$editMealCategory->name}}">
+                                    <label class="form-label">Name *</label>
+                                    <input type="text" class="form-control" placeholder="Enter meal category name"
+                                        name="name" value="{{$editMealCategory->name}}" maxlength="50">
                                     @error("name")
                                     <span class="help-block text text-danger">{{$message}}</span>
                                     @enderror
@@ -60,7 +61,7 @@
 @endsection
 @section('js')
 <script type="text/javascript">
-$('.dropify-event').dropify();
+    $('.dropify-event').dropify();
 
 $('.dropify-clear').click(function(e) {
                 e.preventDefault();

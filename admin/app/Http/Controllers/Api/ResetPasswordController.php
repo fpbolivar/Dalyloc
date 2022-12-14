@@ -29,12 +29,12 @@ class ResetPasswordController extends Controller
                 'message' => $validator->messages()->first()
             ]);
         }
-        $user = User::where(['phone_no' => $request->phone_no, 'is_deleted' => '0'])->first();
+        $user = User::where(['phone_no' => $request->phone_no,'country_code' => $request->country_code, 'is_deleted' => '0'])->first();
         if (!$user) {
             return response()->json([
                 'status_code' => true,
                 'status' => false,
-                'message' => "We can't find a user with this phone number."
+                'message' => "We Can't Find a User With This Phone Number."
             ]);
         } else {
             $OTP = rand(111111, 999999);
@@ -42,7 +42,7 @@ class ResetPasswordController extends Controller
             return response()->json([
                 'status' => true,
                 'status_code' => true,
-                'message' => 'Reset Password OTP sent to your phone no.',
+                'message' => 'Reset Password OTP Sent To Your Phone Number.',
                 'otp' => $OTP,
                 'phone_no' => $request->phone_no
             ]);
@@ -70,12 +70,13 @@ class ResetPasswordController extends Controller
         }
 
         $phoneNo = $request->phone_no;
-        $checkPhone = User::where(['phone_no' => $phoneNo, 'is_deleted' => '0'])->first();
+        $country_code = $request->country_code;
+        $checkPhone = User::where(['phone_no' => $phoneNo,'country_code' => $country_code, 'is_deleted' => '0'])->first();
         if (!empty($checkPhone)) {
             $passwordReset = UserResetPassword::where(['otp' => $request->otp, 'phone_no' => $checkPhone->phone_no])->first();
             if (!$passwordReset) {
                 return response()->json([
-                    'message' => 'Incorrect otp', 'status' => false,
+                    'message' => 'Incorrect OTP', 'status' => false,
                     'status_code' => true
                 ]);
             }
@@ -115,16 +116,16 @@ class ResetPasswordController extends Controller
 
         $passwordReset = UserResetPassword::where(['phone_no' => $request->phone_no])->first();
 
-        $user = User::where(['phone_no' => $request->phone_no, 'is_deleted' => '0'])->first();
+        $user = User::where(['phone_no' => $request->phone_no, 'country_code' => $request->country_code,'is_deleted' => '0'])->first();
         if (!$user) {
-            return response()->json(['message' => 'We can`t find a user with that phone number.', 'status_code' => true, 'status' => false]);
+            return response()->json(['message' => 'We Can`t Find a User With That Phone Number.', 'status_code' => true, 'status' => false]);
         } else {
             $user->password = bcrypt($request->password);
             if ($user->save()) {
                 $passwordReset->delete();
-                return response()->json(['message' => 'Password changed successfully.', 'status_code' => true, 'status' => true]);
+                return response()->json(['message' => 'Password Changed Successfully.', 'status_code' => true, 'status' => true]);
             } else {
-                return response()->json(['message' => 'Connection error. Please try again later.', 'status_code' => true, 'status' => false]);
+                return response()->json(['message' => 'Connection Error. Please Try Again Later.', 'status_code' => true, 'status' => false]);
             }
         }
     }
@@ -153,7 +154,7 @@ class ResetPasswordController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => true,
-                'message' => 'Something went wrong.'
+                'message' => 'Something Went Wrong.'
             ]);
         }
     }

@@ -6,7 +6,8 @@
         <div class="page-header">
             <h6 class="page-title">Add Workout Exercise </h6>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{env('BACK_URL').'workout-exercise'}}"> <i class="fa fa-arrow-left "></i>
+                <li class="breadcrumb-item"><a href="{{env('BACK_URL').'workout-exercise'}}"> <i
+                            class="fa fa-arrow-left "></i>
                         Go
                         Back</a></li>
             </ol>
@@ -23,32 +24,42 @@
                         @include('admin.layouts.message')
                         <div class="row">
                             <div class="col-md-6">
-                            <div class="form-group">
-                                        <label class="form-label">Workout</label>
-                                        <select class="form-control select2"  name="workout_id" data-placeholder="Choose Workout Level">
-                                            <option selected>Choose Workout Level</option>
-                                            <?php  foreach($workout as $work) { ?>
-                                                        <option value="<?= $work['id'] ?>"><?= $work['workout_name'] ?></option>
-                                            <?php   } ?>
-                                        </select> 
-                                        @error("workout_name")
-                                        <span class="help-block  text text-danger">{{$message}}</span>
-                                        @enderror
-                                    </div>
-                            </div>
-                            <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Exercise</label>
-                                        <select class="form-control select2"  name="exercise_id[]" data-placeholder="Choose Browser" multiple>
-                                            
-                                            <?php  foreach($exercise as $exer) { ?>
-                                                <option value="<?= $exer['id'] ?>"><?= $exer['exercise_name'] ?></option>
-                                    <?php   } ?>
-                                    @error("exercise_id")
+                                <div class="form-group">
+                                    <label class="form-label">Workout</label>
+                                    <select class="form-control " name="workout_id"
+                                        data-placeholder="Choose Workout Level" required>
+                                        <option value="" disabled="disabled" selected>Choose Workout </option>
+                                        <?php  foreach($workout as $work) { ?>
+                                        <option value="<?= $work['id'] ?>">
+                                            <?= $work['workout_name'] ?>
+                                        </option>
+                                        <?php   } ?>
+                                    </select>
+                                    {{-- @if ($errors->has('workout_id'))<span
+                                        class="help-block  text text-danger">{{$errors->first('workout_id')}}</span>
+                                    @endif --}}
+                                    @error("workout_id")
                                     <span class="help-block  text text-danger">{{$message}}</span>
                                     @enderror
-                                        </select>
-                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Exercise</label>
+                                    <select class="form-control select2" name="exercise_id[]"
+                                        data-placeholder="Choose Browser" multiple>
+
+                                        <?php  foreach($exercise as $exer) { ?>
+                                        <option value="<?= $exer['id'] ?>">
+                                            <?= $exer['exercise_name'] ?>
+                                        </option>
+                                        <?php   } ?>
+
+                                        @error("exercise_id")
+                                        <span class="help-block  text text-danger">{{$message}}</span>
+                                        @enderror
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -64,7 +75,7 @@
 @endsection
 @section('js')
 <script type="text/javascript">
-$('.dropify-event').dropify();
+    $('.dropify-event').dropify();
 var design = 0;
 $("#is_list_on_menu").click(function() {
     if (this.checked) {

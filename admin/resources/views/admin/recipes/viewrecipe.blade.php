@@ -1,29 +1,32 @@
 @extends('admin.layouts.main')
 @section('contents')
 <style type="text/css">
-.custom-switch {
-    padding-left: unset !important;
-}
+    .custom-switch {
+        padding-left: unset !important;
+    }
 
-.text-muted {
-    color: black !important;
-    font-weight: 800;
-}
-#ingredientsList li {
-    background: url('../../images/recipes/meal-ingredients.png') no-repeat left center;
-    padding: 5px 10px 5px 35px;
-    vertical-align: middle;
-    margin: 0;
-}
-#instructionsList li {
-    line-height: 35px;
-}
-#instructionsList span.step {
-    padding: 5px 10px;
-    background-color: wheat;
-    border-radius: 50%;
-    margin: 0 10px 0 0;
-}
+    .text-muted {
+        color: black !important;
+        font-weight: 800;
+    }
+
+    #ingredientsList li {
+        background: url('../../images/recipes/meal-ingredients.png') no-repeat left center;
+        padding: 5px 10px 5px 35px;
+        vertical-align: middle;
+        margin: 0;
+    }
+
+    #instructionsList li {
+        line-height: 35px;
+    }
+
+    #instructionsList span.step {
+        padding: 5px 10px;
+        background-color: wheat;
+        border-radius: 50%;
+        margin: 0 10px 0 0;
+    }
 </style>
 <div class="app-content  my-3 my-md-5">
     <div class="side-app">
@@ -48,7 +51,9 @@
                                     <td>
                                         {{($recipe['meal_name'])?ucfirst($recipe['meal_name']):'N/A'}}
                                     </td>
-                                    <td rowspan="7"><img src="{{($recipe['meal_image'])? asset($recipe['meal_image']):asset('/images/business/default.jpg')}}" style="width: 50%;float: right;"></td>
+                                    <td rowspan="7"><img
+                                            src="{{($recipe['meal_image'])? asset($recipe['meal_image']):asset('/images/business/download.png')}}"
+                                            style="width: 50%;float: right;"></td>
                                 </tr>
                                 <tr>
                                     <td class="text-muted" style="width:20%">Description:</td>
@@ -83,7 +88,7 @@
                                     <td class="text-muted" style="width:20%">Calorie Count:</td>
                                     <td>
                                         {{($recipe['meal_calories'])?$recipe['meal_calories']:'N/A'}}
-                                    </td>                                   
+                                    </td>
                                 </tr>
                             </table>
                             <hr>
@@ -114,7 +119,8 @@
                 <ul id="instructionsList">
                     @foreach($recipe['instructions'] as $meal_instruction)
                     @if($meal_instruction['is_deleted'] == '0')
-                    <li><span class="step">{{$meal_instruction['step_no']}}</span> {{$meal_instruction['description']}}</li>
+                    <li><span class="step">{{$meal_instruction['step_no']}}</span> {{$meal_instruction['description']}}
+                    </li>
                     @endif
                     @endforeach
                 </ul>
@@ -128,7 +134,7 @@
 
 @section('js')
 <script type="text/javascript">
-$('#usersTable').DataTable({
+    $('#usersTable').DataTable({
     // dom: 'Bfrtip',
     dom: 'frtip',
     // buttons: [{

@@ -80,7 +80,12 @@
                                         {{($user->gender)?$user->gender:'N/A'}}
                                     </td>
                                     <td>
-                                        {{($user->height)?$user->height:'N/A'}}
+                                        <?php
+                                         $inches = $user->height/2.54;
+                                         $feet = intval($inches/12);
+                                         $inches = $inches%12; 
+                                        ?>
+                                        {{($user->height)?$feet.".".$inches:'N/A'}}
                                     </td>
                                     <td>{{($user->weight)?$user->weight:'N/A'}}
                                     </td>

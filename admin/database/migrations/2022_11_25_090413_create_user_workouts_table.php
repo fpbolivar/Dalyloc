@@ -16,6 +16,7 @@ class CreateUserWorkoutsTable extends Migration
         Schema::create('user_workouts', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('workout_id');
+            $table->bigInteger('user_id');
             $table->enum('workout_status',['pending','completed'])->default('pending');
             $table->timestamps();
         });

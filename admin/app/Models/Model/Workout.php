@@ -11,7 +11,7 @@ use App\Models\Model\WorkoutExercise;
 class Workout extends Model
 {
     use HasFactory;
-    public function workoutlevel()
+    public function WorkoutLevel()
     {
 	    return $this->hasOne(WorkoutLevel::class ,'id','level_id');
 	}
