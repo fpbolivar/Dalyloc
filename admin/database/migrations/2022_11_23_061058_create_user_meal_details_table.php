@@ -20,6 +20,10 @@ class CreateUserMealDetailsTable extends Migration
             $table->string('allergies_id')->nullable();    //multiple
             $table->string('dislikes_id')->nullable();        //multiple
             $table->string('meal_size_id')->nullable();    //one 
+            $table->enum('meal_notify', ['1', '0'])->default("0");
+            $table->integer('meal_daily_count')->nullable();
+            $table->time('meal_start_time')->nullable();
+            $table->time('meal_end_time')->nullable();
             $table->enum('is_deleted',['0','1'])->default(0);
             $table->enum('is_notification',['0','1'])->default(1);
             $table->timestamps();

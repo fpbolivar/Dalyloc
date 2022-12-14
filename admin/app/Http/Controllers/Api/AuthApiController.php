@@ -19,13 +19,14 @@ class AuthApiController extends Controller
     public function UserRegister(Request $req,  CustomHelper $helper)
     {   
         $message = [
-                    'phone_no.unique' => 'There is already an account registered with that phone number. Please login with that phone no. or create an account with a new phone number.',
-                    'password.min'=>'Password must be at least 6 digits long',
+                    'phone_no.unique' => 'There Is Already An Account Registered With That Phone Number. Please Login With That Phone Number Or Create An Account With a New Phone Number.',
+                    'password.min'=>'Password Must Be Atleast 6 Digits Long.',
                     ];
     	// validate feilds
         $validator = Validator::make($req->all(),[
             'name' => 'required',
             // 'email' => 'required|email:filter|unique:users,email',
+
             'phone_no' => 'required|unique:users,phone_no',
             'password' => 'required|min:6|same:confirm_password',
             'confirm_password' => 'required|min:6'
@@ -44,6 +45,7 @@ class AuthApiController extends Controller
         $user->name = $req->name;
         // $user->email = $req->email;
         $user->phone_no = $req->phone_no;
+        $user->country_code =$req->country_code;
         $user->otp = $otp;
         $user->device_id = $req->device_id;
         $user->device_token = $req->device_token;
@@ -61,7 +63,7 @@ class AuthApiController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => false,
-                'message' => 'Something went wrong.'
+                'message' => 'Something Went Wrong.'
             ]);
         }
     }
@@ -89,7 +91,7 @@ class AuthApiController extends Controller
                 return response()->json([
                     'status' => true,
                     'status_code' => true,
-                    'message' => 'Mobile number authenticated successfully.',
+                    'message' => 'Mobile Number Authenticated Successfully.',
                     'access_token' => 'Bearer '.$token,
 
                 ]);
@@ -97,7 +99,7 @@ class AuthApiController extends Controller
                 return response()->json([
                     'status' => false,
                     'status_code' => true,
-                    'message' => 'Something went wrong.'
+                    'message' => 'Something Went Wrong.'
                 ]);
             }
         } else {
@@ -135,7 +137,7 @@ class AuthApiController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => true,
-                'message' => 'Something went wrong.'
+                'message' => 'Something Went Wrong.'
             ]);
         }
     }
@@ -143,8 +145,8 @@ class AuthApiController extends Controller
     {
 
         $message = [
-                    'phone_no.exists'=>'This phone number does not exist in our system.',
-                    'password.min'=>'Password must be at least 6 digits long',
+                    'phone_no.exists'=>'This Phone Number Does Not Exist In Our System.',
+                    'password.min'=>'Password Must Be Atleast 6 Digits Long.',
                     ];
     	// validate feilds
         $validator = Validator::make($req->all(),[
@@ -160,7 +162,7 @@ class AuthApiController extends Controller
             ]);
         }
 
-          $user = User::where('phone_no',$req->phone_no)->whereNotNull('phone_verified_at')->first();
+          $user = User::where('phone_no',$req->phone_no)->where('country_code',$req->country_code)->whereNotNull('phone_verified_at')->first();
         // if (!is_null($user->facebook_id) || !is_null($user->google_id)){
         //     return response()->json([
         //             'status' => false,
@@ -173,7 +175,7 @@ class AuthApiController extends Controller
                 return response()->json([
                     'status' => false,
                     'status_code' => false,
-                    'message' => 'Your phone number is not verified.'
+                    'message' => 'Your Phone Number and Country Code Is Not Verified.'
                 ]);
         }
         $passwordCheck = \Hash::check($req->password,$user->password);
@@ -182,13 +184,14 @@ class AuthApiController extends Controller
                  return response()->json([
                     'status' => false,
                     'status_code' => false,
-                    'message' => 'Your account has been disabled, please contact adminstrator'
+                    'message' => 'Your Account Has Been Disabled, Please Contact Adminstrator.'
                  ]);
             }
             $user->device_id = $req->device_id;
             $user->device_type = $req->device_type;
+            $user->country_code = $req->country_code;
             $user->device_token = $req->device_token;
-            $user->login_type = 'mannual';
+            $user->login_type = 'manual';
             if ($user->save()) {
                 // genrate auth token
                 $token = JWTAuth::fromUser($user);
@@ -200,7 +203,7 @@ class AuthApiController extends Controller
                     'details' => $user
                 ]);
             }
-            return response()->json(['message' => 'Something went wrong','status' => false]);
+            return response()->json(['message' => 'Something Went Wrong.','status' => false]);
         }else{
             // if (!is_null($user->social_id) && $user->login_type == 'google') {
             //     return response()->json(['message' => 'you are already login with the google account','status' => false]);
@@ -216,7 +219,7 @@ class AuthApiController extends Controller
         User::whereid(auth()->user()->id)->update(['device_id'=>NULL,'device_token'=>NULL]);
         // invalidate auth token
         JWTAuth::invalidate();
-        return response()->json(['message' => 'Successfully Logged Out','status' => true]);
+        return response()->json(['message' => 'Successfully Logged Out.','status' => true]);
     }
 
 }

@@ -15,8 +15,8 @@ class CreateTaskController extends Controller
             'tId' => 'required',
             // 'email' => 'required|min:6',
              'taskName' => 'required',
-            'howLong'=> 'required',
-            'howOften'=> 'required',
+            // 'howLong'=> 'required',
+            // 'howOften'=> 'required',
             'isCompleted'=> 'required',
             'startTime'=> 'required',
             'endTime'=> 'required',
@@ -36,6 +36,10 @@ class CreateTaskController extends Controller
         $createTask->t_Id = $request->tId;
         $createTask->email = $request->email;
         $createTask->task_name = $request->taskName;
+        $createTask->location = $request->location;
+        $createTask->lat = $request->lat;
+        $createTask->lng = $request->lng;
+        $createTask->task_type = $request->task_type;
         $createTask->utc_date_time = $request->utcDateTime;
         $createTask->task_time_stamp = $request->taskTimeStamp;
         $createTask->create_time_stamp = $request->createTimeStamp;
@@ -63,7 +67,7 @@ class CreateTaskController extends Controller
         return response()->json([
             'status' => true,
             'status_code' => true,
-            'message' =>'Created task successfully.',
+            'message' =>'Created Task Successfully.',
             'task_id' => $createTask->id
         ]);
 
@@ -133,7 +137,7 @@ class CreateTaskController extends Controller
         return response()->json([
             'status' => true,
             'status_code' => true,
-            'message' =>'Updated successfully.'
+            'message' =>'Updated Successfully.'
         ]); 
         
 
@@ -141,7 +145,7 @@ class CreateTaskController extends Controller
                return response()->json([
             'status' => false,
             'status_code' => true,
-            'message' =>'No data found'
+            'message' =>'Data Not Found.'
         ]);
     }
 }
@@ -165,7 +169,7 @@ class CreateTaskController extends Controller
                 return response()->json([
                     'status' => false,
                     'status_code' => false,
-                    'message' => 'Something went wrong.'
+                    'message' => 'Something Went Wrong.'
                 ]);
             }
 
@@ -174,7 +178,7 @@ class CreateTaskController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => false,
-                'message' => 'Data not found.'
+                'message' => 'Data Not Found.'
             ]);
         }
 

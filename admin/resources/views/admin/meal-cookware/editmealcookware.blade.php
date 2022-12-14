@@ -7,10 +7,10 @@
             <h6 class="page-title">Edit Meal Cookware</h6>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-					<a href="{{env('BACK_URL').'meal-cookware'}}"> 
-						<i class="fa fa-arrow-left "></i>Go Back
-					</a>
-				</li>
+                    <a href="{{env('BACK_URL').'meal-cookware'}}">
+                        <i class="fa fa-arrow-left "></i>Go Back
+                    </a>
+                </li>
             </ol>
         </div>
         <!--Page-Header-->
@@ -27,20 +27,22 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label class="form-label">Name</label>
-                                    <input type="text" class="form-control" placeholder="Enter meal cookware name" name="name" value="{{$editMealCookware->name}}">
+                                    <label class="form-label">Name *</label>
+                                    <input type="text" class="form-control" placeholder="Enter meal cookware name"
+                                        name="name" value="{{$editMealCookware->name}}" maxlength="50">
                                     @error("name")
                                     <span class="help-block text text-danger">{{$message}}</span>
                                     @enderror
                                 </div>
                             </div>
                         </div>
-                        <div class="row"> 
+                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <div class="body">
-                                        <label class="form-label">Description</label>
-                                        <textarea rows="8" cols="2" class="form-control" name="description" placeholder="Description" >{{$editMealCookware->description}}</textarea>
+                                        <label class="form-label">Description *</label>
+                                        <textarea rows="8" cols="2" class="form-control" name="description"
+                                            placeholder="Description">{{$editMealCookware->description}}</textarea>
                                         @error("description")
                                         <span class="help-block  text text-danger">{{$message}}</span>
                                         @enderror
@@ -74,7 +76,7 @@
 @endsection
 @section('js')
 <script type="text/javascript">
-$('.dropify-event').dropify();
+    $('.dropify-event').dropify();
 
 $('.dropify-clear').click(function(e) {
                 e.preventDefault();

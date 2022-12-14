@@ -15,8 +15,8 @@ class CreateWorkoutLevelsTable extends Migration
     {
         Schema::create('workout_levels', function (Blueprint $table) {
             $table->id();
-            $table->string('workout_name');
-            $table->string('workout_description')->nullable();
+            $table->string('workout_level_name');
+            $table->text('workout_description')->nullable();
             $table->string('workout_image')->nullable();
             $table->enum('is_deleted',['0','1'])->default(0);
             $table->timestamps();

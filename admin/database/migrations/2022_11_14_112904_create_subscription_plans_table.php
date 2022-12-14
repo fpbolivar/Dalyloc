@@ -16,7 +16,8 @@ class CreateSubscriptionPlansTable extends Migration
         Schema::create('subscription_plans', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
-            $table->enum('type_of_operation',['meal','exercise','devotional','smart','business']);
+            $table->enum('type_of_operation',['meal','exercise','devotional','business']);
+            $table->enum('is_deleted',['0','1'])->default(0);
             $table->timestamps();
         });
     }

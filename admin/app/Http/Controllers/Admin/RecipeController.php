@@ -48,9 +48,15 @@ class RecipeController extends Controller
                 'menu_type' => 'required',
                 'meal_cookware' => 'required',
                 'cooking_time' => 'required',
-                'meal_image' => 'mimes:jpeg,png,jpg',
-                'calorie_count' => 'required'
+                'meal_image' => 'required|mimes:jpeg,png,jpg',
+                'calorie_count' => 'required',
+                // 'ingredients' => 'required|array',
+                // 'quantity' => 'required|array',
+                'description' => 'required',
+                // 'step' => 'required|array',
+                // 'instruction' => 'required|array'
             ]);
+            
 
             $recipe =  new Recipe;
             $recipe->meal_name = $request->meal_name;
@@ -59,6 +65,7 @@ class RecipeController extends Controller
             $recipe->meal_cookware_id = $request->meal_cookware;
             $recipe->meal_cooking_timing = $request->cooking_time;
             $recipe->meal_calories = $request->calorie_count;
+            $recipe->description = $request->description;
             if($request->has('meal_image')){
                 $path = '/images/recipes';
                 $recipe->meal_image = $imageHelper->UploadImage($request->meal_image,$path);
@@ -122,7 +129,9 @@ class RecipeController extends Controller
         $menu_types = MenuType::where('is_deleted', '0')->get()->toArray();
         $meal_cookware = MealCookware::where('is_deleted', '0')->get()->toArray();
         $ingredients = Ingredient::where('is_deleted', '0')->get()->toArray();
+
         if ($request->isMethod('post')) {
+         
             $this->validate($request, [
                 'meal_name' => 'required',
                 'meal_category' => 'required',
@@ -130,15 +139,18 @@ class RecipeController extends Controller
                 'meal_cookware' => 'required',
                 'cooking_time' => 'required',
                 'meal_image' => 'mimes:jpeg,png,jpg',
-                'calorie_count' => 'required'
+                'calorie_count' => 'required',
+                'description' => 'required',
+                
             ]);
-            // dd($request->all());
+            
             
             $updateIngredients = [];
 			foreach($editMealIngredients as $editMealIngredient) {
 				$editMealIngredient->is_deleted = '1';
 				$editMealIngredient->save();
 			}
+            
             for ($i=0; $i < count($request->ingredients); $i++) {                
                 $checkId =[];
                 if(!empty($request->mealingredientsids[$i])){
@@ -146,6 +158,7 @@ class RecipeController extends Controller
                 }else{
                     $checkId = '0';
                 }
+                
 
                 $updateIngredients[] = array('ingredientid' =>$checkId,
                                             'recipe_id' => $id,
@@ -153,6 +166,7 @@ class RecipeController extends Controller
                                             'quantity' => $request->quantity[$i],
                                         );
             }
+            
             foreach ($updateIngredients as $key) {
                 if ($key['ingredientid'] == '0') {
                     $ingredient = new MealIngredient;
@@ -169,12 +183,13 @@ class RecipeController extends Controller
                     $ingredient->save();
                	}
             }
-
+            
 			$updateInstructions = [];
 			foreach($editMealInstructions as $editMealInstruction) {
 				$editMealInstruction->is_deleted = '1';
 				$editMealInstruction->save();
 			}
+            
             for ($i=0; $i < count($request->step); $i++) {
                 
                 $checkId =[];
@@ -190,6 +205,7 @@ class RecipeController extends Controller
                                             'description' => $request->instruction[$i],
                                         );
             }
+            
             foreach ($updateInstructions as $key) {
                 if ($key['instructionid'] == '0') {
                     $instruction = new MealInstruction;
@@ -206,7 +222,7 @@ class RecipeController extends Controller
                     $instruction->save();
                	}
             }
-
+            
             //if has image
             if($request->has('meal_image') && $request->meal_image != ''){
                 $path = '/images/recipes';
@@ -216,6 +232,7 @@ class RecipeController extends Controller
                 $editRecipe->meal_cookware_id = $request->meal_cookware;
                 $editRecipe->meal_cooking_timing = $request->cooking_time;
                 $editRecipe->meal_calories = $request->calorie_count;
+                $editRecipe->description = $request->description;
                 if($editRecipe->meal_image != null){
                     $imagePath = public_path($editRecipe->meal_image);
                     if(File::exists($imagePath)){
@@ -223,6 +240,7 @@ class RecipeController extends Controller
                     }
                 }
                 $editRecipe->meal_image = $imageHelper->UploadImage($request->meal_image,$path);
+                
                 if($editRecipe->save()){
                     return redirect('admin/recipes')->with('success', 'Recipe updated successfully.');
                 }else{
@@ -237,10 +255,7 @@ class RecipeController extends Controller
                 $editRecipe->meal_cookware_id = $request->meal_cookware;
                 $editRecipe->meal_cooking_timing = $request->cooking_time;
                 $editRecipe->meal_calories = $request->calorie_count;
-                if($request->isDeleted == 1){
-                    $check = $imageHelper->CheckFile($editRecipe->image, 1);
-                    $editRecipe->image = null;
-                }
+                $editRecipe->description = $request->description;
                 if($editRecipe->save()){
                     return redirect('admin/recipes')->with('success', 'Recipe updated successfully.');
                 }else{

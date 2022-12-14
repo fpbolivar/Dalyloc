@@ -33,9 +33,9 @@
                                     @foreach($getData as $key)
                                     <tr>
                                         <td>{{$loop->iteration}}</td>
-                                        <td>{{($key->workout_name)?$key->workout_name:'N/A'}}</td>
+                                        <td>{{($key->workout_level_name)?$key->workout_level_name:'N/A'}}</td>
                                         <td>{{($key->workout_description)?$key->workout_description:'N/A'}}</td>
-                                        <td><img src="{{($key->workout_image)?asset($key->workout_image):asset('/images/business/default.jpg')}}"
+                                        <td><img src="{{($key->workout_image)?asset($key->workout_image):asset('/images/business/download.png')}}"
                                                 width="100" height="100"></td>
                                         <!-- <td>
                                             <a title="Edit Allergies" class="btn bg-blue-custom btn-sm"
@@ -72,7 +72,7 @@
 
 @section('js')
 <script type="text/javascript">
-$('#usersTable').DataTable({
+    $('#usersTable').DataTable({
     // dom: 'Bfrtip',
     dom: 'frtip',
     // buttons: [{

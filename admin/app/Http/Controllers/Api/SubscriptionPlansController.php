@@ -10,12 +10,190 @@ use Validator;
 use App\Helper\SubscriptionHelper;
 use App\Models\User;
 use App\Models\Model\SubscriptionSubPlans;
+use Illuminate\Support\Arr;
 
 class SubscriptionPlansController extends Controller
-{
+{   
+
+    public function GetUserCards(){
+        try{
+            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET_KEY'));
+            $user = User::select('stripe_customer_id')->whereid(auth()->user()->id)->first();
+            $cards = [];
+            if(!is_null($user->stripe_customer_id)){
+                $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET_KEY'));
+                $cardData = $stripe->customers->allSources(
+                    $user->stripe_customer_id,
+                    ['object' => 'card']
+                  );
+                  
+                  $customer = $stripe->customers->retrieve( $user->stripe_customer_id,[]);
+                  
+                //   print_r($customer->default_source);
+
+                //   $defaultCard = $stripe->customers
+                foreach($cardData['data'] as $card){
+                    if($customer->default_source == $card['id'] )
+                    {
+                        $default = "1";
+                    }
+                    else
+                    {
+                         $default = "0";
+                    }
+                    $cards[] = [
+                            "id" => $card['id'],
+                            "object" => $card['object'],
+                            "brand" => $card['brand'],
+                            "country" => $card['country'],
+                            "funding" => $card['funding'],
+                            "last4" => $card['last4'],
+                            "default" => $default
+                    ];
+                }
+            }
+            return response()->json([
+                'status' => true,
+                'status_code' => true,
+                'message' => "Success",
+                "cards"=>$cards
+            ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' => $e->getMessage()
+            ]);
+        }
+            
+    }
+    
+    public function UpdateDefaultCard(Request $request)
+    {
+        try{
+            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET_KEY'));
+            $user = User::select('stripe_customer_id')->whereid(auth()->user()->id)->first();
+            $cards = [];
+            if(!is_null($user->stripe_customer_id)){
+                $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET_KEY'));
+
+                $updatecustomer = $stripe->customers->update($user->stripe_customer_id ,['default_source'=> $request->card_id]);
+                
+            }
+            return response()->json([
+                'status' => true,
+                'status_code' => true,
+                'message' => "Success"
+            ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    
+    public function DeleteCard(Request $request)
+    {
+        try{
+            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET_KEY'));
+            $user = User::select('stripe_customer_id')->whereid(auth()->user()->id)->first();
+            $cards = [];
+            if(!is_null($user->stripe_customer_id)){
+                $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET_KEY'));
+                
+                $stripe->customers->deleteSource($user->stripe_customer_id, $request->card_id,[]);
+                
+            }
+            return response()->json([
+                'status' => true,
+                'status_code' => true,
+                'message' => "Success"
+            ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function CreateCardToken(Request $request){
+        // validate
+        $validator = Validator::make($request->all(),[
+            'card_number' => 'required',
+            'exp_month' => 'required',
+            'exp_year' => 'required',
+            'cvc' => 'required',
+        ]);
+         // if validation fails
+    	if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' => $validator->messages()->first()
+            ]);
+        } 
+        try{
+            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET_KEY'));
+            // get user stripe customer id
+            $user = User::select('stripe_customer_id','phone_no')->whereid(auth()->user()->id)->first();
+            if(is_null($user->stripe_customer_id)){
+                // create customer and update to user
+                $customer = $stripe->customers->create([
+                    'phone' => $user->phone_no,
+                    'description' => "customer with phone : ".$user->phone_no,
+                ]);
+                // update to user
+                $update = User::whereid(auth()->user()->id)->update(["stripe_customer_id"=>$customer->id]);
+                // select updated
+                $user = User::select('stripe_customer_id','email')->whereid(auth()->user()->id)->first();
+            }
+            // create token
+            $token = $stripe->tokens->create([
+                            'card' => [
+                                'number' => $request->card_number,
+                                'exp_month' => $request->exp_month,
+                                'exp_year' => $request->exp_year,
+                                'cvc' => $request->cvc
+                            ],
+                        ]);
+            // create token
+            $customer = $stripe->customers->retrieve(
+                            $user->stripe_customer_id,
+                            []
+                        );
+            $card = null;
+            if(!is_null($customer->sources)){
+                foreach ( $customer->sources['data'] as $source ) {
+                    if ( $source['fingerprint'] == $token['card']->fingerprint ) {
+                        $card = $source;
+                    }
+                }
+            }
+            if ( is_null( $card ) ) {
+                $card = $stripe->customers->createSource($user->stripe_customer_id ,['source' => $token->id]);
+            }
+            $updatecustomer = $stripe->customers->update($user->stripe_customer_id ,['default_source'=> $card->id]);
+            return response()->json([
+                'status' => true,
+                'status_code' => true,
+                'message' => "Success",
+                'customer_id'=>$updatecustomer->id
+            ]);
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
     public function GetPlans(){
         $allPlans = SubscriptionPlans::with('SubscriptionSubPlans')->get();
-
         if($allPlans){
             return response()->json([
                 'status' => true,
@@ -26,7 +204,7 @@ class SubscriptionPlansController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => false,
-                'message' => 'No Plans are there'
+                'message' => 'No Plans Are There.'
             ]);
         }
     }
@@ -44,7 +222,7 @@ class SubscriptionPlansController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => false,
-                'message' => 'No Plans are there'
+                'message' => 'No Plans Are There.'
             ]);
         }
     }
@@ -52,7 +230,6 @@ class SubscriptionPlansController extends Controller
     public function GetUserActivePlansByType(Request $request){
         $validator = Validator::make($request->all(),[
             'plan_operation' => 'required',
-
         ]);
          // if validation fails
     	if ($validator->fails()) {
@@ -62,11 +239,11 @@ class SubscriptionPlansController extends Controller
                 'message' => $validator->messages()->first()
             ]);
         } 
-        $checkSubscription = UserSubscription::whereuser_id(auth()->user()->id)->where('plan_operation',$request->plan_operation)->first();
+        $isActive = 0;
+        $checkSubscription = UserSubscription::whereuser_id(auth()->user()->id)->where('plan_operation',$request->plan_operation)->where('subscription_status','active')->first();
         $today = date('Y-m-d');
         if($checkSubscription != null){
-            $isActive = 0;
-            if($checkSubscription->end_date >= $today && $checkSubscription->subscription_status == 'active')
+            if($checkSubscription->end_date >= $today)
             {
                 $isActive = 1;
             }
@@ -79,19 +256,14 @@ class SubscriptionPlansController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => true,
-                'message' => 'No data found'
+                'message' => 'Data Not Found.'
             ]);
         }
-
-
-
     }
+
     public function StripeUserSubscription(Request $request, SubscriptionHelper $helper){
         $validator = Validator::make($request->all(),[
-            'plan_id' => 'required|exists:subscription_plans,id',
-            'type' => 'required',
-            'transaction_id' => 'required',
-            // 'promo_code' => 'nullable|exists:promo_codes,name',
+            'sub_plan_id' => 'required|exists:subscription_sub_plans,id'
         ]);
          // if validation fails
     	if ($validator->fails()) {
@@ -101,58 +273,115 @@ class SubscriptionPlansController extends Controller
                 'message' => $validator->messages()->first()
             ]);
         } 
-
         //check plan
         try {
-            $AlreadyActiveSubscription = UserSubscription::whereuser_id(auth()->user()->id)->whereIn('subscription_status',['active'])->where('plan_id',$request->plan_id)->orderBy('id','DESC')->first();
+            // get customer id
+            $user = User::select('stripe_customer_id')->whereid(auth()->user()->id)->first(); 
+            if(is_null($user)){
+                return response()->json([
+                    'status' => false,
+                    'status_code' => true,
+                    'message' => "Invalid User."
+                ]);
+            }
+            $customerId = $user->stripe_customer_id;
+           
+            if($customerId == null){
+                return response()->json([
+                    'status' => false,
+                    'status_code' => true,
+                    'response_code'=> 404,
+                    'message' => 'Please Add Payment Method.'
+                ]);
+            }else{
+            //check if already subscribed
+            $AlreadyActiveSubscription = UserSubscription::whereuser_id(auth()->user()->id)->whereIn('subscription_status',['active'])->where('sub_plan_id',$request->sub_plan_id)->orderBy('id','DESC')->first();
             if (!is_null($AlreadyActiveSubscription)) {
                 return response()->json([
                     'status' => false,
                     'status_code' => true,
-                    'message' => 'Already subscribed to a plan.'
+                    'message' => 'Already Subscribed To a Plan.'
                 ]);
             }else{
-                $plan = SubscriptionPlans::where('id',$request->plan_id)->first();
-                $plan_detail = SubscriptionSubPlans::where('subscription_plan_id',$request->plan_id)->where('type',$request->type)->first();
-                // dd($plan_detail->type_of_operation);
-                $subscriptionDate = $helper->GetSubscriptionDates($plan_detail);
+                $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET_KEY'));
+                 $cardData = $stripe->customers->allSources(
+                    $user->stripe_customer_id,
+                    ['object' => 'card']
+                  );
+                //   dd($cardData);
+                 if(empty($cardData['data'])) {
+                     return response()->json([
+                        'status' => false,
+                        'status_code' => true,
+                        'response_code'=> 404,
+                        'message' => 'Please Add Payment Method.'
+                    ]);
+                 }
+                $planDetails = SubscriptionSubPlans::with("Plan")->where('id',$request->sub_plan_id)->first();
+               
+                if(is_null($planDetails)){
+                    return response()->json([
+                        'status' => false,
+                        'status_code' => true,
+                        'message' => 'Invalid Plan.'
+                    ]);
+                }
+                
+                
+               
+                
+                
+                $stripePriceId = $planDetails->subscription_price_id;
+                $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET_KEY'));
+                $subscriptionData = $stripe->subscriptions->create([
+                    'customer' => $customerId,
+                    'items' => [
+                        ['price' => $stripePriceId],
+                    ],
+                ]);
+	    	    $startDate = date('Y-m-d');
                 $userSubscription = new UserSubscription;
                 $userSubscription->user_id = auth()->user()->id;
-                $userSubscription->plan_id  = $request->plan_id;
-                $userSubscription->sub_plan_id  = $plan_detail->id;
-                $userSubscription->plan_type  = $plan_detail->type;
-                $userSubscription->plan_operation  = $plan_detail->type_of_operation;
-                $userSubscription->subscription_id  = $request->transaction_id;
-                // $userSubscription->promo_code_id = $promo_code_id;
-                $userSubscription->start_date  = $subscriptionDate['start_date'];
-                $userSubscription->end_date  = $subscriptionDate['expire_date'];
-                $userSubscription->amount  =  $plan_detail->amount;
+                $userSubscription->plan_id  = $planDetails->Plan->id;
+                $userSubscription->sub_plan_id  = $planDetails->id;
+                $userSubscription->plan_type  = $planDetails->type;
+                $userSubscription->plan_operation  = $planDetails->type_of_operation;
+                $userSubscription->subscription_id  = $subscriptionData->id;
+                $userSubscription->start_date  = $startDate;
+                $userSubscription->end_date = date('Y-m-d', $subscriptionData->current_period_end);
+                $userSubscription->amount  =  $planDetails->amount;
                 $userSubscription->subscription_status  = 'active';
                 $userSubscription->subscription_type  = 'stripe';
-                $userSubscription->save();
-
-                return response()->json([
-                    'status' => true,
-                    'status_code' => true,
-                    'message' => 'success',
-                    'details'=> User::with('UserSubscription')->whereid(auth()->user()->id)->first()
-                ]);
+                if($userSubscription->save()){
+                    $userDetails = User::with('UserSubscription')->whereid(auth()->user()->id)->first();
+                    return response()->json([
+                        'status' => true,
+                        'status_code' => true,
+                        'message' => 'success',
+                        'details'=> $userDetails
+                    ]);   
+                }else{
+                    return response()->json([
+                        'status' => false,
+                        'status_code' => true,
+                        'message' => "something went wrong."
+                    ]);
+                }
             }
-
-
+        }
         }catch (\Exception $e) {
+           
             return response()->json([
-                    'status' => false,
-                    'status_code' => true,
-                    'message' => $e->getMessage()
-                ]);
+                'status' => false,
+                'status_code' => true,
+                'message' => $e
+            ]);
         }
     }
 
     public function StripeUserCancelSubscription(Request $request){
         $validator = Validator::make($request->all(),[
-            'plan_id' => 'required|exists:subscription_plans,id',
-            // 'promo_code' => 'nullable|exists:promo_codes,name',
+            'subscription_id' => 'required|exists:user_subscriptions,id'
         ]);
          // if validation fails
     	if ($validator->fails()) {
@@ -162,27 +391,31 @@ class SubscriptionPlansController extends Controller
                 'message' => $validator->messages()->first()
             ]);
         } 
-        $UserSubscription = UserSubscription::whereuser_id(auth()->user()->id)->whereIn('subscription_status',['active'])->where('plan_id',$request->plan_id)->orderBy('id','DESC')->first();
+        $UserSubscription = UserSubscription::whereuser_id(auth()->user()->id)->whereIn('subscription_status',['active'])->where('id',$request->subscription_id)->orderBy('id','DESC')->first();
         if (!is_null($UserSubscription)) {
-            // $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
-            // $cancelSubscription = $stripe->subscriptions->cancel($UserSubscription->subscription_id);
-            // $UserSubscription->subscription_status = $cancelSubscription->status;
+            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET_KEY'));
+            $GetSubscription = $stripe->subscriptions->retrieve(
+                $UserSubscription->subscription_id,
+                []
+              );
+            // current period cancel subscription
+            $UserSubscription->cancel_date = date('Y-m-d', strtotime("-1 day",$GetSubscription->current_period_end));
             $UserSubscription->subscription_status = 'cancel';
-            $UserSubscription->cancel_date = date('Y-m-d');
+            // current period end date
+            $UserSubscription->end_date = date('Y-m-d', $GetSubscription->current_period_end);
             $UserSubscription->save();
-                return response()->json([
-                    'status' => true,
-                    'status_code' => true,
-                    'message' => 'Subscription cancelled successfully',
-                    'details'=> User::with('UserSubscription')->whereid(auth()->user()->id)->first()
-                ]);
-
+            return response()->json([
+                'status' => true,
+                'status_code' => true,
+                'message' => 'Subscription cancelled successfully',
+                'details'=> User::with('UserSubscription')->whereid(auth()->user()->id)->first()
+            ]);
         }else{
             return response()->json([
-                    'status' => false,
-                    'status_code' => true,
-                    'message' => 'No Active subscribtion'
-                ]);
+                'status' => false,
+                'status_code' => true,
+                'message' => 'No Active subscribtion'
+            ]);
         }
     }
 }

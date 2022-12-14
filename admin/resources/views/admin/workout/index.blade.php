@@ -12,7 +12,7 @@
             <div class="col-md-12 col-lg-12">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">View Workout  </div>
+                        <div class="card-title">View Workout </div>
                         <div class="ml-auto"><a href="{{ url('/admin/add-workout') }}" title="Add Workout"
                                 data-toggle="tooltip" class="btn bg-blue-custom">Add</a>
                         </div>
@@ -25,6 +25,7 @@
                                         <th class="wd-15p">#</th>
                                         <th class="wd-15p">Workout Name</th>
                                         <th class="wd-15p">Workout Time</th>
+                                        <th class="wd-15p">Workout Level</th>
                                         <th class="wd-15p">Workout Image</th>
                                         <!-- <th class="wd-15p">Action</th> -->
                                     </tr>
@@ -35,9 +36,11 @@
                                         <td>{{$loop->iteration}}</td>
                                         <td>{{($key->workout_name)?$key->workout_name:'N/A'}}</td>
                                         <td>{{($key->workout_time)?$key->workout_time:'N/A'}}</td>
-                                       
-                                        <td>{{$key->workoutlevel ? $key->workoutlevel->workout_name:'N/A'}}</td>
-                                       
+
+                                        <td>{{$key->WorkoutLevel ? $key->WorkoutLevel->workout_level_name:'N/A'}}</td>
+                                        <td><img src="{{($key->workout_image)?asset($key->workout_image):asset('/images/business/download.png')}}"
+                                                width="100" height="100"></td>
+
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -56,7 +59,7 @@
 
 @section('js')
 <script type="text/javascript">
-$('#usersTable').DataTable({
+    $('#usersTable').DataTable({
     // dom: 'Bfrtip',
     dom: 'frtip',
     // buttons: [{

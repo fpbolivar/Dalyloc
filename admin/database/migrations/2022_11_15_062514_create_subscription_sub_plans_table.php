@@ -16,10 +16,13 @@ class CreateSubscriptionSubPlansTable extends Migration
         Schema::create('subscription_sub_plans', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('subscription_plan_id');
+            $table->string('subscription_price_id');
+            $table->enum('type',['free', 'monthly', 'annually'])->nullable();
             $table->string('name')->nullable();
             $table->text('description')->nullable();
             $table->string('amount');
-            $table->enum('type_of_operation',['meal','exercise','devotional','smart','business']);
+            $table->enum('is_deleted',['0','1'])->default(0);
+            $table->enum('type_of_operation',['meal','exercise','devotional','business']);
             $table->timestamps();
         });
     }

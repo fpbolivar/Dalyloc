@@ -17,6 +17,7 @@ class CreateUserBusinessServicesTable extends Migration
             $table->id();
             $table->bigInteger('user_id');
             $table->bigInteger('business_id');
+            $table->integer('deposit_percentage')->nullable();
             $table->string('service_name');
             $table->string('service_price');
             $table->string('service_time');

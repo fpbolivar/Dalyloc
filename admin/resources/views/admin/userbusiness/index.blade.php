@@ -13,59 +13,62 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">View User Business</div>
-                       {{-- <div class="ml-auto"><a href="{{ url('/admin/add-category') }}" title="Add Category"
-                                data-toggle="tooltip" class="btn" style="background-color:#f5127b;color:white">Add</a>
-                        </div>--}}
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="usersTable" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th class="wd-15p">#</th>
-                                        <th class="wd-15p">Business Name</th>
-                                        <th class="wd-15p">Business Category</th>
-                                        <th class="wd-15p">Business Email</th>
-                                        <th class="wd-15p">Business Address</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($getData as $key)
-                                    <tr>
-                                        <td>{{$loop->iteration}}</td>
-                                        <td>{{($key->business_name)?$key->business_name:'N/A'}}</td>
-                                        <td>{{($key->UserBusinessCategory->business_category_name)?$key->UserBusinessCategory->business_category_name:'N/A'}}</td>
-                                        <td>{{($key->business_email)?$key->business_email:'N/A'}}</td>
-                                        <td>{{($key->business_address)?$key->business_address:'N/A'}}</td>
-                                      
-                                        <!-- <td>
-                                        <a title="View User" class="btn bg-blue-custom btn-sm"
-                                                href="{{ url('/admin/user-view/'.$key->id) }}"
-                                                data-toggle="tooltip">View</a>
-                                            @if($key->is_deleted == '0')
-                                            <a title="Block User" class="btn btn-danger-custom btn-sm"
-                                                href="{{ url('/admin/destroy-user/'.$key->id) }}"
-                                                onclick="return confirm('Are you sure you want to block this User ?');"
-                                                data-toggle="tooltip">Block</a>
-                                            @else
-                                            <a title="Restore User" class="btn btn-success-custom btn-sm"
-                                                href="{{ url('/admin/destroy-user/'.$key->id) }}"
-                                                onclick="return confirm('Are you sure you want to restore this User ?');"
-                                                data-toggle="tooltip">Restore</a>
-                                            @endif
-                                        </td> -->
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <!-- table-wrapper -->
+                        {{-- <div class="ml-auto"><a href="{{ url('/admin/add-category') }}" title="Add Category"
+                        data-toggle="tooltip" class="btn" style="background-color:#f5127b;color:white">Add</a>
+                    </div>--}}
                 </div>
-                <!-- section-wrapper -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="usersTable" class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="wd-15p">#</th>
+                                    <th class="wd-15p">Owner</th>
+                                    <th class="wd-15p">Business Name</th>
+                                    <th class="wd-15p">Category</th>
+                                    <th class="wd-15p">Email</th>
+                                    <th class="wd-15p">Address</th>
+                                    <th class="wd-15p">Online Booking</th>
+                                    <th class="wd-15p">Booking Response</th>
+                                    <th class="wd-15p">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($getData as $key)
+                                <tr>
+                                    <td>{{$loop->iteration}}</td>
+                                    <td>{{($key->User)?ucfirst($key->User->name):'N/A'}}</td>
+                                    <td>{{($key->business_name)?$key->business_name:'N/A'}}</td>
+                                    <td>{{($key->UserBusinessCategory->business_category_name)?$key->UserBusinessCategory->business_category_name:'N/A'}}
+                                    </td>
+                                    <td>{{($key->business_email)?$key->business_email:'N/A'}}</td>
+                                    <td>{{($key->business_address)?$key->business_address:'N/A'}}</td>
+                                    <td>@if($key->online_booking == 1) Yes @else NO @endif</td>
+                                    <td>@if($key->online_booking == 1) 
+                                        @if($key->is_acceptance == 0) Automatic @else Manual @endif
+                                        @else N/A @endif
+                                    </td>
+
+                                    <td style="display:flex">
+                                        <a title="View Business Timing" class="btn bg-blue-custom btn-sm"
+                                            href="{{ url('/admin/business-timing/'.$key->id) }}"
+                                            data-toggle="tooltip" style="margin-right:4px">View Time</a>
+                                        <a title="View Business Services" class="btn btn-success btn-sm"
+                                            href="{{ url('/admin/business-service/'.$key->id) }}"
+                                            data-toggle="tooltip">View Services</a>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- table-wrapper -->
             </div>
+            <!-- section-wrapper -->
         </div>
     </div>
+</div>
 </div>
 
 @endsection

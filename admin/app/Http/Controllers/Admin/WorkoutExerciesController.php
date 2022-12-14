@@ -13,7 +13,7 @@ class WorkoutExerciesController extends Controller
     /**
      *  index view file  
      */
-    public function index(){
+    public function Index(){
         // get all workout exercise
         $getData = WorkoutExercise::with('workout')->where('is_deleted','0')->get();
         foreach($getData as $data) { 
@@ -32,26 +32,35 @@ class WorkoutExerciesController extends Controller
     /**
      *  add workout exercies view file 
      */
-    public function addWorkoutExercise(Request $req)
+    public function AddWorkoutExercise(Request $req)
     {   
         //get all exercise in drop down 
-       $exercise = Exercise::where('is_deleted','0')->get();
+        $exercise = Exercise::where('is_deleted','0')->get();
         //get all workout in drop down 
-       $workout = Workout::where('is_deleted','0')->get();
-
+        $workout = Workout::where('is_deleted','0')->get();
         if($req->isMethod('post')){
+            // $messages = [
+            //     'workout_id.required.not_in' => 'workout_id is required'
+            // ];
             $this->validate($req, [
                 'workout_id' => 'required',
-                'exercise_id' => 'required',
+                // 'exercise_id' => ['required']
             ]);
-            //add new workout exercise
-            $add_data = new WorkoutExercise;
-            $add_data->workout_id = $req->workout_id;
-            $add_data->exercise_id = $req->exercise_id ? implode(",",$req->exercise_id) :"";
-            if($add_data->save()){
-                return redirect('admin/workout-exercise')->with('success', 'Workout Exercise  created successfully.');
+            $workout = WorkoutExercise::where('workout_id',$req->workout_id)->where('is_deleted','0')->first();
+ 
+            if(empty($workout)){
+                //add new workout exercise
+                // dd('herer');
+                $add_data = new WorkoutExercise;
+                $add_data->workout_id = $req->workout_id;
+                $add_data->exercise_id = $req->exercise_id ? implode(",",$req->exercise_id) :"";
+                if($add_data->save()){
+                    return redirect('admin/workout-exercise')->with('success', 'Workout Exercise  created successfully.');
+                }else{
+                    return redirect('admin/workout-exercise')->with('error', 'Something went wrong.');
+                }
             }else{
-                return redirect('admin/workout-exercise')->with('error', 'Something went wrong.');
+                return redirect()->back()->withErrors(['workout_id' => 'This  workout already used']);
             }
 
         }else{

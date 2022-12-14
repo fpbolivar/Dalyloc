@@ -13,7 +13,7 @@ class WorkoutLevelsController extends Controller
     /**
      *  index view file 
      */
-    public function index(){
+    public function Index(){
         $getData = WorkoutLevel::where('is_deleted','0')->get();
         return view('admin.workoutlevels.index',compact('getData'));
     }
@@ -21,22 +21,22 @@ class WorkoutLevelsController extends Controller
     /**
      *  add workout level view file 
      */
-    public function addWorkoutLevel(Request $req, ImageHelper $imageHelper)
+    public function AddWorkoutLevel(Request $req, ImageHelper $imageHelper)
     {
         if($req->isMethod('post')){
+            
             $this->validate($req, [
-                'workout_name' => 'required',
+                'workout_level_name' => 'required',
                 'workout_image' => 'mimes:jpeg,png,jpg',
-                'workout_description' => 'required',
+                // 'workout_description' => 'required',
             ]);
             $workout = new WorkoutLevel;
-            $workout->workout_name = $req->workout_name;
+            $workout->workout_level_name = $req->workout_level_name;
             $workout->workout_description = $req->workout_description;
             if($req->has('workout_image')){
                 $path = '/images/workoutlevel';
                 $workout->workout_image = $imageHelper->UploadImage($req->workout_image,$path);
             }
-            // dd($workout);
             if($workout->save()){
                 return redirect('admin/workout-level')->with('success', 'Workout level  created successfully.');
             }else{
@@ -44,8 +44,8 @@ class WorkoutLevelsController extends Controller
             }
 
         }else{
-        // add allergies view file     
-        return view('admin.workoutlevels.addworkoutlevel');
+            // add allergies view file     
+            return view('admin.workoutlevels.addworkoutlevel');     
         }
     }
 

@@ -118,9 +118,9 @@ class ApiMealController extends Controller
     
         }else{
             return response()->json([
-                'status' => true,
+                'status' => false,
                 'status_code' => true,
-                'message' => 'Data not found.',
+                'message' => 'Data Not Found.',
             ]);
         }
     }
@@ -215,22 +215,22 @@ class ApiMealController extends Controller
             return response()->json([
                 'status' => true,
                 'status_code' => true,
-                'data' => 'Meal plan created successfully',
+                'data' => 'Meal Plan Created Successfully.',
             ]);
     
         }else{
             return response()->json([
                 'status' => true,
                 'status_code' => true,
-                'message' => 'please select a recipe.',
+                'message' => 'Please Select a Recipe.',
             ]);
     
         }
     }
     public function GetUserMealPlan(){
-        $getDates = UserMealPlan::groupBy('cooking_date')->orderBy('cooking_date','DESC')->get(['cooking_date']);
+        $getDates = UserMealPlan::groupBy('cooking_date')->where('user_id',auth()->user()->id)->orderBy('cooking_date','DESC')->get(['cooking_date']);
         foreach($getDates as $getDate){
-            $recipes = UserMealPlan::with('UserMealPlanRecipes')->where('cooking_date',$getDate->cooking_date)->get();
+            $recipes = UserMealPlan::with('UserMealPlanRecipes')->where('user_id',auth()->user()->id)->where('cooking_date',$getDate->cooking_date)->get();
             $getDate['recipes'] = $recipes;
         }
 
@@ -274,7 +274,7 @@ class ApiMealController extends Controller
                 return response()->json([
                     'status' => false,
                     'status_code' => true,
-                    'message' => 'Something went wrong.',
+                    'message' => 'Something Went Wrong.',
                 ]);
             }
         }else{
@@ -294,7 +294,7 @@ class ApiMealController extends Controller
                     return response()->json([
                         'status' => false,
                         'status_code' => true,
-                        'message' => 'Something went wrong.',
+                        'message' => 'Something Went Wrong.',
                     ]);
                 }
             }
@@ -322,7 +322,7 @@ class ApiMealController extends Controller
             //return all menu type if type diet
         if($request->type == 'diet'){
             $menu_type_id = $userMealDetail->menu_type_id;
-            $allmenuTypes = MenuType::get();
+            $allmenuTypes = MenuType::where('is_deleted','0')->get();
             foreach($allmenuTypes as $allmenuType){
                 if($allmenuType->id == $menu_type_id){
                     $allmenuType['user_selected'] = 1;
@@ -339,7 +339,7 @@ class ApiMealController extends Controller
         //return all meal size if type mealsize
         elseif($request->type == 'mealsize'){
             $meal_size_id = $userMealDetail->meal_size_id;
-            $allMealSizes = MealSize::get();
+            $allMealSizes = MealSize::where('is_deleted','0')->get();
             foreach($allMealSizes as $allMealSize){
                 if($allMealSize->id == $meal_size_id){
                     $allMealSize['user_selected'] = 1;
@@ -359,7 +359,7 @@ class ApiMealController extends Controller
         elseif($request->type == 'allergies'){
             $allergies_id = $userMealDetail->allergies_id;
             $allergies_id_arr = explode(",",$allergies_id);
-            $allAllergies = Allergy::get();
+            $allAllergies = Allergy::where('is_deleted','0')->get();
             foreach($allAllergies as $allAllergy){
                 if(in_array($allAllergy->id, $allergies_id_arr)){
                     $allAllergy['user_selected'] = 1;
@@ -379,7 +379,7 @@ class ApiMealController extends Controller
            elseif($request->type == 'dislike'){
             $dislike_id = $userMealDetail->dislikes_id;
             $alldislike_id_arr = explode(",",$dislike_id);
-            $alldislikes = Allergy::get();
+            $alldislikes = Allergy::where('is_deleted','0')->get();
             foreach($alldislikes as $alldislike){
                 if(in_array($alldislike->id, $alldislike_id_arr)){
                     $alldislike['user_selected'] = 1;
@@ -397,7 +397,7 @@ class ApiMealController extends Controller
         }else{
             //return all menu type if type diet
         if($request->type == 'diet'){
-            $allmenuTypes = MenuType::get();
+            $allmenuTypes = MenuType::where('is_deleted','0')->get();
             foreach($allmenuTypes as $allmenuType){
                     $allmenuType['user_selected'] = 0;
             }
@@ -409,7 +409,7 @@ class ApiMealController extends Controller
         }
         //return all meal size if type mealsize
         elseif($request->type == 'mealsize'){
-            $allMealSizes = MealSize::get();
+            $allMealSizes = MealSize::where('is_deleted','0')->get();
             foreach($allMealSizes as $allMealSize){
  
                     $allMealSize['user_selected'] = 0;
@@ -424,7 +424,7 @@ class ApiMealController extends Controller
 
         //return all allergies if type allergies
         elseif($request->type == 'allergies'){
-            $allAllergies = Allergy::get();
+            $allAllergies = Allergy::where('is_deleted','0')->get();
             foreach($allAllergies as $allAllergy){
                     $allAllergy['user_selected'] = 0;
             }
@@ -438,7 +438,7 @@ class ApiMealController extends Controller
 
            //return all dislike if type dislike
            elseif($request->type == 'dislike'){
-            $alldislikes = Allergy::get();
+            $alldislikes = Allergy::where('is_deleted','0')->get();
             foreach($alldislikes as $alldislike){
                     $alldislike['user_selected'] = 0;
             }
@@ -477,7 +477,7 @@ class ApiMealController extends Controller
                 return response()->json([
                     'status' => false,
                     'status_code' => true,
-                    'message' =>'Something went wrong.'
+                    'message' =>'Something Went Wrong.'
                 ]);
             }
         }else{
@@ -488,5 +488,54 @@ class ApiMealController extends Controller
             ]);
         }
         
+    }
+    
+    public function AddMealSetting(Request $req){
+        $user = UserMealDetail::where("user_id",auth()->user()->id)->first();
+        if($user != null){
+            if($req->meal_notify != null){
+                $user->meal_notify = $req->meal_notify;
+            }
+            if($req->meal_daily_count != null){
+                $user->meal_daily_count = $req->meal_daily_count;
+            }
+            if($req->meal_start_time != null){
+                $user->meal_start_time = $req->meal_start_time;
+
+            }
+            if($req->meal_end_time != null){
+                $user->meal_end_time = $req->meal_end_time;
+            }
+            if($user->save()){
+                return response()->json([
+                    'status' => true,
+                    'status_code' => true,
+                    'data' => $user,
+                ]);
+            }else{
+                return response()->json([
+                    'status' => false,
+                    'status_code' => true,
+                    'message' =>'data not found.'
+                ]);
+            }
+        }
+    }
+
+    public function GetMealSetting(){
+        $getMealDetail = UserMealDetail::where("user_id",auth()->user()->id)->first();
+        if($getMealDetail){
+            return response()->json([
+                'status' => true,
+                'status_code' => true,
+                'data' => $getMealDetail,
+            ]);
+        }
+
+    }
+
+
+    public function cron(){
+        \Artisan::call('user:meal');
     }
 }

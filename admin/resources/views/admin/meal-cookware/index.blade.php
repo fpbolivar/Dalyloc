@@ -15,7 +15,8 @@
                         <div class="card-title">View Meal Cookware</div>
                         <div class="ml-auto">
                             <a href="{{ url('/admin/add-meal-cookware') }}" title="Add Meal Cookware"
-                                data-toggle="tooltip" class="btn bg-blue-custom" style="background-color:#f5127b;color:white">Add</a>
+                                data-toggle="tooltip" class="btn bg-blue-custom"
+                                style="background-color:#f5127b;color:white">Add</a>
                         </div>
                     </div>
                     <div class="card-body">
@@ -36,7 +37,7 @@
                                         <td>{{$loop->iteration}}</td>
                                         <td>{{($key->name)?$key->name:'N/A'}}</td>
                                         <td>{{($key->description)?$key->description:'N/A'}}</td>
-                                        <td><img src="{{($key->image)?asset($key->image):asset('/images/business/default.jpg')}}"
+                                        <td><img src="{{($key->image)?asset($key->image):asset('/images/business/download.png')}}"
                                                 width="100" height="100"></td>
                                         <td>
                                             <a title="Edit Meal Cookware" class="btn bg-blue-custom btn-sm"
@@ -65,7 +66,7 @@
 
 @section('js')
 <script type="text/javascript">
-$('#usersTable').DataTable({
+    $('#usersTable').DataTable({
     // dom: 'Bfrtip',
     dom: 'frtip',
     // buttons: [{

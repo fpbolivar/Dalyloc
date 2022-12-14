@@ -17,7 +17,7 @@ class CreateMealInstructionsTable extends Migration
             $table->id();
             $table->bigInteger('recipe_id');
             $table->string('step_no');
-            $table->string('description');
+            $table->text('description');
             $table->enum('is_deleted',['0','1'])->default(0);
             $table->timestamps();
         });

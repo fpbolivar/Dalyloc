@@ -26,6 +26,10 @@ class CreateCreateTasksTable extends Migration
             $table->enum('how_often',['once','daily','weekly','monthly'])->nullable();
             $table->text('note')->nullable();
             $table->boolean('is_completed')->nullable();
+            $table->string('task_type')->nullable();
+            $table->string('location')->nullable();
+            $table->double('lat',15,8)->nullable();
+            $table->double('lng',15,8)->nullable();
             // $table->json('subNotes')->nullable();
             $table->date('date_format')->nullable();
             $table->string('start_task_time')->nullable();

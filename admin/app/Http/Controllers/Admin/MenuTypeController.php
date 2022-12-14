@@ -19,9 +19,9 @@ class MenuTypeController extends Controller
         if($req->isMethod('post')){
            
             $this->validate($req, [
-                'name' => 'required',
-                'description' => 'max:80',
-                'image' => 'mimes:jpeg,png,jpg'
+                'name' => 'required|max:50',
+                'description' => 'required|max:80',
+                'image' => 'required|mimes:jpeg,png,jpg'
             ]);
 
             $menuType  =  new MenuType;
@@ -36,7 +36,6 @@ class MenuTypeController extends Controller
             }else{
                 return redirect('admin/menu-type')->with('error', 'Something went wrong.');
             }
-            // dd($req->All());
         }else{
             return view('admin.menutype.addmenutype');
         }
@@ -62,15 +61,13 @@ class MenuTypeController extends Controller
         $editMenuType = MenuType::where('id',$id)->first();
         if ($request->isMethod('post')) {
             $this->validate($request, [
-                'name' => 'required',
-                'description' => 'max:80',
+                'name' => 'required|max:50',
+                'description' => 'required|max:80',
                 'image' => 'mimes:jpeg,png,jpg'
             ]);
             //if has image
             if($request->has('image') && $request->image != ''){
                 $path = '/images/menu-type';
-                $editMenuType->name = $request->name;
-                $editMenuType->description = $request->description;
                 if($editMenuType->image != null){
                     $imagePath = public_path($editMenuType->image);
                     if(File::exists($imagePath)){
@@ -78,25 +75,13 @@ class MenuTypeController extends Controller
                     }
                 }
                 $editMenuType->image = $imageHelper->UploadImage($request->image,$path);
-                if($editMenuType->save()){
-                    return redirect('admin/menu-type')->with('success', 'Menu type updated successfully.');
-                }else{
-                    return redirect('admin/menu-type')->with('error', 'Something went wrong.');
-                }
-
             }
-            else{
-                $editMenuType->name = $request->name;
-                $editMenuType->description = $request->description;
-                if($request->isDeleted == 1){
-                    $check = $imageHelper->CheckFile($editMenuType->image, 1);
-                    $editMenuType->image = null;
-                }
-                if($editMenuType->save()){
-                    return redirect('admin/menu-type')->with('success', 'Menu type updated successfully.');
-                }else{
-                    return redirect('admin/menu-type')->with('error', 'Something went wrong.');
-                }
+            $editMenuType->name = $request->name;
+            $editMenuType->description = $request->description;
+            if($editMenuType->save()){
+                return redirect('admin/menu-type')->with('success', 'Menu type updated successfully.');
+            }else{
+                return redirect('admin/menu-type')->with('error', 'Something went wrong.');
             }
         }else{
                 return view('admin.menutype.editmenutype',compact('editMenuType')); 

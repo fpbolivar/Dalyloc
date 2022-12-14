@@ -91,15 +91,15 @@ class ApiSocialLoginController extends Controller
                     return response()->json([
                         'status' => true,
                         'status_code' => true,
-                        'message' => 'Login successfully',
+                        'message' => 'Login Successfully',
                         'access_token' => 'Bearer ' . $token,
                         'details' => $AuthUser
                     ]);
                 } else {
-                    return response()->json(['status' => false, 'status_code' => true, 'message' => "Your accound has been suspended by admin."]);
+                    return response()->json(['status' => false, 'status_code' => true, 'message' => "Your Accound Has Been Suspended By Admin."]);
                 }
             } else {
-                return response()->json(['status' => false, 'message' => "Invalid credentials!"]);
+                return response()->json(['status' => false, 'message' => "Invalid Credentials!"]);
             }
         // } catch (\Exception $e) {
         //     return response()->json(['status' => false, 'message' => 'something went wrong']);
@@ -186,9 +186,9 @@ class ApiSocialLoginController extends Controller
                         // (new CustomHelper)->userRecord($record);
                     }else{
                         if (!is_null($AuthUser->google_id)) {
-                             return response()->json(['status'=>false,'status_code' => false,'message' => "You are already registered with use with your google account"]);
+                             return response()->json(['status'=>false,'status_code' => false,'message' => "You Are Already Registered With Use With Your Google Account."]);
                         }else{
-                            return response()->json(['status'=>false,'status_code' => false,'message' => "An account is already registered with this address."]);
+                            return response()->json(['status'=>false,'status_code' => false,'message' => "An Account Is Already Registered With This Address."]);
                         }
                     }
                 }
@@ -199,13 +199,13 @@ class ApiSocialLoginController extends Controller
                          return response()->json([
                             'status' => false,
                             'status_code' => false,
-                            'message' => 'Your account has been deleted, please contact adminstrator'
+                            'message' => 'Your Account Has Been Deleted, Please Contact Adminstrator.'
                          ]);
                    }
                         $AuthUser->login_by= 'facebook';
                          $token = JWTAuth::fromUser($AuthUser);
                              if (empty($token)) {
-                                return response()->json(['status'=>false,'message' => 'something went wrong' ]);
+                                return response()->json(['status'=>false,'message' => 'Something Went Wrong.' ]);
                              }
                             return response()->json([
                                 'status' => true,
@@ -216,7 +216,7 @@ class ApiSocialLoginController extends Controller
                             ]);
 
             }else{
-                return response()->json(['status'=>false,'message' => "Invalid credentials!"]);
+                return response()->json(['status'=>false,'message' => "Invalid Credentials!"]);
             }  
         } catch (\Exception $e) {
             return response()->json(['status'=>false,'message' => $e->getMessage() ]);

@@ -13,7 +13,7 @@ class AllergiesController extends Controller
     /**
      *  index view file 
      */
-    public function index(){
+    public function Index(){
         //get all allergy list 
         $getData = Allergy::where('is_deleted','0')->get();
         // index view  file     
@@ -23,13 +23,14 @@ class AllergiesController extends Controller
     /**
      *  add allergies  view file 
      */
-    public function addAllergy(Request $req, ImageHelper $imageHelper)
+    public function AddAllergy(Request $req, ImageHelper $imageHelper)
     {
 
         if($req->isMethod('post')){
             $messages = [
                 'image.dimensions' => "Image must be maximum 80x80 ",
-                'allergies_name.required' => "Required "
+                'allergies_name.required' => "The allergy name field is required."
+                
             ];
             $this->validate($req, [
                 'allergies_name' => 'required',
@@ -58,18 +59,20 @@ class AllergiesController extends Controller
     /**
      * edit and update  allergies
      */
-    public function editAllergy(Request $req,$id, ImageHelper $imageHelper)
+    public function EditAllergy(Request $req,$id, ImageHelper $imageHelper)
     {
         $getAllergy = Allergy::where('id',$id)->where('is_deleted','0')->first();
         // update  allergies  with image 
         if($req->isMethod('post')){
             $messages = [
                 'image.dimensions' => "Image must be maximum 80x80 ",
-                'allergies_name.required' => "Required "
+                'allergies_name.required' => "The allergy name field is required."
+                
             ];
             $this->validate($req, [
-                'allergies_name' => 'required',
+                'allergies_name' => 'required|max:50',
                 'image' => 'mimes:jpeg,png,jpg|dimensions:max_width=80,max_height=80',
+              
             ],$messages);
             if($req->has('image') && $req->image != ''){
                 $path = '/images/allergy';
@@ -112,13 +115,13 @@ class AllergiesController extends Controller
     /**
      * block asllergy
      */
-    public function blockAllergy($id)
+    public function BlockAllergy($id)
     {
         $allergy = allergy::find($id);
         if ($allergy->is_deleted == "0") {
             $allergy->is_deleted = "1";
             $allergy->save();
-            return redirect('admin/allergies')->with('success', 'Allergy blocked successfully.');
+            return redirect('admin/allergies')->with('success', 'Allergy Deleted successfully.');
         }
     }
 

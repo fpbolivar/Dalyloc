@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\SubscriptionPlansController;
 use App\Http\Controllers\Api\BusinessApiController;
 use App\Http\Controllers\Api\ApiMealController;
 use App\Http\Controllers\Api\ApiUserWorkout;
+use App\Http\Controllers\Api\ApiPrayerController;
+use App\Http\Controllers\Api\UserAppointmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +40,7 @@ Route::group(['prefix' => 'auth','namespace' => 'Api'], function ($router) {
     //business catgeory
     Route::get('get-all-business-category',[BusinessApiController::class,'GetAllBusinessCategory']);
 
+
 });
 
 Route::group(['middleware' => ['user.api']], function() {
@@ -46,10 +49,15 @@ Route::group(['middleware' => ['user.api']], function() {
 
  Route::group(['namespace' => 'Api'], function ($router) {
 	// with auth
+    Route::get('prayer-cron', [ApiPrayerController::class,'cron']);
 	Route::group(['middleware' => ['user.api']], function() {
 	    Route::get('get-profile',[ApiProfileController::class,'GetProfile']);
         Route::post('change-password',[ApiProfileController::class,'ChangePassword']);
         Route::post('edit-profile',[ApiProfileController::class,'EditProfile']);
+        Route::get('user-wake-up',[ApiProfileController::class,'UserWakeUp']);
+
+        //user time format detail
+        Route::get('user-time-format',[ApiProfileController::class,'UserTimeFormat']);
 
         //Create user task
         Route::post('create-task',[CreateTaskController::class,'CreateTask']);
@@ -57,12 +65,23 @@ Route::group(['middleware' => ['user.api']], function() {
         Route::get('delete-task/{id}',[CreateTaskController::class,'DeleteTask']);
         Route::get('all-task-by-date',[CreateTaskController::class,'AllTaskByDate']);
 
-        //plans
+
+        //admin setting  
+        Route::get('get-setting',[AdminSettingController::class,'Index']);
+
+        //plans 
         Route::get('get-plans',[SubscriptionPlansController::class,'GetPlans']);
+        
+        // card and customer
+        Route::post('create-card-token',[SubscriptionPlansController::class,'CreateCardToken']);
+        Route::get('get-user-stripe-cards',[SubscriptionPlansController::class,'GetUserCards']);
+        Route::post('update-default-card',[SubscriptionPlansController::class,'UpdateDefaultCard']);
+        Route::post('delete-card',[SubscriptionPlansController::class,'DeleteCard']);
+        
+        // subscription
         Route::get('get-user-active-plans',[SubscriptionPlansController::class,'GetUserActivePlans']);
         Route::post('stripe-user-cancel-subscription',[SubscriptionPlansController::class,'StripeUserCancelSubscription']);
         Route::get('get-user-active-plans-by-type',[SubscriptionPlansController::class,'GetUserActivePlansByType']);
-
 
         //stripe
         Route::post('stripe-user-subscription',[SubscriptionPlansController::class,'StripeUserSubscription']);
@@ -72,16 +91,27 @@ Route::group(['middleware' => ['user.api']], function() {
         Route::post('update-user-business',[BusinessApiController::class,'UpdateUserBusiness']);
         Route::get('get-user-business',[BusinessApiController::class,'GetUserBusiness']);
         Route::post('edit-user-business-slot-interval',[BusinessApiController::class,'EditUserBusinessSlotInterval']);
+        Route::get('get-online-booking-setting',[BusinessApiController::class,'GetOnlineBookingSetting']);
+        Route::post('deposit-percentage',[BusinessApiController::class,'DepositPercentage']);
+        Route::get('get-deposit-percentage',[BusinessApiController::class,'GetDepositPercentage']);
+        Route::get('get-acceptance',[BusinessApiController::class,'GetAcceptance']);
+        Route::post('acceptance',[BusinessApiController::class,'Acceptance']);
+        Route::get('get-active-payment',[BusinessApiController::class,'GetActivePayment']);
+        Route::post('active-payment',[BusinessApiController::class,'ActivePayment']);
 
         //user business service
         Route::post('create-user-business-service',[BusinessApiController::class,'CreateUserBusinessService']);
         Route::post('edit-user-business-service',[BusinessApiController::class,'EditUserBusinessService']);
         Route::get('delete-user-business-service',[BusinessApiController::class,'DeleteUserBusinessService']);
         Route::get('get-all-user-business-service',[BusinessApiController::class,'GetAllUserBusinessService']);
+        Route::get('get-user-business-service-detail',[BusinessApiController::class,'GetUserBusinessServiceDetail']);
 
         //user business timing
         Route::post('create-user-business-timing',[BusinessApiController::class,'CreateUserBusinessTiming']);
         Route::post('edit-user-business-timing',[BusinessApiController::class,'EditUserBusinessTiming']);
+
+        //deposit
+        Route::post('update-deposit', [BusinessApiController::class,'UpdateDeposite']);
 
         //get menu type
         Route::get('get-menu-type',[ApiMealController::class,'GetMenuType']);
@@ -93,12 +123,14 @@ Route::group(['middleware' => ['user.api']], function() {
         Route::get('get-single-recipe',[ApiMealController::class,'GetSingleRecipe']);
         Route::get('get-user-single-recipe',[ApiMealController::class,'GetUserSingleRecipe']);
         
-
         //user meal plan
         Route::get('get-selected-meal-ids',[ApiMealController::class,'GetSelectedMealIds']);
         Route::post('create-user-meal-plan',[ApiMealController::class,'CreateUserMealPlan']);
         Route::get('get-user-meal-plan',[ApiMealController::class,'GetUserMealPlan']);
         Route::post('create-user-meal-detail',[ApiMealController::class,'CreateUserMealDetail']);
+        Route::post('update-user-meal-setting',[ApiMealController::class,'AddMealSetting']);
+        Route::get('get-user-meal-setting',[ApiMealController::class,'GetMealSetting']);
+        Route::get('get-cron-meal',[ApiMealController::class,'cron']);
         Route::get('get-user-meal-detail',[ApiMealController::class,'GetUserMealDetail']);
         Route::get('get-notification-setting',[ApiMealController::class,'GetNotificationSetting']);
 
@@ -107,6 +139,26 @@ Route::group(['middleware' => ['user.api']], function() {
         Route::get('get-workouts-by-workout-level-id',[ApiUserWorkout::class,'GetWorkoutByWorkoutLevelId']);
         Route::get('get-exercies-by-workout-id',[ApiUserWorkout::class,'GetExerciseByWorkoutId']);
         Route::post('create-user-workout',[ApiUserWorkout::class,'CreateUserWorkout']);
+        Route::get('complete-user-workout',[ApiUserWorkout::class,'CompleteUserWorkout']);
+        
+        // prayer route
+        Route::post('prayer-create', [ApiPrayerController::class,'Create']);
+        Route::get('prayer-list', [ApiPrayerController::class,'GetPrayer']);
+        Route::post('prayer-update', [ApiPrayerController::class,'UpdatePrayer']);
+        Route::get('admin-prayer', [ApiPrayerController::class,'GetAdminPrayer']);
+            
+        Route::post('prayer-setting', [ApiPrayerController::class,'PrayerSetting']);
+        Route::get('get-setting', [ApiPrayerController::class,'GetPrayeSetting']);
+        Route::get('get-category', [ApiPrayerController::class,'GetPrayerCategory']);
+
+        //appointment
+        Route::get('get-business-categories-list', [UserAppointmentController::class,'GetBusinessCategoriesList']);
+        Route::get('get-business-list', [UserAppointmentController::class,'GetBusinessList']);
+        Route::get('get-business-by-id', [UserAppointmentController::class,'GetBusinessById']);
+        Route::post('appointment-business-slot', [UserAppointmentController::class,'AppointmentBusinessSlot']);
+        Route::post('create-user-business-appointment', [UserAppointmentController::class,'CreateUserBusinessAppointment']);
+        
+     
 
 
 	});

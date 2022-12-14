@@ -17,6 +17,7 @@ class CreateWorkoutsTable extends Migration
             $table->id();
             $table->string('workout_name')->nullable();
             $table->string('workout_time')->nullable();
+            $table->string('workout_image')->nullable();
             $table->unsignedBigInteger('level_id')->nullable();
             $table->enum('is_deleted',['0','1'])->default(0);
             $table->timestamps();

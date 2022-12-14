@@ -17,7 +17,13 @@ class ApiProfileController extends Controller
     public function GetProfile(Request $request)
     {
     	$user = User::whereid(auth()->user()->id)->first();
+        $from = $user->date_of_birth;
+        $age = 0;
+        if($from != null){
+            $age = (date('Y') - date('Y',strtotime($from)));
+        }
         $user->user_profile_pic = ($user->user_profile_pic)?$user->user_profile_pic:null;
+        $user['age'] = $age;
     	 return response()->json([
             'status' => true,
             'status_code' => true,
@@ -47,7 +53,7 @@ class ApiProfileController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => true,
-                'message' =>'Old password and New password should be different.'
+                'message' =>'Old Password And New Password Should Be Different.'
             ]);
         }
         // check old passowrd
@@ -55,7 +61,7 @@ class ApiProfileController extends Controller
         	return response()->json([
                 'status' => false,
                 'status_code' => true,
-                'message' =>'old password doesn`t matched'
+                'message' =>'Old Password Doesn`t Matched.'
             ]);
         } 
        	// update new password
@@ -65,13 +71,13 @@ class ApiProfileController extends Controller
             return response()->json([
                 'status' => true,
                 'status_code' => true,
-                'message' =>'Password changed successfully.'
+                'message' =>'Password Changed Successfully.'
             ]);
         }else{
             return response()->json([
                 'status' => false,
                 'status_code' => true,
-                'message' => 'Something went wrong.'
+                'message' => 'Something Went Wrong.'
             ]);
         }
     }
@@ -116,7 +122,7 @@ class ApiProfileController extends Controller
                 return response()->json([
                     'status' => true,
                     'status_code' => true,
-                    'message' =>'Phone number is already exist.',
+                    'message' =>'Phone Number Is Already Exist.',
                 ]);
             }else{
                 $user->phone_no = $request->phone_no; 
@@ -132,14 +138,64 @@ class ApiProfileController extends Controller
             return response()->json([
                 'status' => true,
                 'status_code' => true,
-                'message' =>'Profile updated successfully.',
+                'message' =>'Profile Updated Successfully.',
             ]);
         }else{
             return response()->json([
                 'status' => true,
                 'status_code' => false,
-                'message' => 'Something went wrong.'
+                'message' => 'Something Went Wrong.'
             ]);
         }
+    }
+
+    // add/update/get user user wakeup
+    public function UserWakeUp(Request $request){
+        $user = User::where('id',auth()->user()->id)->first();
+        if($user){
+            if($request->has('wake_up')){
+                $user->wake_up = $request->wake_up;
+                if($user->save()){
+                    return response()->json([
+                        'status' => true,
+                        'status_code' => true,
+                        'message' => 'Success.',
+                        'wake_up' => $user['wake_up']
+                    ]);
+                }else{
+                    return response()->json([
+                        'status' => true,
+                        'status_code' => false,
+                        'message' => 'Something Went Wrong.'
+                    ]);
+                }
+            }else{
+                return response()->json([
+                    'status' => true,
+                    'status_code' => false,
+                    'wake_up' => $user['wake_up']
+                ]);
+            }
+        }else{
+            return response()->json([
+                'status' => true,
+                'status_code' => false,
+                'message' => 'Data Not Found.'
+            ]);
+        }
+    }
+
+    //user time format
+    public function UserTimeFormat(Request $request){
+        $user = User::where('id',auth()->user()->id)->first();
+        if($request->has('is24Format')){
+            $user->is_24_format = (int)$request->is24Format;
+            $user->save();
+        }
+        return response()->json([
+            'status' => true,
+            'status_code' => true,
+            'is24Format' => $user['is_24_format']
+        ]);
     }
 }
