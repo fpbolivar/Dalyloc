@@ -11,10 +11,10 @@
 
 #### Milestone 1 (COMPLETED)
 
-    -   **Mobile Application**
+    **Mobile Application**
         -   Designing of the screens for the Personal Flow
         -   Social Login i.e Google and Facebook (But we need design for the login screen)
-    -   **Admin Panel**
+    **Admin Panel**
         -   Login
         -   Edit Profile
         -   Change Password
@@ -23,42 +23,42 @@
 
 #### Milestone 2 (COMPLETED)
 
-    -   **Mobile Application**
-        -   If we complete the business flow design along with milestone 1 then we will start the designing of business flow.
+    **Mobile Application**
+        -   designing of business flow.
         -   Development of Personal Flow
         -   Add Task
         -   Add Meal Plans
-    -   **Admin Panel**
+    **Admin Panel**
         -   User Management
         -   View registered users
         -   Block / Activate the users
 
 #### Milestone 3 (COMPLETED)
 
-    -   **Mobile Application**
+    **Mobile Application**
         -   Business Pro Module - Complete --> Need subscription for this feature only
         -   Meal Plans Module - Complete
-    -   **Admin Panel**
+    **Admin Panel**
         -   Business Categories Management
         -   Business Listings which are registered by the user
         -   Meals Management
 
 #### Milestone 4 (COMPLETED)
 
-    -   **Mobile Application**
+    **Mobile Application**
         -   Exercise Plan Module - Complete
         -   Devotional Plan Module - Complete
-    -   **Admin Panel**
+    **Admin Panel**
         -   Allergies Management
         -   Workout Levels Management
         -   Exercises Management
 
 #### Milestone 5 (IN-PROGRESS)
 
-    -   **Mobile Application**
+    **Mobile Application**
         -   Book appointment as a normal user
         -   Subscription Plans implementation
-    -   **Admin Panel**
+    **Admin Panel**
         -   Plans detailing
         -   Appointment listing
         -   Subscription reports
