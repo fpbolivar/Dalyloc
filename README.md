@@ -1,5 +1,7 @@
 # DalyDoc
 
+#### This file will includes the things for the whole project. If need to check the details as per the different modules please check the readme.md file in the respective folder
+
 ## REPOSITORY INCLUDES
 
 -   Admin Panel (Laravel Technology)
