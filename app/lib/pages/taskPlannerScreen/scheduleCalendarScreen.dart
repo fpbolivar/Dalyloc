@@ -1,8 +1,11 @@
 import 'package:daly_doc/core/Sql/DBIntializer.dart';
 import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/pages/appoinmentPlan/views/lookingForView.dart';
+import 'package:daly_doc/pages/appoinmentPlan/views/myAppointmentListView.dart';
+import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/upcomingAppointmentListView.dart';
 import 'package:daly_doc/pages/dailyDevotinalPlan/views/momentOfPrayerView.dart';
 import 'package:daly_doc/pages/notificationScreen/notificationScreen.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/components/drawerView.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/components/viewDetailTask.dart';
 
 import 'package:daly_doc/pages/taskPlannerScreen/createTaskView.dart';
@@ -64,10 +67,19 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
     }
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.newBgcolor,
+      key: _scaffoldKey,
+
+      drawer: Consumer<TaskManager>(builder: (context, object, child) {
+        return DalyDocDrawer(
+          userName: Constant.taskProvider.userName,
+        );
+      }),
+
       // ignore: unnecessary_new
 
       floatingActionButton: Padding(
@@ -113,6 +125,7 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
   }
 
   getTaskList() async {
+    Constant.taskProvider.getUserName();
     manager.fetchAllTaskFromServer();
   }
 
@@ -123,6 +136,9 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
           HeaderCalendar(
             headerDateList: headerDateModal,
             selectedDate: selectedDate,
+            onClickDrawer: () {
+              _scaffoldKey.currentState!.openDrawer();
+            },
             onClickNotification: () {
               Routes.pushSimple(context: context, child: NotificationScreen());
             },
@@ -170,7 +186,19 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
                           Routes.gotoExerciseFlow(context: context);
                           return;
                         }
-
+                        if (item.operationType ==
+                            TaskType.business_appointment.rawValue) {
+                          Routes.pushSimpleRootNav(
+                              context: context,
+                              child: UpcomingApointmentListView());
+                          return;
+                        }
+                        if (item.operationType ==
+                            TaskType.user_appointment.rawValue) {
+                          Routes.pushSimpleRootNav(
+                              context: context, child: MyApointmentListView());
+                          return;
+                        }
                         if (item.operationType == TaskType.meal.rawValue) {
                           Routes.pushSimpleRootNav(
                               context: context, child: MyMealPlanView());
@@ -297,8 +325,8 @@ class ScheduleCalendarScreenState extends State<ScheduleCalendarScreen> {
             foregroundColor: Colors.white,
             label: 'Appointment',
             onTap: () {
-              showAlert("Coming soon");
-              //  Routes.pushSimple(context: context, child: LookingForView());
+              // showAlert("Coming soon");
+              Routes.pushSimple(context: context, child: LookingForView());
             }),
         SpeedDialChild(
             child: Image.asset("assets/icons/fire.png",

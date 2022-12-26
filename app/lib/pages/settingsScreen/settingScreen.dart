@@ -328,6 +328,7 @@ class _SettingScreenState extends State<SettingScreen> {
               SectionRowListView(
                   itemList: planOption,
                   onTap: (sectionIndex, rowIndex) {
+                    Constant.settingProvider.fromSidebar = false;
                     if (planOption[rowIndex].type == SettingType.refresh) {
                       addWidgetLoading();
                       getplanList();
@@ -376,6 +377,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   return SectionRowListView(
                       itemList: Constant.settingProvider.businessOption,
                       onTap: (sectionIndex, rowIndex) async {
+                        Constant.settingProvider.fromSidebar = false;
                         print(businessId);
                         if (Constant.settingProvider.businessOption[rowIndex]
                                 .type ==
@@ -402,9 +404,12 @@ class _SettingScreenState extends State<SettingScreen> {
               SectionRowListView(
                   itemList: logoutOption,
                   onTap: (sectionIndex, rowIndex) async {
-                    await LogoutApi().syncingBeforLogout();
-                    print("SYNCED ALLL");
-                    LogoutApi().logout();
+                    showConfirmAlert("Are you sure you want to Logout?",
+                        onTap: (() async {
+                      await LogoutApi().syncingBeforLogout();
+                      print("SYNCED ALLL");
+                      LogoutApi().logout();
+                    }));
                   })
             ]),
       ),

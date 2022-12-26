@@ -24,7 +24,7 @@ class PrayerApis {
     };
     var param = {"id": id, "prayer_status": "answered"};
     try {
-      // waitDialog();
+      waitDialog();
       Response response = await post(
           Uri.parse(
             HttpUrls.WS_CHANGEPRAYERSTATUS,

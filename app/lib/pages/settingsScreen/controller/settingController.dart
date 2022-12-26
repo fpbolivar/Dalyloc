@@ -2,16 +2,26 @@ import 'package:daly_doc/core/apisUtils/internetCheck.dart';
 import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/pages/authScreens/authManager/api/businessApis.dart';
 import 'package:daly_doc/pages/authScreens/authManager/models/userBusinesModel.dart';
+import 'package:daly_doc/pages/settingsScreen/ApiManager/AllPlansApiManager.dart';
 import 'package:daly_doc/pages/settingsScreen/model/SettingOption.dart';
+import 'package:daly_doc/pages/settingsScreen/model/allPlanMode.dart';
 import 'package:daly_doc/pages/subscriptionPlansScreen/model/PlanInfoModel.dart';
 import 'package:daly_doc/utils/exportPackages.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
 import 'package:daly_doc/widgets/dialogs/CommonDialogs.dart';
 
+class BizStatus {
+  bool? isActive;
+  bool? isCreatedBusiness;
+  BizStatus({isActive = false, isCreatedBusiness = false});
+}
+
 class SettingController with ChangeNotifier {
   BusinessApis manager = BusinessApis();
   UserBusinessModel? tempResponse;
+  var fromSidebar = false;
   List<SettingOption> businessOption = [];
+  bool isBusinessCheckingLoader = false;
   Future<UserBusinessModel?> getUserBusinessDetail() async {
     UserBusinessModel? temp =
         await manager.getUserBusinessDetail(needLoader: false);
@@ -55,6 +65,72 @@ class SettingController with ChangeNotifier {
     }
     notifyListeners();
     return tempResponse;
+  }
+
+  Future<BizStatus?> getBusinessIsActive() async {
+    BizStatus obj = BizStatus();
+    obj.isActive = false;
+    obj.isCreatedBusiness = false;
+    isBusinessCheckingLoader = true;
+    notifyListeners();
+    tempResponse = await manager.getUserBusinessDetail(needLoader: false);
+    isBusinessCheckingLoader = false;
+    notifyListeners();
+
+    isBusinessCheckingLoader = true;
+    notifyListeners();
+    List<PlanInfoModel>? list = await manager.getActivePlan();
+    print(" getActivePlan list${list}");
+    isBusinessCheckingLoader = false;
+    notifyListeners();
+    list?.forEach(
+      (element) {
+        if ("business" == element.plan_operation) {
+          obj.isActive = true;
+        }
+      },
+    );
+
+    if (obj.isActive!) {
+      if (tempResponse != null) {
+        obj.isCreatedBusiness = true;
+      } else {
+        obj.isCreatedBusiness = false;
+      }
+
+      notifyListeners();
+    } else {
+      businessOption = [];
+    }
+    notifyListeners();
+    return obj;
+  }
+
+  getAllplanList({onSuccess, onError}) {
+    isBusinessCheckingLoader = true;
+    notifyListeners();
+    SettingOption planOption =
+        SettingOption(title: "", subscriptionSubPlans: []);
+    AllPlansApiManager().getAllPlans(onSuccess: (List<GetAllPlansModel> data) {
+      isBusinessCheckingLoader = false;
+      notifyListeners();
+
+      for (var i = 0; i < data.length; i++) {
+        print(data[i].typeOfOperation);
+        final title = data[i].title;
+        if (data[i].typeOfOperation == "business") {
+          planOption.title = title;
+          planOption.subscriptionSubPlans = data[i].subscriptionSubPlans;
+
+          break;
+        }
+      }
+      onSuccess(planOption);
+    }, onError: () {
+      isBusinessCheckingLoader = false;
+      notifyListeners();
+      onError(planOption);
+    });
   }
 
   Future<bool?> timeSetGet24Hrs({needGet = false, value = "0"}) async {

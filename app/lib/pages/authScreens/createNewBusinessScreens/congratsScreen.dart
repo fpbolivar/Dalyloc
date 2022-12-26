@@ -1,5 +1,7 @@
 import 'package:daly_doc/core/constant/constants.dart';
+import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/createNewBusiness.dart';
 import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/createNewBusinessService.dart';
+import 'package:daly_doc/pages/taskPlannerScreen/components/drawerView.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
 
 import '../../../core/localStore/localStore.dart';
@@ -128,9 +130,13 @@ class _CongratsScreenBusinessState extends State<CongratsScreenBusiness> {
 
                   //   Routes.pushSimple(
                   //       context: context, child: BusinessSettingView());
-                  Navigator.of(context).popUntil((route) =>
-                      route.settings.name ==
-                      SettingScreen().runtimeType.toString());
+                  if (!Constant.settingProvider.fromSidebar) {
+                    Navigator.of(context).popUntil((route) =>
+                        route.settings.name ==
+                        SettingScreen().runtimeType.toString());
+                  } else {
+                    Routes.gotoHomeScreen();
+                  }
                   Constant.settingProvider.getUserBusinessDetail();
                 },
               )

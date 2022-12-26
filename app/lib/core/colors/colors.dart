@@ -42,4 +42,10 @@ class AppColor {
   static var textBG = const Color(0xFFEEEEEE);
   static var textSubtitle = const Color(0xFF8C8CA1);
   static var bgGenderGrayCircle = const Color(0xFFD9D9D9);
+  static var navBarWhite = Colors.white;
+  static var applinkColor = const Color(0xFF1C3CAE);
+  static var partialBrown = const Color(0xFFBC561C);
+  static var acceptBgColor = const Color(0xFF2E8F4F);
+  static var rejectBgColor = const Color(0xFF9B2323);
+  static var rescheduleBgColor = const Color(0xFFD38135);
 }

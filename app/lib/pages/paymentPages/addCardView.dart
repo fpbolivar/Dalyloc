@@ -97,6 +97,7 @@ class _AddCardViewState extends State<AddCardView> {
                       child: textBgShadow(
                         TextFormField(
                           controller: cardNumberCtrl,
+                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                               hintText: 'Card Number',
                               border: InputBorder.none,
@@ -210,6 +211,7 @@ class _AddCardViewState extends State<AddCardView> {
     return Container(
       child: TextFormField(
         controller: cvvTF,
+        keyboardType: TextInputType.number,
         decoration: InputDecoration(
             hintText: 'CVV',
             border: InputBorder.none,
@@ -231,6 +233,7 @@ class _AddCardViewState extends State<AddCardView> {
   expireWidgetTF() {
     return Container(
       child: TextFormField(
+        keyboardType: TextInputType.number,
         controller: expiryFieldCtrl,
         decoration: InputDecoration(
             hintText: 'MM/YY',

@@ -13,11 +13,13 @@ class CustomTF extends StatefulWidget {
   bool enabled;
   bool password;
   int maxlines;
+  Widget? rightIcon;
   TextInputType keyBoardType;
   Function(String)? onChange;
   CustomTF(
       {this.password = false,
       this.maxlines = 1,
+      this.rightIcon,
       //this.width = double.infinity,
       required this.controllr,
       this.keyBoardType = TextInputType.text,
@@ -54,32 +56,31 @@ class _CustomTFState extends State<CustomTF> {
           onChanged: (text) => {widget.onChange!(text)},
           keyboardType: widget.keyBoardType,
           decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: widget.placeholder,
-            suffixIcon: widget.password == true
-                ? IconButton(
-                    onPressed: () {
-                      //add Icon button at end of TextField
-                      setState(() {
-                        //refresh UI
-                        if (widget.obscureText) {
-                          //if passenable == true, make it false
-                          widget.obscureText = false;
-                        } else {
-                          widget.obscureText =
-                              true; //if passenable == false, make it true
-                        }
-                      });
-                    },
-                    icon: Icon(
-                      widget.obscureText == true
-                          ? Icons.remove_red_eye
-                          : Icons.password,
-                      // color: Colors.black,
-                    ),
-                  )
-                : null,
-          ),
+              border: InputBorder.none,
+              hintText: widget.placeholder,
+              suffixIcon: widget.password == true
+                  ? IconButton(
+                      onPressed: () {
+                        //add Icon button at end of TextField
+                        setState(() {
+                          //refresh UI
+                          if (widget.obscureText) {
+                            //if passenable == true, make it false
+                            widget.obscureText = false;
+                          } else {
+                            widget.obscureText =
+                                true; //if passenable == false, make it true
+                          }
+                        });
+                      },
+                      icon: Icon(
+                        widget.obscureText == true
+                            ? Icons.remove_red_eye
+                            : Icons.password,
+                        // color: Colors.black,
+                      ),
+                    )
+                  : widget.rightIcon),
           autofocus: false,
           enabled: widget.enabled,
           obscureText: widget.obscureText,

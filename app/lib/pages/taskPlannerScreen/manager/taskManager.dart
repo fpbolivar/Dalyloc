@@ -21,6 +21,11 @@ import '../model/subtaskModel.dart';
 class TaskManager with ChangeNotifier {
   List<GroupTaskItemModel> taskGroupData = [];
   bool isSyncing = false;
+  String userName = "";
+  getUserName() async {
+    userName = await LocalStore().get_nameofuser();
+    notifyListeners();
+  }
 
   fetchAllTaskFromServer() async {
     isSyncing = true;
@@ -318,10 +323,10 @@ class TaskManager with ChangeNotifier {
   }
 
   String generateUtcTime({time = ""}) {
-    print(time);
+    print("------>$time");
 
     final timeComponent = time.split(":");
-    print(timeComponent);
+    print("###$timeComponent");
 
     if (timeComponent.length > 0) {
       final hr = int.tryParse(timeComponent[0]) ?? 0;
@@ -363,6 +368,24 @@ class TaskManager with ChangeNotifier {
     DateTime parseDate = new DateFormat("YYYY-MM-dd").parse(date);
     var inputDate = DateTime.parse(parseDate.toString());
     var outputFormat = DateFormat('dd-MM-YYYY');
+    var outputDate = outputFormat.format(inputDate);
+    print(outputDate);
+    return outputDate;
+  }
+
+  String yyyyMMdd_To_EEEMMMDDYYYY(date) {
+    DateTime parseDate = new DateFormat("yyyy-MM-dd").parse(date);
+    var inputDate = DateTime.parse(parseDate.toString());
+    var outputFormat = DateFormat('EEE | MMM dd, yyyy');
+    var outputDate = outputFormat.format(inputDate);
+    print(outputDate);
+    return outputDate;
+  }
+
+  String yyyyMMdd_To_MMMDDYYYY(date) {
+    DateTime parseDate = new DateFormat("yyyy-MM-dd").parse(date);
+    var inputDate = DateTime.parse(parseDate.toString());
+    var outputFormat = DateFormat('MMM dd, yyyy');
     var outputDate = outputFormat.format(inputDate);
     print(outputDate);
     return outputDate;
@@ -415,6 +438,11 @@ class TaskManager with ChangeNotifier {
     var outputDate = outputFormat.format(inputDate);
 
     return outputDate;
+  }
+
+  String dateParseyyyyMMddHHMM(DateTime date) {
+    var _date = DateFormat('yyyy-MM-dd HH:mm').format(date).toString();
+    return _date;
   }
 
   String timeFromDATE(DateTime date) {

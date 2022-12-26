@@ -197,11 +197,22 @@ class TaskModel {
   }
 }
 
-enum TaskType { meal, appointment, prayer, exercise }
+enum TaskType {
+  meal,
+  appointment,
+  prayer,
+  exercise,
+  user_appointment,
+  business_appointment
+}
 
 extension TopicExtension on TaskType {
   String get rawValue {
     switch (this) {
+      case TaskType.user_appointment:
+        return 'user_appointment';
+      case TaskType.business_appointment:
+        return 'business_appointment';
       case TaskType.meal:
         return 'meal';
       case TaskType.prayer:

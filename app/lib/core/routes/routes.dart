@@ -1,6 +1,6 @@
 import 'package:daly_doc/core/constant/constants.dart';
 import 'package:daly_doc/pages/excercisePlan/excercisePlanScreen.dart';
-import 'package:daly_doc/pages/excercisePlan/exeercisePlanMainScreen.dart';
+import 'package:daly_doc/pages/excercisePlan/exercisePlanMainScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import '../../pages/pagesGetStarted/introduction_animation_screen.dart';
@@ -117,7 +117,7 @@ class Routes {
     if (value == '') {
       child = ExcercisePlanScreen();
     } else {
-      child = ExcercisePlanMainScreen();
+      child = ExcercisePlanMainScreen(); //ExcercisePlanMainScreen();
     }
     Navigator.push(
       context,

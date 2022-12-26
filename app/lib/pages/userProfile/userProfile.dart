@@ -5,8 +5,11 @@ import 'package:daly_doc/pages/authScreens/authManager/api/getUserDetails.dart';
 import 'package:daly_doc/pages/authScreens/authManager/models/userDataModel.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
 import 'package:daly_doc/pages/userProfile/components/ageTextFieldView.dart';
+import 'package:daly_doc/pages/userProfile/components/emailTextFieldView.dart';
 import 'package:daly_doc/pages/userProfile/components/heightInchesView.dart';
 import 'package:daly_doc/pages/userProfile/components/heightTextFieldView.dart';
+import 'package:daly_doc/pages/userProfile/components/otpTextFeild.dart';
+import 'package:daly_doc/pages/userProfile/components/phoneTextFieldView.dart';
 import 'package:daly_doc/pages/userProfile/components/userNameTFView.dart';
 import 'package:daly_doc/pages/userProfile/helper/ageCalculator.dart';
 import 'package:daly_doc/widgets/ToastBar/toastMessage.dart';
@@ -29,7 +32,7 @@ class UserProfileViewScreen extends StatefulWidget {
 
 class _UserProfileViewScreenState extends State<UserProfileViewScreen> {
   var manager = UserDetailsApi();
-
+  var phoneControllr = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -49,20 +52,29 @@ class _UserProfileViewScreenState extends State<UserProfileViewScreen> {
   String height = "";
   String name = "";
   String mobileNo = "";
+  String onlyMobileNo = "";
+  String originalMobNo = "";
   String ageDuration = "years old";
   String countryCode = "";
+  String userEmail = "";
+  String formattedDate = "";
   data() async {
     UserDetailModel? data = await manager.getUserData();
     print("31212");
+    print("EMAIL ${data?.email}");
     if (data != null) {
       countryCode = data.country_code ?? "";
     }
+    userEmail = data?.email ?? "";
     // setState(() async {
     token = await LocalStore().getToken();
 
     name = await LocalStore().get_nameofuser();
 
     mobileNo = await LocalStore().get_MobileNumberOfUser();
+    originalMobNo = mobileNo;
+    onlyMobileNo = mobileNo;
+    phoneControllr.text = onlyMobileNo;
     age = await LocalStore().getAge();
     height = await LocalStore().getHeightOfUser();
     gender = await LocalStore().getGenderOfUser();
@@ -102,7 +114,60 @@ class _UserProfileViewScreenState extends State<UserProfileViewScreen> {
     setState(() {});
   }
 
-  String formattedDate = "";
+  updateProfile() {
+    var updateMobileNo = countryCode.trim() + onlyMobileNo.trim();
+    var oldMobileNo = mobileNo.replaceAll(" ", "");
+    var phn = "";
+    var codeCountryTemp = "";
+
+    if (oldMobileNo.trim() != updateMobileNo.trim()) {
+      phn = onlyMobileNo;
+      codeCountryTemp = countryCode;
+    }
+    EditUserDataApi().EdituserData(
+        token: token,
+        dob: dob,
+        age: age,
+        weight: weight,
+        height: height,
+        name: name,
+        countryCode: codeCountryTemp,
+        mobile: phn,
+        email: userEmail,
+        gender: gender);
+  }
+
+  sendOTP() {
+    EditUserDataApi().sendOtpToVerifyPhoneNumber(
+        phoneNo: onlyMobileNo.trim(),
+        country_code: countryCode.trim(),
+        onReceiveOTP: (otp, userID) {
+          textAgeWidget(
+              context,
+              UserOTPTFView(
+                oldValue: otp,
+                mobileNo: countryCode.trim() + onlyMobileNo.trim(),
+                resendOtpChange: () {
+                  sendOTP();
+                },
+                onChange: (text) {
+                  if (text.trim() != "") {
+                    EditUserDataApi().otpVerifyApi(
+                        otp: text.trim(),
+                        country_code: countryCode.trim(),
+                        uid: userID,
+                        onSuccess: () {
+                          Navigator.pop(context);
+                          mobileNo = countryCode.trim() + onlyMobileNo.trim();
+                          setState(() {});
+                          updateProfile();
+                        });
+                  }
+                },
+              ));
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -198,13 +263,65 @@ class _UserProfileViewScreenState extends State<UserProfileViewScreen> {
               height: 40,
             ),
             UserHealthInfoView(
+              leftTitle: "Email Id",
+              child: InkWell(
+                child: userEmail == ""
+                    ? Text("Enter Email")
+                    : Text(
+                        userEmail,
+                        maxLines: 1,
+                      ),
+                onTap: () async {
+                  textAgeWidget(
+                      context,
+                      UserEmailTFView(
+                        oldValue: userEmail,
+                        onChange: (text) {
+                          userEmail = text;
+                          setState(() {});
+                        },
+                      ));
+                },
+              ),
+            ),
+            separatorDashed(),
+            UserHealthInfoView(
+              leftTitle: "Mobile No",
+              child: InkWell(
+                child: onlyMobileNo == ""
+                    ? Text("Enter Mobile No.")
+                    : Text(countryCode + onlyMobileNo),
+                onTap: () async {
+                  if (originalMobNo == "") {
+                    textAgeWidget(
+                        context,
+                        UserPhoneTFView(
+                          phoneControllr: phoneControllr,
+                          oldValue: onlyMobileNo,
+                          oldCountryCode: countryCode,
+                          onCountryCodeChange: (text) {
+                            countryCode = text;
+                            setState(() {});
+                          },
+                          onChange: (text) {
+                            onlyMobileNo = text;
+                            setState(() {});
+                          },
+                        ));
+                  }
+                },
+              ),
+            ),
+            separatorDashed(),
+
+            UserHealthInfoView(
               leftTitle: "Date of birth",
               child: InkWell(
                 child: dob == "" ? Text("yyyy-MM-dd") : Text(dob),
                 onTap: () async {
                   final today = DateTime.now();
                   var newDate =
-                      new DateTime(today.year - 13, today.month, today.day);
+                      new DateTime(today.year - 14, today.month, today.day);
 
                   DateTime? pickedDate = await datePickerModal(newDate);
 
@@ -342,20 +459,24 @@ class _UserProfileViewScreenState extends State<UserProfileViewScreen> {
                     ToastMessage.showErrorwMessage(msg: "Enter Weight");
                     return;
                   }
-                  EditUserDataApi().EdituserData(
-                      token: token,
-                      dob: dob,
-                      age: age,
-                      weight: weight,
-                      height: height,
-                      name: name,
-                      gender: gender);
+                  var updateMobileNo = countryCode.trim() + onlyMobileNo.trim();
+                  var oldMobileNo = mobileNo.replaceAll(" ", "");
+                  print(oldMobileNo.trim());
+                  print(updateMobileNo.trim());
+                  if (oldMobileNo.trim() != updateMobileNo.trim()) {
+                    sendOTP();
+                  } else {
+                    updateProfile();
+                  }
                 },
                 width: 150,
               ),
 
               //
-            )
+            ),
+            const SizedBox(
+              height: 40,
+            ),
           ]),
     );
   }

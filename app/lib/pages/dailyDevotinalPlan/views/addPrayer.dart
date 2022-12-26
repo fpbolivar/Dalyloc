@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/pages/dailyDevotinalPlan/Apis/PrayerApis.dart';
 import 'package:daly_doc/pages/dailyDevotinalPlan/models/prayerCategoryModel.dart';
+import 'package:daly_doc/pages/dailyDevotinalPlan/views/devotionalPlanSetting.dart';
 import 'package:daly_doc/widgets/ToastBar/toastMessage.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:url_launcher/link.dart';
@@ -49,6 +50,17 @@ class _AddNewPrayerViewScreenState extends State<AddNewPrayerView> {
       backgroundColor: AppColor.newBgcolor,
       appBar: CustomAppBar(
         title: LocalString.lblLetsPray,
+        trailingIcon: true,
+        trailingIconData: const Icon(Icons.settings),
+        trailingIconOnTap: () {
+          Routes.pushSimple(
+              context: context,
+              child: DevotionalPlanSetting(),
+              onBackPress: () {
+                print("ffffffffff");
+                //  getPrayerList();
+              });
+        },
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(

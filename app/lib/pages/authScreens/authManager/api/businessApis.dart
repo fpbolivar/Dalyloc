@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:daly_doc/core/localStore/localStore.dart';
+import 'package:daly_doc/pages/authScreens/authManager/models/bankDetailModel.dart';
 import 'package:daly_doc/pages/authScreens/authManager/models/businessCatModel.dart';
 
 import 'package:daly_doc/pages/authScreens/authManager/models/serviceItemModel.dart';
 import 'package:daly_doc/pages/subscriptionPlansScreen/model/PlanInfoModel.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
+import 'package:daly_doc/widgets/ToastBar/toastMessage.dart';
 import 'package:http/http.dart' as http;
 import 'package:daly_doc/utils/exportPackages.dart';
 import 'package:daly_doc/widgets/dialogs/CommonDialogs.dart';
@@ -435,10 +437,10 @@ class BusinessApis {
         var st = element.startime!.timeStr.toString();
         var et = element.endtime!.timeStr.toString();
 
-        st = TaskManager().convertTo24hrs(st);
-        st = TaskManager().generateUtcTime(time: st);
-        et = TaskManager().convertTo24hrs(et);
-        et = TaskManager().generateUtcTime(time: et);
+        st = st = st == "" ? "" : TaskManager().convertTo24hrs(st);
+        st = st = st == "" ? "" : TaskManager().generateUtcTime(time: st);
+        et = et = et == "" ? "" : TaskManager().convertTo24hrs(et);
+        et = et = et == "" ? "" : TaskManager().generateUtcTime(time: et);
         obj1.add({
           "day": element.name,
           "is_closed": element.selected == true ? "0" : "1",
@@ -451,10 +453,10 @@ class BusinessApis {
         var st = element.startime!.timeStr.toString();
         var et = element.endtime!.timeStr.toString();
 
-        st = TaskManager().convertTo24hrs(st);
-        st = TaskManager().generateUtcTime(time: st);
-        et = TaskManager().convertTo24hrs(et);
-        et = TaskManager().generateUtcTime(time: et);
+        st = st == "" ? "" : TaskManager().convertTo24hrs(st);
+        st = st == "" ? "" : TaskManager().generateUtcTime(time: st);
+        et = et == "" ? "" : TaskManager().convertTo24hrs(et);
+        et = et == "" ? "" : TaskManager().generateUtcTime(time: et);
 
         obj1.add({
           "day": element.name,
@@ -480,6 +482,7 @@ class BusinessApis {
     var headers = {"Authorization": token, 'Content-Type': 'application/json'};
     var url = HttpUrls.WS_CREATEBUSINESSTIMING;
     print(url);
+
     var request = http.Request('POST', Uri.parse(url));
 
     request.headers.addAll(headers);
@@ -489,6 +492,7 @@ class BusinessApis {
           weekDays: weekDays, firstTimeCreated: weekDays.first.id == "0")
     });
     print(request.body);
+    waitDialog();
     var response = await Response.fromStream(await request.send());
     dismissWaitDialog();
 
@@ -940,6 +944,168 @@ class BusinessApis {
       }
     } catch (e) {
       dismissWaitDialog();
+      print(e.toString());
+      showErrorAlert(e.toString());
+      return null;
+    }
+  }
+
+  addBankDetail({
+    required BuildContext context,
+    onSuccess,
+    required String bankName,
+    required String bankID,
+    required bool isUpdate,
+    required String accountNumber,
+    required String country,
+    required String cfmaccountNumber,
+    required String routingNumber,
+    required String userName,
+    required String city,
+    required String state,
+    required String address,
+    required String postalCode,
+    required String mobileNo,
+    required String accountHolderName,
+  }) async {
+    var token = await LocalStore().getToken();
+    if (await internetCheck() == false) {
+      showAlert(LocalString.internetNot);
+
+      return;
+    }
+    if (bankName.toString().isEmpty) {
+      ToastMessage.showErrorwMessage(msg: "Enter bank name");
+
+      return;
+    } else if (accountHolderName.toString().isEmpty) {
+      ToastMessage.showErrorwMessage(msg: "Enter account holder name");
+
+      return;
+    } else if (accountNumber.toString().isEmpty) {
+      ToastMessage.showErrorwMessage(msg: "Enter bank account no.");
+
+      return;
+    } else if (cfmaccountNumber.toString().isEmpty) {
+      ToastMessage.showErrorwMessage(msg: "Enter account no. into confirm box");
+
+      return;
+    } else if (cfmaccountNumber.toString() != accountNumber.toString()) {
+      ToastMessage.showErrorwMessage(
+          msg: "Mismatched account no. with confirm boc of account no.");
+
+      return;
+    } else if (routingNumber.toString().isEmpty) {
+      ToastMessage.showErrorwMessage(msg: "Enter routing number");
+
+      return;
+    } else if (city.toString().isEmpty) {
+      ToastMessage.showErrorwMessage(msg: "Enter city");
+
+      return;
+    } else if (state.toString().isEmpty) {
+      ToastMessage.showErrorwMessage(msg: "Enter state");
+
+      return;
+    } else if (address.toString().isEmpty) {
+      ToastMessage.showErrorwMessage(msg: "Enter address");
+
+      return;
+    } else if (postalCode.toString().isEmpty) {
+      ToastMessage.showErrorwMessage(msg: "Enter postal code");
+
+      return;
+    } else if (postalCode.toString().isEmpty) {
+      ToastMessage.showErrorwMessage(msg: "Enter phone Number");
+
+      return;
+    }
+    var param = {
+      "object": "bank_account",
+      "bank_name": bankName,
+      "account_number": accountNumber,
+      "country": country,
+      "state": state,
+      "city": city,
+      "address": address,
+      "routing_number": routingNumber,
+      "account_holder_name": accountHolderName,
+      "account_holder_type": "company",
+      "postal_code": postalCode
+    };
+    var url = HttpUrls.WS_AddBankDetail;
+    if (isUpdate) {
+      if (bankID != "") {
+        param["bank_stripe_id"] = bankID;
+        url = HttpUrls.WS_UpdateBankDetail;
+      }
+    }
+    var id = await LocalStore().getBusinessId();
+    var headers = {"Authorization": token, 'Content-Type': 'application/json'};
+
+    print(url);
+    var request = http.Request('POST', Uri.parse(url));
+    request.body = json.encode(param);
+    print(request.body);
+    request.headers.addAll(headers);
+    waitDialog();
+    var response = await Response.fromStream(await request.send());
+    dismissWaitDialog();
+
+    Map<String, dynamic> data = jsonDecode(response.body);
+    print(data);
+
+    if (data['status'] == true) {
+      if (data['bank'] != null) {
+        showAlert(data['message'].toString());
+        onSuccess();
+        // showAlert("Your bank account has been submitted for review.");
+      }
+    } else {
+      showAlert(data['message'].toString());
+    }
+
+    print(await response.body);
+  }
+
+  Future<BankDetailModel?> getBankDetail() async {
+    var token = await LocalStore().getToken();
+    if (await internetCheck() == false) {
+      showAlert(LocalString.internetNot);
+      return null;
+    }
+    // waitDialog();
+    var id = await LocalStore().getBusinessId();
+    var url = HttpUrls.WS_GET_BANK_DETAIL;
+
+    var header = await HttpUrls.headerData();
+    print(url);
+    try {
+      Response response = await get(Uri.parse(url), headers: header);
+      //dismissWaitDialog();
+      var data = jsonDecode(response.body);
+      print('${data}');
+
+      if (data['status'] == true) {
+        var obj = data["data"];
+        if (obj != null) {
+          return BankDetailModel.fromJson(obj);
+        }
+
+        return null;
+      } else {
+        if (data["auth_code"] != null || token == null) {
+          showAlert(LocalString.msgSessionExpired, onTap: () {
+            Routes.gotoMainScreen();
+          });
+          return null;
+        } else {
+          showAlert(data['message'].toString());
+          return null;
+        }
+      }
+    } catch (e) {
+      //dismissWaitDialog();
       print(e.toString());
       showErrorAlert(e.toString());
       return null;

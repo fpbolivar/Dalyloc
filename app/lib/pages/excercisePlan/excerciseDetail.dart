@@ -1,3 +1,4 @@
+import 'package:daly_doc/pages/excercisePlan/allplayers/animation_player/animation_player.dart';
 import 'package:daly_doc/pages/excercisePlan/manager/exerciseApi.dart';
 import 'package:daly_doc/pages/excercisePlan/model/exerciseDataModel.dart';
 import 'package:daly_doc/pages/excercisePlan/workoutVideoScreen.dart';
@@ -125,14 +126,17 @@ class _ExcerciseDetailScreenState extends State<ExcerciseDetailScreen>
                   onPressed: () {
                     managerExercise.startWorkOut(workOutID: widget.id);
 
+                    // Routes.pushSimple(
+                    //     context: context,
+                    //     child: AnimationPlayer(
+                    //       data: dataExercise!.exerciseList!.first,
+                    //       dataList: dataExercise!.exerciseList!,
+                    //     )
                     Routes.pushSimple(
                       context: context,
                       child: WorkoutVideoScreen(
                         data: dataExercise!.exerciseList!.first,
                         dataList: dataExercise!.exerciseList!,
-                        // title: dataExercise!
-                        //     .exerciseList![index].exercise_name
-                        //     .toString(),
                       ),
                     );
                     // Add your onPressed code here!

@@ -14,7 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import '../../../utils/exportPackages.dart';
 import '../../../utils/exportWidgets.dart';
-import 'exeercisePlanMainScreen.dart';
+import 'exercisePlanMainScreen.dart';
 
 class PhysicalActivityLevelView extends StatefulWidget {
   PhysicalActivityLevelView({

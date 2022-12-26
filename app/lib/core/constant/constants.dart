@@ -1,3 +1,5 @@
+import 'package:daly_doc/pages/appoinmentPlan/provider/appointmentProvider.dart';
+import 'package:daly_doc/pages/appoinmentPlan/provider/bizAppointmentProvider.dart';
 import 'package:daly_doc/pages/excercisePlan/manager/provider/videoProvider.dart';
 import 'package:daly_doc/pages/mealPlan/manager/mealcontroller.dart';
 import 'package:daly_doc/pages/settingsScreen/controller/settingController.dart';
@@ -8,6 +10,9 @@ class Constant {
   static var taskProvider = TaskManager();
   static var mealProvider = MealController();
   static var settingProvider = SettingController();
+  static var appointmentProvider = AppointmentProvider();
+  static var bizAppointmentProvider = BizAppointmentProvider();
+
   static var videoProvider = VideoProvider();
   static var KeyGoogleMaps = "AIzaSyCHbr4Y4V0UwjtTPY6r8pN4kdNrIexxNvk";
   static var selectedDateYYYYMMDD = "";

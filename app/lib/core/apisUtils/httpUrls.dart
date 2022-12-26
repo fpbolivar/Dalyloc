@@ -22,6 +22,11 @@ class HttpUrls {
   // ignore: constant_identifier_names
   static const WS_GETBUSINESSSERVICES =
       "${WS_BASEURL}api/get-all-user-business-service?business_id=";
+  static const WS_GETBUSINESSOWNERSERVICES =
+      "${WS_BASEURL}api/get-business-owner-services?business_id=";
+
+  static const WS_GET_ADVANCE_PRICE_BYSERVICE_ID =
+      "${WS_BASEURL}api/get-service-detail-by-id?service_id=";
   static const WS_GETBUSINESSSERVICES_BYID =
       "${WS_BASEURL}api/get-user-business-service-detail?business_service_id=";
   // ignore: constant_identifier_names
@@ -40,6 +45,18 @@ class HttpUrls {
   static const WS_CREATEBUSINESSSERVICES =
       "${WS_BASEURL}api/create-user-business-service";
   // ignore: constant_identifier_names
+  static const WS_AddBankDetail = "${WS_BASEURL}api/add-business-bank";
+  static const WS_UpdateBankDetail = "${WS_BASEURL}api/update-business-bank";
+  static const WS_GET_TIME_SLOT = "${WS_BASEURL}api/appointment-business-slot";
+
+  static const WS_GET_MY_APPOINTMENT =
+      "${WS_BASEURL}api/get-user-appointments-list";
+
+  static const WS_ADD_APPOINTMENT =
+      "${WS_BASEURL}api/create-user-business-appointment";
+  static const WS_ADD_APPOINTMENT_WITH_ADVANCE_PAY =
+      "${WS_BASEURL}api/create-user-business-appointment-with-advance";
+  // ignore: constant_identifier_names
   static const WS_CREATEBUSINESSTIMING =
       "${WS_BASEURL}api/edit-user-business-timing";
   // ignore: constant_identifier_names
@@ -48,6 +65,8 @@ class HttpUrls {
   // ignore: constant_identifier_names
   static const WS_GETALLBUSINESSCATGORY =
       "${WS_BASEURL}api/auth/get-all-business-category";
+  static const WS_GETALLBUSINESSCATGORY_ID =
+      "${WS_BASEURL}api/get-business-list?business_category_id=";
   // ignore: constant_identifier_names
   static const WS_USERLOGIN = "${WS_BASEURL}api/auth/user-login";
   // ignore: constant_identifier_names
@@ -71,6 +90,10 @@ class HttpUrls {
   // ignore: constant_identifier_names
   static const WS_OTPVERIFICATIONFORGOT =
       "${WS_BASEURL}api/auth/password/otp/verify";
+
+  static const WS_SENT_OTP_TO_UPDATENUMBER =
+      "${WS_BASEURL}api/auth/get-otp-for-google";
+  static const WS_UPDATE_PROFILE = "${WS_BASEURL}api/edit-profile";
   // ignore: constant_identifier_names
   static const WS_CREATENEWPASSWORDAFTERFORGOT =
       "${WS_BASEURL}api/auth/password/reset";
@@ -104,8 +127,10 @@ class HttpUrls {
   static const WS_CREATE_MEAL = "${WS_BASEURL}api/create-user-meal-detail";
 
   static const WS_PRAYERSETTING = "${WS_BASEURL}api/prayer-setting";
+  static const WS_EXERCISESETTING = "${WS_BASEURL}api/exercise-setting";
   static const WS_MEALSETTING = "${WS_BASEURL}api/update-user-meal-setting";
   static const WS_GETPRAYERSETTING = "${WS_BASEURL}api/get-setting";
+  static const WS_GETEXERCISESETTING = "${WS_BASEURL}api/get-exercise-setting";
   static const WS_GETMEALSETTING = "${WS_BASEURL}api/get-user-meal-setting";
   static const WS_GET_SELECTED_MEALPLAN =
       "${WS_BASEURL}api/get-selected-meal-ids";
@@ -143,6 +168,40 @@ class HttpUrls {
   static const WS_STARTWORKOUT = "${WS_BASEURL}api/create-user-workout";
   static const WS_COMPLETEWORKOUT =
       "${WS_BASEURL}api/complete-user-workout?workout_id=";
+  static const WS_TERMSCONDTIONS =
+      "${WS_BASEURL}api/get-exercise-term-conditions";
+
+  static const WS_CANCEL_BOOKING =
+      "${WS_BASEURL}api/cancel-user-appointment?appt_id=";
+
+  static const WS_RESCHEDULE_BOOKING =
+      "${WS_BASEURL}api/reschedule-user-appointment";
+
+  static const WS_GET_USER_APPOINTMENTDETAILBY_ID =
+      "${WS_BASEURL}api/get-user-appointment-detail-by-id?appt_id=";
+
+  static const WS_GET_BIZOWNER_APPOINTMENTList =
+      "${WS_BASEURL}api/get-business-owner-appointments-list";
+
+  static const WS_ACCEPT_BOOKING =
+      "${WS_BASEURL}api/accept-user-appointment?appt_id=";
+
+  static const WS_COMPLETE_BOOKING =
+      "${WS_BASEURL}api/complete-user-appointment?appt_id=";
+  static const WS_ASK_FOR_PAYMENT =
+      "${WS_BASEURL}api/ask-for-appointment-payment?appt_id=";
+
+  static const WS_DELETE_ACCOUNT = "${WS_BASEURL}api/delete-account";
+
+  static const WS_REJECT_BOOKING =
+      "${WS_BASEURL}api/reject-user-appointment?appt_id=";
+  static const WS_PENDING_DUE_PAYNOW =
+      "${WS_BASEURL}api/pay-full-payment-for-appointment";
+
+  static const WS_RATING_SUBMIT = "${WS_BASEURL}api/user-appointment-rating";
+  static const WS_ACCEPT_TERMS_CONDS =
+      "${WS_BASEURL}api/accept-exercise-term-conditions";
+  static const WS_GET_BANK_DETAIL = "${WS_BASEURL}api/get-business-bank";
   static Future<Map<String, String>> headerData() async {
     return {
       "Authorization": await LocalStore().getToken(),

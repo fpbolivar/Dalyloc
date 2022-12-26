@@ -156,17 +156,19 @@ class RegisterApis {
     print(
       HttpUrls.WS_OTPVERIFICATION,
     );
+    waitDialog();
     try {
       Response response = await post(
           Uri.parse(
             HttpUrls.WS_OTPVERIFICATION,
           ),
           body: param);
-
+      dismissWaitDialog();
       var data = jsonDecode(response.body);
       print('${data}');
 
       if (data['status'] == true) {
+        dismissWaitDialog();
         showAlert(data['message'].toString());
         print("Bearer Token== ${data["access_token"]}");
         var token = data["access_token"];
@@ -175,7 +177,7 @@ class RegisterApis {
         Routes.pushSimple(
             context: Constant.navigatorKey.currentState!.context,
             child: WakeUpTimeViewScreen());
-        dismissWaitDialog();
+
         showAlert(data['message'].toString());
       } else {
         dismissWaitDialog();

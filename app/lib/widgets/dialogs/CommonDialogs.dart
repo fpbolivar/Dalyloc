@@ -436,6 +436,84 @@ showConfirmAlert(msg,
         return alert;
       });
 }
+
+showConfirmAlertWithBtnName(msg,
+    {bool pop = false,
+    VoidCallback? onTap,
+    VoidCallback? onDismissTap,
+    barrierDismiss = false,
+    String btnName = "Go to profile"}) {
+  var alert = AlertDialog(
+    title: Container(
+      child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            msg,
+            style: TextStyle(fontSize: 14),
+          )
+        ],
+      ),
+    ),
+    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(5)),
+    actions: <Widget>[
+      Row(
+        children: [
+          Spacer(),
+          Center(
+            child: new CustomButton.regular(
+              title: "Dismiss",
+              width: 70,
+              height: 30,
+              fontSize: 13,
+              background: Colors.red,
+              radius: 4,
+              onTap: () {
+                Navigator.of(
+                        Constant.navigatorKey.currentState!.overlay!.context)
+                    .pop();
+                if (onDismissTap != null) {
+                  onDismissTap();
+                }
+              },
+            ),
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          Center(
+            child: new CustomButton.regular(
+              title: btnName,
+              width: 110,
+              background: AppColor.theme,
+              height: 30,
+              fontSize: 13,
+              radius: 4,
+              onTap: () {
+                Navigator.of(
+                        Constant.navigatorKey.currentState!.overlay!.context)
+                    .pop();
+                if (onTap != null) {
+                  onTap();
+                }
+              },
+            ),
+          ),
+          Spacer(),
+        ],
+      )
+    ],
+  );
+
+  showDialog(
+      barrierDismissible: false, //barrierDismiss,
+      context: Constant.navigatorKey.currentState!.overlay!.context,
+      builder: (BuildContext context) {
+        return alert;
+      });
+}
 //part of commons;
 
 dismissWaitDialog() {

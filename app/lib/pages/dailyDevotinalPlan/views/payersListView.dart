@@ -55,17 +55,6 @@ class _PrayerViewScreenState extends State<PrayerView> {
       backgroundColor: AppColor.newBgcolor,
       appBar: CustomAppBar(
         title: LocalString.lblPrayer,
-        trailingIcon: true,
-        trailingIconData: const Icon(Icons.settings),
-        trailingIconOnTap: () {
-          Routes.pushSimple(
-              context: context,
-              child: DevotionalPlanSetting(),
-              onBackPress: () {
-                print("ffffffffff");
-                getPrayerList();
-              });
-        },
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
@@ -161,6 +150,20 @@ class _PrayerViewScreenState extends State<PrayerView> {
                       },
                       child: PrayerItemWidget(
                         item: data[index],
+                        count: data[index].response!.length.toString(),
+                        onAnswer: () {
+                          if (data[index].prayerStatus!.toLowerCase() !=
+                              "answered") {
+                            PrayerApis().changePrayerStatus(
+                                id: data[index].id,
+                                onSuccess: () {
+                                  //Navigator.pop(context);
+                                  getPrayerList();
+                                });
+                          } else {
+                            showAlert("The Prayer is already answered");
+                          }
+                        },
                       ));
                 },
                 separatorBuilder: (context, index) {

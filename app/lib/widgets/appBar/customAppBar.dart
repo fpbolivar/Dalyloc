@@ -241,6 +241,7 @@ class CustomAppBarPresentCloseButton extends StatelessWidget
   double homeIconTopPadding = 0;
   Color? titleColor;
   Color? subtitleColor;
+  Color? colorNavBar;
   Widget? rightWidget;
   bool? needHomeIcon = true;
 
@@ -249,6 +250,7 @@ class CustomAppBarPresentCloseButton extends StatelessWidget
       this.title = "",
       this.fontSize = 20,
       this.homeIconTopPadding = 0,
+      this.colorNavBar,
       this.topContainerPadding = 0,
       this.subfontSize = 25,
       this.needHomeIcon = true,
@@ -266,7 +268,7 @@ class CustomAppBarPresentCloseButton extends StatelessWidget
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(0.0),
-          color: AppColor.newBgcolor,
+          color: colorNavBar ?? AppColor.newBgcolor,
           boxShadow: needShadow == true
               ? [
                   BoxShadow(

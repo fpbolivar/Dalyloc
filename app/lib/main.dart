@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'package:daly_doc/pages/paymentPages/savedCardListView.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:daly_doc/core/colors/colors.dart';
@@ -8,7 +6,6 @@ import 'package:daly_doc/core/localStore/localStore.dart';
 import 'package:daly_doc/core/stripe/stripeHelper.dart';
 
 import 'package:daly_doc/pages/pagesGetStarted/introduction_animation_screen.dart';
-import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
 import 'package:daly_doc/utils/exportWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -107,6 +104,16 @@ class _DalyDocAppState extends State<DalyDocApp> {
           var videoProvider = Constant.videoProvider;
 
           return videoProvider;
+        }),
+        ChangeNotifierProvider(create: (_) {
+          var appointmentProvider = Constant.appointmentProvider;
+
+          return appointmentProvider;
+        }),
+        ChangeNotifierProvider(create: (_) {
+          var bizAppointmentProvider = Constant.bizAppointmentProvider;
+
+          return bizAppointmentProvider;
         }),
 
         // ChangeNotifierProvider(create: (_) => TaskManager()),

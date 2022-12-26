@@ -5,6 +5,7 @@ import 'package:daly_doc/pages/authScreens/authManager/api/getUserDetails.dart';
 import 'package:daly_doc/pages/authScreens/authManager/models/userDataModel.dart';
 import 'package:daly_doc/pages/excercisePlan/physicalActivityLevelView.dart';
 import 'package:daly_doc/pages/taskPlannerScreen/manager/taskManager.dart';
+import 'package:daly_doc/pages/termsConditions/termConditionView.dart';
 import 'package:daly_doc/pages/userProfile/components/heightInchesView.dart';
 import 'package:daly_doc/pages/userProfile/helper/ageCalculator.dart';
 import 'package:daly_doc/widgets/ToastBar/toastMessage.dart';
@@ -13,7 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import '../../../utils/exportPackages.dart';
 import '../../../utils/exportWidgets.dart';
-import 'exeercisePlanMainScreen.dart';
+import 'exercisePlanMainScreen.dart';
 
 class ExcercisePlanScreen extends StatefulWidget {
   ExcercisePlanScreen({
@@ -163,7 +164,7 @@ class _ExcercisePlanScreenScreenState extends State<ExcercisePlanScreen> {
               gender: genderInfo,
               onSuccess: () {
                 Routes.pushSimple(
-                    context: context, child: PhysicalActivityLevelView());
+                    context: context, child: TermsConditionsView());
               });
         }
       },
@@ -182,7 +183,7 @@ class _ExcercisePlanScreenScreenState extends State<ExcercisePlanScreen> {
 
   openCalender() async {
     final today = DateTime.now();
-    var newDate = new DateTime(today.year - 13, today.month, today.day);
+    var newDate = new DateTime(today.year - 14, today.month, today.day);
 
     DateTime? pickedDate = await datePickerModal(newDate);
 

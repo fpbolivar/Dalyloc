@@ -38,6 +38,13 @@ class LocalStore {
   final String _wakeTime = "_wakeTime";
   final String _timeFormat = "_timeFormat";
   final String _isExerciseIntroComplete = "_isExerciseIntroComplete";
+  final String _userEmail = "_userEmail";
+  Future<bool> set_Emailofuser(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("_userEmail");
+    print(value);
+    return (prefs.setString(_userEmail, value));
+  }
 
   Future<bool> setExerciseIntro(String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

@@ -72,6 +72,7 @@ class LocalString {
   static const lblBusinessCongratsDescription =
       "You gain access to proceed your business at next level. ";
   static const lblCreateAnAccount = "Create an account";
+  static const lblBankDetailForm = "Bank Detail";
   static const lblCreateBusiness = "Create Business";
   static const lblOnlineBusiness = "Online Booking";
 
@@ -111,10 +112,14 @@ class LocalString {
   static const lblSettingNavTitle = "Settings";
   static const lblBizSettingNavTitle = "Business Settings";
 
-  static const lblDevSettingNavTitle = "Prayer Settings"; //PLACEHOLDER
+  static const lblDevSettingNavTitle = "Prayer Settings";
+  static const lblExerciseSetting = "Set Workout Settings"; //PLACEHOLDER
+
   static const plcMobileNo = "Mobile No *";
   static const plcEnterMobileNo = "Enter Mobile No.";
   static const plcPassword = "Passsword *";
+  static const plcDate = "Date *";
+  static const plcTime = "Time *";
   static const plcCurrentPassword = "Current Passsword *";
 
   static const plcOTP = "OTP Code";
@@ -132,6 +137,16 @@ class LocalString {
   static const plcServicePrice = "Service Price";
   static const plcDuration = "Service Duration";
   static const plcDeposit = " Service Deposit";
+  static const plcBankName = "Bank Name *";
+  static const plcAccountHolderName = "Account Holder Name *";
+  static const plcAccountNumber = "Account Number *";
+  static const plcConfirmAccountNumber = "Confirm Account number *";
+  static const plcRoutingNumber = "Rounting Number  *";
+  static const plcState = "State *";
+  static const plcCity = "City *";
+  static const plcBankAddress = "Address *";
+  static const plcPostalCode = "Postal Code *";
+
   //MESSAGES
   static const msgEmail = "Enter email";
   static const msgTaskName = "Enter Task Name";

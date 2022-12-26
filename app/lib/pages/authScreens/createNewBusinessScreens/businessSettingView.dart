@@ -1,7 +1,9 @@
 import 'package:daly_doc/pages/authScreens/authManager/api/businessApis.dart';
+import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/bankDetailFormView.dart';
 import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/bookingLinkScreen.dart';
 import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/serviceListScreen.dart';
 import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/timeSlotsAvailabilty.dart';
+import 'package:daly_doc/pages/authScreens/createNewBusinessScreens/upcomingAppointmentListView.dart';
 import 'package:daly_doc/pages/settingsScreen/components/sectionRowListView.dart';
 import 'package:daly_doc/pages/settingsScreen/model/SettingOption.dart';
 import '../../../../utils/exportPackages.dart';
@@ -67,6 +69,8 @@ class _BusinessSettingViewState extends State<BusinessSettingView> {
   List<SettingOption> businessOtherOption = [
     SettingOption(title: "Booking acceptance", section: 3),
     SettingOption(title: "Time slots availabilty", section: 3),
+    SettingOption(title: "Bank Details", section: 3),
+    SettingOption(title: "Appointments", section: 3),
   ];
   getOnlinePaymentStatus() async {
     bool? status = await BusinessApis().getOnlinePaymentStatus();
@@ -210,15 +214,31 @@ class _BusinessSettingViewState extends State<BusinessSettingView> {
               SectionRowListView(
                   itemList: businessOtherOption,
                   onTap: (sectionIndex, rowIndex) {
-                    rowIndex == 0
-                        ? Routes.pushSimple(
+                    switch (rowIndex) {
+                      case 0:
+                        Routes.pushSimple(
                             context: context,
                             child: TimeSlotsAvailabiltyScreens(
                               timeSlotsAvailabilty: false,
-                            ))
-                        : Routes.pushSimple(
+                            ));
+                        break;
+                      case 1:
+                        Routes.pushSimple(
                             context: context,
                             child: TimeSlotsAvailabiltyScreens());
+                        break;
+
+                      case 2:
+                        Routes.pushSimple(
+                            context: context, child: BankDetailFormView());
+                        break;
+                      case 3:
+                        Routes.pushSimple(
+                            context: context,
+                            child: UpcomingApointmentListView());
+                        break;
+                      default:
+                    }
                   }),
               const SizedBox(
                 height: 20,

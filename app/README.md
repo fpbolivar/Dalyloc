@@ -55,3 +55,14 @@ insert task || get task list by date || delete task || update task.
 #Player , Meal , Exercise show in HomeCalendar
 #Home button in Each Screen
 #Restrict in Age , User enter age >=13
+
+
+
+## 26 Dec,2022
+
+#ADD EXERCISE TERM and CONDITION 
+#ADD EXERCISE / WORK OUT TIME 
+#RESTRICT ON PRAYER CATEGORY
+
+#ADD APPOINTMENT FLOW
+#ADD BANK DETAIL

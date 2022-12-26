@@ -160,7 +160,7 @@ class DateHelper {
     }
     // var newDate = DateTime(now.year, now.month, element);
     // DateTime pastMonth = DateTime.now().add(Duration(days: 30));
-    DateTime dateCurrent = now;
+    DateTime dateCurrent = arrayDates.last;
     for (var i = 1; i <= 20; i++) {
       arrayDates.add(dateCurrent.add(Duration(days: i)));
     }

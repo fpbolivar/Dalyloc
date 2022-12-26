@@ -8,6 +8,7 @@ class UserDetailModel {
   String? height;
   String? inchse;
   String? gender;
+  String? email;
   String? mobile_no;
   String? login_type;
   String? country_code;
@@ -21,6 +22,7 @@ class UserDetailModel {
       this.inchse,
       this.gender,
       this.name,
+      this.email,
       this.country_code,
       this.weight});
 
@@ -29,6 +31,7 @@ class UserDetailModel {
       age: json['age'] ?? "",
       id: json['id'] ?? "",
       name: json['name'] ?? "",
+      email: json['email'] ?? "",
       gender: json['gender'] ?? "",
       mobile_no: json['phone_no'] ?? "",
       dateOfBirth: json['date_of_birth'] ?? "",

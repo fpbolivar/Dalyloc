@@ -35,8 +35,8 @@ class AgeTextFieldView extends StatelessWidget {
                       "Age",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
                           color: AppColor.textBlackColor),
                     ),
                   ),
@@ -111,7 +111,7 @@ class AgeTextFieldView extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: TextField(
-          style: TextStyle(fontSize: 25, color: AppColor.halfGrayTextColor),
+          style: TextStyle(fontSize: 17, color: AppColor.halfGrayTextColor),
           minLines: 1,
           maxLines: 1,
           maxLength: 3,
@@ -125,7 +125,7 @@ class AgeTextFieldView extends StatelessWidget {
             hintText: placehoder,
             border: InputBorder.none,
             hintStyle:
-                TextStyle(fontSize: 25, color: AppColor.halfGrayTextColor),
+                TextStyle(fontSize: 17, color: AppColor.halfGrayTextColor),
           ),
         ),
       ),

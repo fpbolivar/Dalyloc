@@ -18,7 +18,12 @@ class VideoProvider with ChangeNotifier {
   calculaterPercent() {
     percentage = (duration / totalDuration) * 100;
     percentage = percentage / 100;
-    textDurationCounter = (totalDuration - duration).toInt();
+    if (percentage >= 1.0) {
+      percentage = 1.0;
+      textDurationCounter = 0;
+    } else {
+      textDurationCounter = (totalDuration - duration).toInt();
+    }
     notifyListeners();
 
     // setState(() {});

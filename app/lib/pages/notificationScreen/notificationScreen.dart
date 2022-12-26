@@ -41,9 +41,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
       body: BackgroundCurveView(
           child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: bodyDesign(),
-        ),
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: simpleMessageShow(
+                "Notifications bucket are empty.") // bodyDesign(),
+            ),
       )),
     );
   }
@@ -59,6 +60,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
               const SizedBox(
                 height: 20,
               ),
+              //  simpleMessageShow("Notification bucket are empty.")
               listView(),
               //
             ]),

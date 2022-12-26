@@ -10,10 +10,12 @@ class PhoneTF extends StatefulWidget {
   double height = 50;
   var controllr = TextEditingController();
   String placeholder = "";
+  String defaultDialCode = "";
   // int maxLength;
   //Color background;
   // Color titleColor;
   bool obscureText;
+  bool isBorderEnable;
   bool enabled;
   bool password;
   int maxlines;
@@ -23,8 +25,10 @@ class PhoneTF extends StatefulWidget {
   PhoneTF(
       {this.password = false,
       this.maxlines = 1,
+      this.defaultDialCode = "",
       //this.width = double.infinity,
       required this.controllr,
+      this.isBorderEnable = true,
       this.onCountryCodeChange,
       this.keyBoardType = TextInputType.text,
       this.height = 50,
@@ -51,8 +55,18 @@ class _PhoneTFState extends State<PhoneTF> {
     countryData = countryCodes
         .map((countryData) => Country.fromJson(countryData))
         .toList();
-    List<Country> temp =
-        countryData.where((element) => element.code == "us").toList();
+    List<Country> temp = [];
+
+    if (widget.defaultDialCode == "") {
+      temp = countryData.where((element) => element.code == "us").toList();
+    } else {
+      temp = countryData
+          .where((element) => element.dialCode == widget.defaultDialCode)
+          .toList();
+    }
+    if (temp.isEmpty) {
+      temp = countryData.where((element) => element.code == "us").toList();
+    }
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (temp.length > 0) {
         country = temp.first;
@@ -67,9 +81,11 @@ class _PhoneTFState extends State<PhoneTF> {
     return Container(
       height: widget.height,
       decoration: BoxDecoration(
-          border: Border.all(width: 1, color: AppColor.textBlackColor
-              //                   <--- border width here
-              ),
+          border: widget.isBorderEnable
+              ? Border.all(width: 1, color: AppColor.textBlackColor
+                  //                   <--- border width here
+                  )
+              : null,
           borderRadius: BorderRadius.circular(8),
           color: Colors.transparent),
       child: Padding(

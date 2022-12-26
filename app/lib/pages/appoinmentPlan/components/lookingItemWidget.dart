@@ -1,5 +1,6 @@
 import 'package:daly_doc/core/LocalString/localString.dart';
-import 'package:daly_doc/pages/appoinmentPlan/model/LookingItemModel.dart';
+
+import 'package:daly_doc/pages/authScreens/authManager/models/businessCatModel.dart';
 import 'package:daly_doc/pages/mealPlan/model/mealCategoryModel.dart';
 import 'package:daly_doc/pages/notificationScreen/model/rowItemModel.dart';
 import 'package:daly_doc/pages/paymentPages/model/SavedCardModel.dart';
@@ -14,7 +15,7 @@ class LookingItemView extends StatelessWidget {
       {required this.item,
       required this.onDeleted,
       required this.onDefaultSet});
-  LookingItemModel? item;
+  BusinessCatModel? item;
   Function()? onDeleted;
   Function()? onDefaultSet;
   @override
@@ -37,7 +38,7 @@ class LookingItemView extends StatelessWidget {
                     height: 5,
                   ),
                   Text(
-                    "${item!.title}",
+                    "${item!.name}",
                     textAlign: TextAlign.left,
                     style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
                   ),

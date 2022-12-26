@@ -5,11 +5,12 @@ import '../../utils/exportWidgets.dart';
 // ignore: must_be_immutable
 class BackgroundCurveView extends StatelessWidget {
   Widget child;
-  BackgroundCurveView({super.key, required this.child});
+  Color? color;
+  BackgroundCurveView({super.key, required this.child, this.color});
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColor.newBgcolor,
+      color: color ?? AppColor.newBgcolor,
       child: child,
     );
     // return Container(

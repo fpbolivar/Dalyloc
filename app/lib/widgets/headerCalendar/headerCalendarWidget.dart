@@ -13,6 +13,7 @@ class HeaderCalendar extends StatelessWidget {
       this.onSelection,
       this.selectedDate,
       this.onClickCalendar,
+      this.onClickDrawer,
       this.onClickSetting,
       this.onClickNotification})
       : super(key: key);
@@ -20,6 +21,7 @@ class HeaderCalendar extends StatelessWidget {
   Function()? onClickCalendar;
   Function()? onClickSetting;
   Function()? onClickNotification;
+  Function()? onClickDrawer;
   @override
   Widget build(BuildContext context) {
     print(MediaQuery.of(context).size.width);
@@ -46,6 +48,16 @@ class HeaderCalendar extends StatelessWidget {
               //       Icons.arrow_back_ios,
               //       color: Colors.black,
               //     )),
+              IconButton(
+                onPressed: () {
+                  onClickDrawer!();
+                },
+                icon: Image.asset(
+                  "assets/icons/menu.png",
+                  width: 20,
+                  height: 20,
+                ),
+              ),
               Spacer(),
               IconButton(
                 autofocus: false,
@@ -69,16 +81,16 @@ class HeaderCalendar extends StatelessWidget {
                   height: 20,
                 ),
               ),
-              IconButton(
-                onPressed: () {
-                  onClickSetting!();
-                },
-                icon: Image.asset(
-                  "assets/icons/ic_setting.png",
-                  width: 20,
-                  height: 20,
-                ),
-              ),
+              // IconButton(
+              //   onPressed: () {
+              //     onClickSetting!();
+              //   },
+              //   icon: Image.asset(
+              //     "assets/icons/ic_setting.png",
+              //     width: 20,
+              //     height: 20,
+              //   ),
+              // ),
             ],
           ),
           const SizedBox(

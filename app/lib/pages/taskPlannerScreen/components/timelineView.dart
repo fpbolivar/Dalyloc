@@ -250,6 +250,11 @@ class TimelineView extends StatelessWidget {
         return AppColor.appointmentItemBgColor;
       case "exercise":
         return AppColor.exerciseItemBgColor;
+      case "business_appointment":
+        return AppColor.appointmentItemBgColor;
+
+      case "user_appointment":
+        return AppColor.appointmentItemBgColor;
 
       default:
         return AppColor.taskItemBgColor;
@@ -397,7 +402,9 @@ class TimelineView extends StatelessWidget {
                 ],
               ),
               if (item.operationType != TaskType.exercise.rawValue &&
-                  item.operationType != TaskType.prayer.rawValue)
+                  item.operationType != TaskType.prayer.rawValue &&
+                  item.operationType != TaskType.user_appointment.rawValue &&
+                  item.operationType != TaskType.business_appointment.rawValue)
                 Positioned(
                   right: 0,
                   top: 15,

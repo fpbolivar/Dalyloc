@@ -10,11 +10,10 @@ import '../../../utils/exportPackages.dart';
 
 // ignore: must_be_immutable
 class PrayerItemWidget extends StatelessWidget {
-  PrayerItemWidget({
-    required this.item,
-  });
+  PrayerItemWidget({required this.item, this.onAnswer, this.count = "0"});
   PrayerModel? item;
-
+  String count = "0";
+  Function()? onAnswer;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -41,17 +40,17 @@ class PrayerItemWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            item!.prayerStatus.toString().toLowerCase() == "answered"
-                ? const Icon(
-                    Icons.circle,
-                    color: Color(0XFF2E7316),
-                    size: 20,
-                  )
-                : const Icon(
-                    Icons.circle,
-                    color: Color(0XFFD82121),
-                    size: 20,
-                  ),
+            // item!.prayerStatus.toString().toLowerCase() == "answered"
+            //     ? const Icon(
+            //         Icons.circle,
+            //         color: Color(0XFF2E7316),
+            //         size: 20,
+            //       )
+            //     : const Icon(
+            //         Icons.circle,
+            //         color: Color(0XFFD82121),
+            //         size: 20,
+            //       ),
             SizedBox(
               width: 10,
             ),
@@ -74,6 +73,43 @@ class PrayerItemWidget extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                         fontSize: 12),
                   ),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        if (count != "0")
+                          Container(
+                              height: 20,
+                              width: 20,
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Center(
+                                  child: Text(count,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w300,
+                                          fontSize: 10)))),
+                        Spacer(),
+                        CustomButton.regular(
+                          width: 70,
+                          height: 23,
+                          fontSize: 13,
+                          background:
+                              item!.prayerStatus.toString().toLowerCase() ==
+                                      "answered"
+                                  ? Colors.grey[500]
+                                  : AppColor.theme,
+                          title: "Answer",
+                          onTap: () {
+                            if (item!.prayerStatus.toString().toLowerCase() !=
+                                "answered") {
+                              onAnswer!();
+                            }
+                          },
+                        )
+                      ])
                 ],
               ),
             ),

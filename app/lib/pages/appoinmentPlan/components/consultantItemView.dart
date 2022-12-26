@@ -1,4 +1,4 @@
-import 'package:daly_doc/pages/appoinmentPlan/model/consultantModel.dart';
+import 'package:daly_doc/pages/authScreens/authManager/models/userBusinesModel.dart';
 import 'package:daly_doc/pages/notificationScreen/model/rowItemModel.dart';
 import 'package:daly_doc/pages/subscriptionPlansScreen/model/PlanInfoModel.dart';
 import '../../../core/colors/colors.dart';
@@ -6,7 +6,7 @@ import '../../../utils/exportPackages.dart';
 
 // ignore: must_be_immutable
 class ConsultantItemView extends StatelessWidget {
-  ConsultantItemModel itemData;
+  UserBusinessModel itemData;
   ConsultantItemView({super.key, required this.itemData});
 
   @override
@@ -57,21 +57,13 @@ class ConsultantItemView extends StatelessWidget {
         Row(
           children: [
             Text(
-              "${itemData.title}",
+              "${itemData.businessName}",
               style: const TextStyle(
                   fontSize: 14,
                   color: Colors.black,
                   fontWeight: FontWeight.w600),
             ),
             Spacer(),
-            Text(
-              "\$ ${itemData.price}",
-              // ignore: prefer_const_constructors
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16),
-            ),
           ],
         ),
         SizedBox(
@@ -87,7 +79,7 @@ class ConsultantItemView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      itemData.description ?? "",
+                      itemData.businessAddress ?? "",
                       textAlign: TextAlign.left,
                       // ignore: prefer_const_constructors
                       style: TextStyle(
@@ -98,16 +90,16 @@ class ConsultantItemView extends StatelessWidget {
                   ],
                 ),
               ),
-              CustomButton.regular(
-                width: 70,
-                height: 20,
-                title: "Book Now",
-                fontSize: 14,
-                fontweight: FontWeight.w500,
-                background: Colors.transparent,
-                titleColor: AppColor.textGrayBlue,
-                radius: 3,
-              ),
+              // CustomButton.regular(
+              //   width: 70,
+              //   height: 20,
+              //   title: "Book Now",
+              //   fontSize: 14,
+              //   fontweight: FontWeight.w500,
+              //   background: Colors.transparent,
+              //   titleColor: AppColor.textGrayBlue,
+              //   radius: 3,
+              // ),
             ])
       ],
     );

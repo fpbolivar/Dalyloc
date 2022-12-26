@@ -101,6 +101,20 @@ class _WorkoutVideoScreenState extends State<WorkoutVideoScreen> {
     }
     print(
         "videoPlayerController.value.position${videoPlayerController.value.position}");
+    print(
+        "videoPlayerController.value.duration${videoPlayerController.value.duration}");
+
+    if (videoPlayerController.value.position >
+        videoPlayerController.value.duration) {
+      print('video ended21');
+      Constant.videoProvider.initializeZero();
+      if (videoPlayerController.value.position.inSeconds != 0.0) {
+        isEndPlaying = true;
+        isPlaying = false;
+      }
+      return;
+    }
+
     if (videoPlayerController.value.position ==
         videoPlayerController.value.duration) {
       print('video ended');
@@ -201,30 +215,39 @@ class _WorkoutVideoScreenState extends State<WorkoutVideoScreen> {
             ],
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
                 width: 1,
               ),
-              CustomButton.regular(
-                height: 40,
-                width: 140,
-                title: "Previous",
-                background: Colors.grey,
-                titleColor: Colors.black,
-                onTap: () {
-                  _onPrevious();
-                },
-              ),
-              CustomButton.regular(
-                height: 40,
-                width: 140,
-                title: "Next",
-                background: AppColor.weightScrollColor,
-                onTap: () {
-                  _onNext();
-                },
-              ),
+              selectedIndex > 0
+                  ? CustomButton.regular(
+                      height: 40,
+                      width: 140,
+                      title: "Previous",
+                      background: Colors.grey,
+                      titleColor: Colors.black,
+                      onTap: () {
+                        _onPrevious();
+                      },
+                    )
+                  : Container(),
+              (selectedIndex > 0 && selectedIndex < dataList!.length)
+                  ? SizedBox(
+                      width: 10,
+                    )
+                  : Container(),
+              selectedIndex < dataList!.length - 1
+                  ? CustomButton.regular(
+                      height: 40,
+                      width: 140,
+                      title: "Next",
+                      background: AppColor.weightScrollColor,
+                      onTap: () {
+                        _onNext();
+                      },
+                    )
+                  : Container(),
               SizedBox(
                 width: 1,
               ),
@@ -327,8 +350,8 @@ class _WorkoutVideoScreenState extends State<WorkoutVideoScreen> {
       chewieController.dispose();
       videoPlayerController.pause();
       videoPlayerController.seekTo(Duration(seconds: 0));
-      videoPlayerController.removeListener(() {});
-      videoPlayerController.addListener(_videoListener);
+      // videoPlayerController.removeListener(() {});
+      // videoPlayerController.addListener(_videoListener);
       chewieController = ChewieController(
         videoPlayerController: videoPlayerController,
         aspectRatio: 16 / 16,

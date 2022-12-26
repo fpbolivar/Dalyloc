@@ -1,5 +1,6 @@
 import 'package:daly_doc/pages/authScreens/authManager/api/getUserDetails.dart';
 import 'package:daly_doc/pages/authScreens/authManager/models/userDataModel.dart';
+import 'package:daly_doc/pages/excercisePlan/exerciseSettingView.dart';
 import 'package:daly_doc/pages/excercisePlan/manager/exerciseApi.dart';
 import 'package:daly_doc/pages/excercisePlan/model/levelWorkOutModel.dart';
 import 'package:daly_doc/pages/excercisePlan/model/workoutDataModel.dart';
@@ -119,6 +120,11 @@ class _ExcercisePlanMainScreenScreenState
       backgroundColor: AppColor.newBgcolor,
       appBar: CustomAppBar(
         needLoader: isLoadingUserDetail,
+        trailingIcon: true,
+        trailingIconData: Icon(Icons.settings_outlined),
+        trailingIconOnTap: () {
+          Routes.pushSimple(context: context, child: ExerciseSettingView());
+        },
         onTap: () {
           Navigator.pop(context);
         },

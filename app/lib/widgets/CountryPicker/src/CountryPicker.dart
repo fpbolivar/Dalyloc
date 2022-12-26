@@ -69,7 +69,7 @@ class _CountryPickerState extends State<CountryPicker> {
     return Scaffold(
         backgroundColor: AppColor.newBgcolor,
         appBar: CustomAppBarPresentCloseButton(
-            title: "Country Code",
+            title: "Country Picker",
             subtitle: "",
             needHomeIcon: false,
             subtitleColor: AppColor.textGrayBlue),
