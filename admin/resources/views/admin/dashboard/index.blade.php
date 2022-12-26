@@ -1,5 +1,6 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'Dashboard'}} @endsection
 <!--App-Content-->
 <div class="app-content  my-3 my-md-5">
     <div class="side-app">
@@ -13,7 +14,7 @@
                 <div class="item-all-card bg-blue-custom text-center">
                     <a href="{{ url('admin/users') }}"></a>
                     <div class="iteam-all-icon">
-                        <i class="fe fe-user w-30"></i>
+                        <i class="fe fe-users w-30"></i>
                     </div>
                     <div class="item-all-text mt-3">
                         <p>Active Users</p>
@@ -26,7 +27,7 @@
                 <div class="item-all-card bg-orange text-center">
                     <a href="{{ url('admin/business-category') }}"></a>
                     <div class="iteam-all-icon">
-                        <i class="fe fe-thumbs-up w-30"></i>
+                        <i class="fe fe-globe w-30"></i>
                     </div>
                     <div class="item-all-text mt-3">
                         <p> Business Categories</p>
@@ -38,7 +39,7 @@
                 <div class="item-all-card bg-pink text-center">
                     <a href="{{ url('admin/user-business') }}"></a>
                     <div class="iteam-all-icon">
-                        <i class="fe fe-user w-30"></i>
+                        <i class="fe fe-sun w-30"></i>
                     </div>
                     <div class="item-all-text mt-3">
                         <p>User Business</p>
@@ -50,7 +51,7 @@
                 <div class="item-all-card bg-blue-custom text-center">
                     <a href="{{ url('admin/workout-level') }}"></a>
                     <div class="iteam-all-icon">
-                        <i class="fe fe-volume-1 w-30"></i>
+                        <i class="fe fe-map w-30"></i>
                     </div>
                     <div class="item-all-text mt-3">
                         <p>Workout Levels</p>
@@ -74,7 +75,7 @@
                 <div class="item-all-card bg-pink text-center">
                     <a href="{{ url('admin/meal-categories') }}"></a>
                     <div class="iteam-all-icon">
-                        <i class="fe fe-credit-card w-30"></i>
+                        <i class="fe fe-layers w-30"></i>
                     </div>
                     <div class="item-all-text mt-3">
                         <p>Prayer Categories</p>

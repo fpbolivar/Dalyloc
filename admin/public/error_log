@@ -1,0 +1,72 @@
+[28-Nov-2022 09:31:42 UTC] PHP Fatal error:  Uncaught Error: Class 'Maatwebsite\Excel\ExcelServiceProvider' not found in /home3/codeotkx/public_html/test/daly-doc/vendor/laravel/framework/src/Illuminate/Foundation/ProviderRepository.php:208
+Stack trace:
+#0 /home3/codeotkx/public_html/test/daly-doc/vendor/laravel/framework/src/Illuminate/Foundation/ProviderRepository.php(144): Illuminate\Foundation\ProviderRepository->createProvider('Maatwebsite\\Exc...')
+#1 /home3/codeotkx/public_html/test/daly-doc/vendor/laravel/framework/src/Illuminate/Foundation/ProviderRepository.php(61): Illuminate\Foundation\ProviderRepository->compileManifest(Array)
+#2 /home3/codeotkx/public_html/test/daly-doc/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(659): Illuminate\Foundation\ProviderRepository->load(Array)
+#3 /home3/codeotkx/public_html/test/daly-doc/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterProviders.php(17): Illuminate\Foundation\Application->registerConfiguredProviders()
+#4 /home3/codeotkx/public_html/test/daly-doc/vendor in /home3/codeotkx/public_html/test/daly-doc/vendor/laravel/framework/src/Illuminate/Foundation/ProviderRepository.php on line 208
+[28-Nov-2022 09:31:47 UTC] PHP Fatal error:  Uncaught Error: Class 'Maatwebsite\Excel\ExcelServiceProvider' not found in /home3/codeotkx/public_html/test/daly-doc/vendor/laravel/framework/src/Illuminate/Foundation/ProviderRepository.php:208
+Stack trace:
+#0 /home3/codeotkx/public_html/test/daly-doc/vendor/laravel/framework/src/Illuminate/Foundation/ProviderRepository.php(144): Illuminate\Foundation\ProviderRepository->createProvider('Maatwebsite\\Exc...')
+#1 /home3/codeotkx/public_html/test/daly-doc/vendor/laravel/framework/src/Illuminate/Foundation/ProviderRepository.php(61): Illuminate\Foundation\ProviderRepository->compileManifest(Array)
+#2 /home3/codeotkx/public_html/test/daly-doc/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(659): Illuminate\Foundation\ProviderRepository->load(Array)
+#3 /home3/codeotkx/public_html/test/daly-doc/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterProviders.php(17): Illuminate\Foundation\Application->registerConfiguredProviders()
+#4 /home3/codeotkx/public_html/test/daly-doc/vendor in /home3/codeotkx/public_html/test/daly-doc/vendor/laravel/framework/src/Illuminate/Foundation/ProviderRepository.php on line 208
+[28-Nov-2022 03:31:54 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.2". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:31:55 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.2". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:31:58 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.2". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:32:10 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.2". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:32:23 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.2". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:32:23 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.2". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:32:23 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.0.2". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:33:39 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:34:18 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:34:22 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:35:39 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:36:00 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:38:34 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:38:49 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:38:52 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:44:51 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:44:56 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:45:26 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:45:27 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:45:27 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:46:04 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:46:05 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:46:13 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:46:45 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:49:00 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:49:30 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:51:48 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[28-Nov-2022 03:52:15 America/Chicago] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home3/codeotkx/public_html/test/daly-doc/vendor/composer/platform_check.php on line 24
+[30-Nov-2022 05:26:03 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[30-Nov-2022 05:43:58 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[30-Nov-2022 05:50:42 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[30-Nov-2022 05:53:51 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[30-Nov-2022 05:56:36 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[30-Nov-2022 06:39:05 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[30-Nov-2022 07:43:14 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[30-Nov-2022 12:47:48 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[30-Nov-2022 12:48:40 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[30-Nov-2022 12:49:32 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[30-Nov-2022 12:51:08 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[01-Dec-2022 06:54:59 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[01-Dec-2022 06:56:22 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[01-Dec-2022 07:32:01 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[01-Dec-2022 10:28:14 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[02-Dec-2022 06:37:22 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[05-Dec-2022 05:49:51 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[06-Dec-2022 06:38:15 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[07-Dec-2022 12:21:24 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[08-Dec-2022 06:23:27 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[08-Dec-2022 14:56:42 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[12-Dec-2022 06:50:21 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[13-Dec-2022 10:18:51 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[22-Dec-2022 07:13:03 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[24-Dec-2022 11:15:26 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[24-Dec-2022 11:55:25 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[24-Dec-2022 12:03:42 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[24-Dec-2022 12:06:43 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[24-Dec-2022 12:09:59 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources
+[26-Dec-2022 08:20:13 UTC] Stripe Notice: Undefined property of Stripe\Customer instance: sources

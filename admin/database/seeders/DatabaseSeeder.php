@@ -7,7 +7,7 @@ use Database\Seeders\PrayerSeeder;
 use Database\Seeders\AdminSeeder;
 use Database\Seeders\SubscriptionPlansSeeder;
 use Database\Seeders\SubscriptionSubPlansSeeder;
-
+use Database\Seeders\AdminCommissionSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,7 +22,8 @@ class DatabaseSeeder extends Seeder
             PrayerSeeder::class,
             AdminSeeder::class,
             SubscriptionPlansSeeder::class,
-            SubscriptionSubPlansSeeder::class
+            SubscriptionSubPlansSeeder::class,
+            AdminCommissionSeeder::class
         ]);
     }
 }

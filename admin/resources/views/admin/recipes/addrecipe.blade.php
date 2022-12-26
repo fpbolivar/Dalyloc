@@ -1,5 +1,6 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'Add Recipe' }} @endsection
 <style>
     .chosen-container {
         font-size: 15px;
@@ -158,8 +159,8 @@
                                             data-allowed-file-extensions="jpeg jpg png">
                                     </div>
                                     @error("meal_image")
-                                        <span class="help-block text text-danger">{{$message}}</span>
-                                        @enderror
+                                    <span class="help-block text text-danger">{{$message}}</span>
+                                    @enderror
                                 </div>
                             </div>
                         </div>

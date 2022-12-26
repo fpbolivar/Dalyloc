@@ -15,7 +15,8 @@ class CreateAdminSettingsTable extends Migration
     {
         Schema::create('admin_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('admin_commission');
+            $table->string('option_name');
+            $table->text('option_value');
             $table->enum('is_deleted', ['1', '0'])->default("0");
             $table->timestamps();
         });

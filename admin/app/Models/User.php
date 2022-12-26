@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Carbon;
 use App\Models\Model\UserSubscription;
+use App\Models\Model\BusinessBank;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -68,6 +69,16 @@ class User extends Authenticatable implements JWTSubject
     public function UserSubscription()
     {
         return $this->hasmany(UserSubscription::class,'user_id','id')->orderBy('id','DESC');
+    }
+    public function BusinessPlan()
+    {
+        return $this->hasOne(UserSubscription::class,'user_id','id')->orderBy('id','DESC');
+    }
+ 
+
+    public function BusinessBank()
+    {
+        return $this->hasOne(BusinessBank::class,'user_id','id');
     }
  
 }

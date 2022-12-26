@@ -1,5 +1,6 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'Edit Subscription Sub Plan' }} @endsection
 
 <div class="app-content  my-3 my-md-5">
     {{--@php echo $category->name; exit;@endphp --}}
@@ -80,23 +81,23 @@
                                             data-placeholder="Choose Type Plan">
                                             <option disabled="disabled" selected>Choose Plan Type</option>
                                             @if($subscriptionSubPlan->subscription_plan_id == 4)
-                                            <option value="monthly"
-                                                {{ ($subscriptionSubPlan->type) == 'monthly' ? 'selected' : '' }}>
+                                            <option value="monthly" {{ ($subscriptionSubPlan->type) == 'monthly' ?
+                                                'selected' : '' }}>
                                                 Monthly
                                             </option>
-                                            <option value="annual"
-                                                {{ ($subscriptionSubPlan->type) == 'annual' ? 'selected' : '' }}>Annual
+                                            <option value="annual" {{ ($subscriptionSubPlan->type) == 'annual' ?
+                                                'selected' : '' }}>Annual
                                             </option>
                                             @else
-                                            <option value="free"
-                                                {{ ($subscriptionSubPlan->type) == 'free' ? 'selected' : '' }}>Free
+                                            <option value="free" {{ ($subscriptionSubPlan->type) == 'free' ? 'selected'
+                                                : '' }}>Free
                                             </option>
-                                            <option value="monthly"
-                                                {{ ($subscriptionSubPlan->type) == 'monthly' ? 'selected' : '' }}>
+                                            <option value="monthly" {{ ($subscriptionSubPlan->type) == 'monthly' ?
+                                                'selected' : '' }}>
                                                 Monthly
                                             </option>
-                                            <option value="annual"
-                                                {{ ($subscriptionSubPlan->type) == 'annual' ? 'selected' : '' }}>Annual
+                                            <option value="annual" {{ ($subscriptionSubPlan->type) == 'annual' ?
+                                                'selected' : '' }}>Annual
                                             </option>
                                             @endif
                                         </select>

@@ -1,5 +1,6 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'Add Workout Exercise' }} @endsection
 
 <div class="app-content  my-3 my-md-5">
     <div class="side-app">
@@ -27,7 +28,7 @@
                                 <div class="form-group">
                                     <label class="form-label">Workout</label>
                                     <select class="form-control " name="workout_id"
-                                        data-placeholder="Choose Workout Level" required>
+                                        data-placeholder="Choose Workout Level">
                                         <option value="" disabled="disabled" selected>Choose Workout </option>
                                         <?php  foreach($workout as $work) { ?>
                                         <option value="<?= $work['id'] ?>">
@@ -55,10 +56,11 @@
                                         </option>
                                         <?php   } ?>
 
-                                        @error("exercise_id")
-                                        <span class="help-block  text text-danger">{{$message}}</span>
-                                        @enderror
+
                                     </select>
+                                    @error("exercise_id")
+                                    <span class="help-block  text text-danger">{{$message}}</span>
+                                    @enderror
                                 </div>
                             </div>
                         </div>

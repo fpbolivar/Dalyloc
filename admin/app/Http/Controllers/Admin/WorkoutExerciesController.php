@@ -44,7 +44,7 @@ class WorkoutExerciesController extends Controller
             // ];
             $this->validate($req, [
                 'workout_id' => 'required',
-                // 'exercise_id' => ['required']
+                'exercise_id' => 'required'
             ]);
             $workout = WorkoutExercise::where('workout_id',$req->workout_id)->where('is_deleted','0')->first();
  

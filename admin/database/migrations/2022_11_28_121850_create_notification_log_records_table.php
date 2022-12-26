@@ -21,11 +21,18 @@ class CreateNotificationLogRecordsTable extends Migration
             $table->string('notification_type')->nullable();
             $table->string('notification_description')->nullable();
             $table->string('notification_source')->nullable();
+            $table->enum('is_read',['0','1'])->default(0);
+            $table->string('send_by')->nullable();
+            $table->bigInteger('send_by_id')->nullable();
+            $table->string('send_to')->nullable();
+            $table->bigInteger('send_to_id')->nullable();
+            $table->bigInteger('event_id')->nullable();
+            $table->bigInteger('business_id')->nullable();
+            $table->bigInteger('business_owner_id')->nullable();
             $table->string('message')->nullable();
             $table->string('status')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamps();
-
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }

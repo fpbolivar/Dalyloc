@@ -45,7 +45,6 @@ class PushHelper
 		//Send the request
 		$response = curl_exec($ch);
 		$response = json_decode($response);
-
 		//Close request
 		if ($response->success === 0) {
 					//for notifiction log records
@@ -102,6 +101,28 @@ class PushHelper
         $new_str = new \DateTime($str, new \DateTimeZone('IST') );
         $new_str->setTimeZone(new \DateTimeZone('UTC'));
         return $new_str->format( $format);  
+    }
+
+
+	
+    public function addNotificationRecord($userId,$notification_type,$title,$msg,$notification_source){
+        $data = array( 'notification_type' => $notification_type );
+		$notificationLogSave = new NotificationLogRecord;
+		$notificationLogSave->user_id = $userId;
+		$notificationLogSave->data_payload = json_encode($data);
+		$notificationLogSave->notification_type = $notification_type;
+		$notificationLogSave->notification_title = $title;
+		$notificationLogSave->notification_description = $msg;
+		$notificationLogSave->notification_date = date("Y-m-d H:i:s");
+		$notificationLogSave->notification_source = $notification_source;
+		$notificationLogSave->message = 'Failed';
+		$notificationLogSave->status = 'No Deliver';
+		$notificationLogSave->save();
+		if($notificationLogSave->save()){
+			return true;
+		}else{
+			return false;
+		}
     }
 
 }

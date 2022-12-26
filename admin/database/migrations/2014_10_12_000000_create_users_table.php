@@ -44,6 +44,9 @@ class CreateUsersTable extends Migration
             $table->enum('login_type',['google','facebook','manual','apple'])->nullable();
             $table->boolean('is_24_format')->default(1);
             $table->enum('is_deleted', ['1', '0'])->default("0");
+            $table->enum('exercise_notify', ['1', '0'])->default("0");
+            $table->time('exercise_start_time')->nullable();
+            $table->time('exercise_end_time')->nullable();
             $table->timestamps();
         });
     }

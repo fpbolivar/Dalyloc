@@ -1,5 +1,6 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'View User Business Timing' }} @endsection
 
 <div class="app-content  my-3 my-md-5">
     <div class="side-app">
@@ -37,8 +38,10 @@
                                     <tr>
                                         <td>{{$loop->iteration}}</td>
                                         <td>{{($key->day)?ucfirst($key->day):'N/A'}}</td>
-                                        <td>@if($key->isClosed == 0) {!! date('H:i A', strtotime($key->open_time)) !!} @else -- @endif </td>
-                                        <td>@if($key->isClosed == 0) {!! date('H:i A', strtotime($key->close_time)) !!} @else -- @endif </td>
+                                        <td>@if($key->isClosed == 0) {!! date('H:i A', strtotime($key->open_time)) !!}
+                                            @else -- @endif </td>
+                                        <td>@if($key->isClosed == 0) {!! date('H:i A', strtotime($key->close_time)) !!}
+                                            @else -- @endif </td>
                                         <td>@if($key->isClosed == 0) Open @else Closed @endif</td>
                                     </tr>
                                     @endforeach
@@ -58,7 +61,7 @@
 
 @section('js')
 <script type="text/javascript">
-$('#usersTable').DataTable({
+    $('#usersTable').DataTable({
     // dom: 'Bfrtip',
     dom: 'frtip',
     // buttons: [{

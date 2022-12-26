@@ -1,5 +1,6 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'View Exercise'}} @endsection
 
 
 <div class="app-content  my-3 my-md-5">

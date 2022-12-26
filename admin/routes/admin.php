@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\PrayerController;
 use App\Http\Controllers\Admin\UserPrayerController;
 use App\Http\Controllers\Admin\PushNotificationController;
 use App\Http\Controllers\Admin\AdminSettingController;
+use App\Http\Controllers\Admin\PayoutController;
 
 use App\Http\Controllers\Admin\IngredientController;
 use App\Http\Controllers\Admin\MealCategoryController;
@@ -28,7 +29,7 @@ use App\Http\Controllers\Admin\SubscriptionPlanController;
 Route::match(['get','post'],'/login',[AdminAuthController::class,'Login']);
 Route::get('logout',[AdminAuthController::class, 'logout']);
 
-
+Route::get('/get-cron-push',[PushNotificationController::class,'PushCron']);
 Route::group(['middleware' => \App\Http\Middleware\RedirectIfNotAdmin::class],function(){
 	Route::group(['namespace'=>'Admin'],function(){
 		Route::get('/dashboard',[DashboardController::class,'Dashboard']);
@@ -80,20 +81,22 @@ Route::group(['middleware' => \App\Http\Middleware\RedirectIfNotAdmin::class],fu
         Route::get('/user-business',[UserBusinessController::class,'Index']);
         Route::get('/business-timing/{id}',[UserBusinessController::class,'BusinessTiming']);
         Route::get('/business-service/{id}',[UserBusinessController::class,'BusinessService']);
+        Route::get('/business-bank/{id}',[UserBusinessController::class,'BusinessBank']);
 
         // workout levels route list 
         Route::get('/workout-level',[WorkoutLevelsController::class,'Index']);
         Route::match(['get','post'],'/add-workout-level',[WorkoutLevelsController::class,'AddWorkoutLevel']);
  
         //admin setting  
-        Route::get('get-setting',[AdminSettingController::class,'Index']);
-        Route::match(['get','post'],'add-commission',[AdminSettingController::class,'AddCommission']);
-        Route::match(['get','post'],'edit-commission/{id}',[AdminSettingController::class,'EditCommission']);
-        Route::get('/destroy-commission/{id}',  [AdminSettingController::class,'BlockCommission']);
+        Route::match(['get','post'],'get-setting',[AdminSettingController::class,'GetSetting']);
+        Route::match(['get','post'],'exercise-terms',[AdminSettingController::class,'ExerciseTerms']);
+        Route::get('get-transactions',[AdminSettingController::class,'GetTransactions']);
+        Route::get('get-appointments',[AdminSettingController::class,'GetAppoinments']);
 
         // exercise  route list 
         Route::get('/exercise',[ExerciseController::class,'Index']);
         Route::match(['get','post'],'/add-exercise',[ExerciseController::class,'AddExercise']);
+        
         
         // workout  route list 
         Route::get('/workout',[WorkoutController::class,'Index']);
@@ -144,6 +147,13 @@ Route::group(['middleware' => \App\Http\Middleware\RedirectIfNotAdmin::class],fu
         Route::get('/push-notification',[PushNotificationController::class,'Index']);
         Route::get('/get-push-notification',[PushNotificationController::class,'GetPushRecorde']);
         Route::match(['get','post'],'/create-notification', [PushNotificationController::class,'CreateNotification']);
+
+        
+        // payout pending  
+        Route::match(['get','post'],'/pending',[PayoutController::class,'PendingPayout']);
+        Route::match(['get','post'],'/history',[PayoutController::class,'HistoryPayout']);
+        Route::get('/pay/{id}',[PayoutController::class,'AdminPayout']);
+
     });
 });
 ?>

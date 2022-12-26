@@ -1,5 +1,15 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'View Active Users' }} @endsection
+<style>
+    .active-status {
+        color: green;
+    }
+
+    .expired {
+        color: red;
+    }
+</style>
 
 <div class="app-content  my-3 my-md-5">
     <div class="side-app">
@@ -25,6 +35,7 @@
                                         <th class="wd-15p">#</th>
                                         <th class="wd-15p">Name</th>
                                         <th class="wd-15p">Email</th>
+                                        <th class="wd-15p">Business Plan</th>
                                         <th class="wd-15p noExport">Action</th>
                                     </tr>
                                 </thead>
@@ -34,6 +45,26 @@
                                         <td>{{$loop->iteration}}</td>
                                         <td>{{($key->name)?$key->name:'N/A'}}</td>
                                         <td>{{($key->email)?$key->email:'N/A'}}</td>
+                                        <td> @if(!empty($key->BusinessPlan) && $key->BusinessPlan->subscription_status
+                                            ==
+                                            'active' )
+                                            <span
+                                                class="active-status">●</span>{{ucfirst($key->BusinessPlan->subscription_status)}}
+                                            @elseif(!empty($key->BusinessPlan) &&
+                                            $key->BusinessPlan->subscription_status ==
+                                            'expired')
+                                            <span class="expired">●</span>
+                                            {{ucfirst($key->BusinessPlan->subscription_status)}}
+
+                                            @elseif(!empty($key->BusinessPlan) &&
+                                            $key->BusinessPlan->subscription_status ==
+                                            'cancel')
+                                            <span class="expired">●</span>
+                                            {{ucfirst($key->BusinessPlan->subscription_status)}}
+                                            @else
+                                            <span class="expired">●</span>No
+                                            @endif
+                                        </td>
                                         <td>
                                             <a title="View User" class="btn bg-blue-custom btn-sm"
                                                 href="{{ url('/admin/user-view/'.$key->id) }}"

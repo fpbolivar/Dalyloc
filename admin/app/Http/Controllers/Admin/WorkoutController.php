@@ -32,6 +32,8 @@ class WorkoutController extends Controller
 
             $this->validate($req, [
                 'workout_name' => 'required',
+                'workout_time' => 'required',
+                'level_id' => 'required',
                 'workout_image' => 'required|mimes:jpeg,png,jpg'
             ]);
 

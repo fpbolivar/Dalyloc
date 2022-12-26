@@ -1,5 +1,6 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'View Prayer Category'}} @endsection
 
 <div class="app-content  my-3 my-md-5">
     <div class="side-app">
@@ -28,7 +29,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                     @foreach($getData as $key)
+                                    @foreach($getData as $key)
                                     <tr>
                                         <td>{{$loop->iteration}}</td>
                                         <td>{{($key->prayer_category_name)?$key->prayer_category_name:'N/A'}}</td>
@@ -49,7 +50,7 @@
                                             @endif
                                         </td>
                                     </tr>
-                                    @endforeach 
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>

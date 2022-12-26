@@ -25,7 +25,7 @@
         <li class="slide">
             <a class="side-menu__item {{ (request()->is('admin/subscription-plan')) ? 'active' : '' }}"
                 href="{{ url('admin/subscription-plan') }}"><i class="side-menu__icon fe fe-clock"></i><span
-                    class="side-menu__label">Subscription Plan</span></a>
+                    class="side-menu__label">Subscription Plans</span></a>
         </li>
 
         <li class="slide ">
@@ -167,7 +167,8 @@
                                          (request()->is('admin/workout')) || 
                                          (request()->is('admin/add-workout'))||
                                          (request()->is('admin/workout-exercise')) ||
-                                         (request()->is('admin/add-workout-exercise'))
+                                         (request()->is('admin/add-workout-exercise')) ||
+                                         (request()->is('admin/exercise-terms'))
                                          
                                           ? 'active' : '' }}" data-toggle="slide" href="#">
                 <i class="side-menu__icon fe fe-compass"></i>
@@ -195,6 +196,10 @@
                     <a class="slide-item {{ (request()->is('admin/workout-exercise')) ||(request()->is('admin/add-workout-exercise')) ? 'active' : '' }}"
                         href="{{ url('admin/workout-exercise') }}">Workout Exercise</a>
                 </li>
+                <li class=" {{ (request()->is('admin/exercise-terms')) }}">
+                    <a class="slide-item {{ (request()->is('admin/exercise-terms')) ? 'active' : '' }}"
+                        href="{{ url('admin/exercise-terms') }}">Exercise Terms</a>
+                </li>
             </ul>
         </li>
 
@@ -205,7 +210,7 @@
 
 
 
-        <li class="slide ">
+        <li class="slide {{(request()->is('admin/add-prayer-category'))  ? 'is-expanded' : ''}} ">
             <a class=" side-menu__item {{ (request()->is('admin/prayer')) || (request()->is('admin/user-prayer')) ? 'active'
             : '' }}" data-toggle="slide" href="#">
                 <i class="side-menu__icon fe fe-award"></i>
@@ -220,7 +225,8 @@
                     <a class="slide-item {{ (request()->is('admin/prayer')) ? 'active' : '' }}"
                         href="{{ url('admin/prayer') }}">Admin Prayer</a>
                 </li>
-                <li class=" {{ (request()->is('admin/user-prayer')) ? 'active' : '' }}">
+                <li
+                    class=" {{ (request()->is('admin/user-prayer'))||(request()->is('admin/add-prayer-category')) ? 'active' : '' }}">
                     <a class="slide-item {{ (request()->is('admin/user-prayer'))  ? 'active' : '' }}"
                         href="{{ url('admin/user-prayer') }}">User Prayer</a>
                 </li>
@@ -245,7 +251,7 @@
                 </li>
                 <li class=" {{ (request()->is('admin/get-push-notification')) ? 'active' : '' }}">
                     <a class="slide-item {{ (request()->is('admin/get-push-notification'))  ? 'active' : '' }}"
-                        href="{{ url('admin/get-push-notification') }}">Notification Log</a>
+                        href="{{ url('admin/get-push-notification') }}">Notification Logs</a>
                 </li>
 
             </ul>
@@ -257,7 +263,7 @@
             ? 'active'
             : '' }}" data-toggle="slide" href="#">
                 <i class="side-menu__icon fe fe-book"></i>
-                <span class="side-menu__label">Booking</span>
+                <span class="side-menu__label">Appointments</span>
                 <i class="angle fa fa-angle-right"></i></a>
             <ul class="slide-menu">
                 {{-- <li
@@ -270,41 +276,42 @@
                     <a class="slide-item {{ (request()->is('admin/get-setting'))   || (request()->is('admin/add-commission'))  ? 'active' : '' }}"
                         href="{{ url('admin/get-setting') }}">Admin Commission </a>
                 </li>
+                <li
+                    class=" {{ (request()->is('admin/get-appointments')) || (request()->is('admin/add-commission')) ? 'active' : '' }}">
+                    <a class="slide-item {{ (request()->is('admin/get-appointments'))   || (request()->is('admin/add-commission'))  ? 'active' : '' }}"
+                        href="{{ url('admin/get-appointments') }}">Appoinments </a>
+                </li>
+                <li
+                    class=" {{ (request()->is('admin/get-transactions')) || (request()->is('admin/add-commission')) ? 'active' : '' }}">
+                    <a class="slide-item {{ (request()->is('admin/get-transactions'))   || (request()->is('admin/add-commission'))  ? 'active' : '' }}"
+                        href="{{ url('admin/get-transactions') }}">Appoinment Transactions </a>
+                </li>
 
             </ul>
         </li>
 
 
 
+        <li class="slide ">
+            <a class="side-menu__item {{ (request()->is('admin/pending')) || (request()->is('admin/block-user')) ? 'active' : '' }}"
+                data-toggle="slide" href="#">
+                <i class="side-menu__icon  fe fe-layers"></i>
+                <span class="side-menu__label">Payouts</span>
+                <i class="angle fa fa-angle-right"></i></a>
+            <ul class="slide-menu">
+                <li class=" {{ (request()->is('admin/pending'))  ? 'active' : '' }}">
+                    <a class="slide-item {{ (request()->is('admin/pending')) ? 'active' : '' }}"
+                        href="{{ url('admin/pending') }}">Payouts Pending </a>
+                </li>
+                <li class=" {{ (request()->is('admin/history')) ? 'active' : '' }}">
+                    <a class="slide-item {{ (request()->is('admin/history')) }}"
+                        href="{{ url('admin/history') }}">Payouts History
+                    </a>
+                </li>
 
 
-
-
-
-
-
-        {{-- <li class="slide">
-            <a class="side-menu__item {{ (request()->is('admin/prayer')) ? 'active' : '' }}"
-        href="{{ url('admin/prayer') }}"><i class="side-menu__icon fe fe-award"></i><span
-            class="side-menu__label">Prayer</span></a>
+            </ul>
         </li>
-
-        <li class="slide">
-            <a class="side-menu__item {{ (request()->is('admin/user-prayer')) ? 'active' : '' }}"
-                href="{{ url('admin/user-prayer') }}"><i class="side-menu__icon fe fe-award"></i><span
-                    class="side-menu__label">User Prayer</span></a>
-        </li> --}}
-
-        {{-- <li class="slide">
-            <a class="side-menu__item {{ (request()->is('admin/push-notification')) ? 'active' : '' }}"
-        href="{{ url('admin/push-notification') }}"><i class="side-menu__icon fe fe-bell"></i><span
-            class="side-menu__label">Push Notification</span></a>
-        </li>
-        <li class="slide">
-            <a class="side-menu__item {{ (request()->is('admin/get-push-notification')) ? 'active' : '' }}"
-                href="{{ url('admin/get-push-notification') }}"><i class="side-menu__icon fe fe-bell"></i><span
-                    class="side-menu__label"> Notification Log</span></a>
-        </li> --}}
 
     </ul>
 </aside>

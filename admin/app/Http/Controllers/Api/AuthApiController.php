@@ -8,6 +8,10 @@ use Validator,Hash;
 use App\Models\User;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Helper\CustomHelper;
+use Stripe\Exception\CardException;
+use Stripe\StripeClient;
+use Stripe\Stripe;
+use App\Models\Model\UserBusiness;
 
 class AuthApiController extends Controller
 {
@@ -107,6 +111,47 @@ class AuthApiController extends Controller
                 'status' => false,
                 'status_code' => true,
                 'message' => 'Invalid OTP.'
+            ]);
+        }
+    }
+    
+    public function GetOtpForGoogle(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'phone_no' => 'required'        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' => $validator->messages()->first()
+            ]);
+        }
+        
+        $user = User::where('phone_no',$request->phone_no)->first();
+        if($user){
+          return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' => 'Phone Number Is Already Existed.'
+            ]);   
+        }
+        $user = User::whereid(auth()->user()->id)->first();
+        $otp =  random_int(100000, 999999);
+         $user->otp = $otp;
+        // save user
+        if ($user->save()) {
+            return response()->json([
+                'status' => true,
+                'status_code' => true,
+                'otp' => $otp,
+                'user_id' => $user->id
+                // 'message' =>'User register successfully.'
+            ]);
+        }else{
+            return response()->json([
+                'status' => false,
+                'status_code' => false,
+                'message' => 'Something Went Wrong.'
             ]);
         }
     }
@@ -220,6 +265,68 @@ class AuthApiController extends Controller
         // invalidate auth token
         JWTAuth::invalidate();
         return response()->json(['message' => 'Successfully Logged Out.','status' => true]);
+    }
+    
+    public function DeleteAccount(Request $request){
+         $user = User::whereid(auth()->user()->id)->first();
+         if($user->stripe_customer_id != null){
+                $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET_KEY'));
+                $stripe->customers->delete(
+                  $user->stripe_customer_id,
+                  []
+                );
+         }
+         $user->stripe_customer_id = 'deleted';
+         $user->name = 'deleted';
+         $user->wake_up = 'deleted';
+         $user->date_of_birth = 'deleted';
+         $user->gender = 'deleted';
+         $user->height = 'deleted';
+         $user->weight = 'deleted';
+         $user->email = 'deleted_'.$user->id.'@deleted.com';
+         $user->phone_no = 'deleted';
+         $user->country_code = 'deleted';
+         $user->profile_image = 'deleted';
+         $user->google_id = 'deleted';
+         $user->facebook_id = 'deleted';
+         $user->password = 'deleted';
+         $user->device_id = 'deleted';
+         $user->device_token = 'deleted';
+         $user->prayer_notify = 'deleted';
+         $user->prayer_daily_count = 'deleted';
+         $user->prayer_start_time = 'deleted';
+         $user->prayer_end_time = 'deleted';
+         $user->old_token = 'deleted';
+         $user->otp = 'deleted';
+         $user->is_24_format = 'deleted';
+         $user->device_type = 'deleted';
+         $user->login_type = 'deleted';
+         $user->is_deleted = 'deleted';
+         if($user->save()){
+                     $allBusiness = UserBusiness::where('user_id',auth()->user()->id)->get();
+                         if(count($allBusiness) != 0){
+                             foreach($allBusiness as $key){
+                             $key->is_deleted = '1';
+                             $key->save();
+                            }
+                     }
+                // invalidate auth token
+                JWTAuth::invalidate();
+                 return response()->json([
+                    'status' => true,
+                    'status_code' => true,
+                    'message' => 'Account Has Been Deleted Successfully.',
+
+                ]);
+         }else{
+                return response()->json([
+                    'status' => false,
+                    'status_code' => true,
+                    'message' => 'Something Went Wrong.',
+
+                ]);
+         }
+
     }
 
 }

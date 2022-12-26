@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Model\UserPrayer;
 use App\Models\Model\Prayer;
+use App\Models\Model\CreateTask;
 use App\Models\Model\PrayerCategory;
 use App\Models\User;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -31,21 +32,40 @@ class ApiPrayerController extends Controller
                 'message' =>$error[0]
             ]);
         }
-        
+        // get catergory name 
         $cate = PrayerCategory::where('id',$request->category_id)->where('is_deleted','0')->first();
+        
         if($cate){
             $createPrayer = new UserPrayer;
             $createPrayer->user_id = auth()->user()->id;
             $createPrayer->category_id = $request->category_id;
-            $createPrayer->prayer_title = $cate->prayer_category_name;
+            $createPrayer->prayer_title = $cate->prayer_category_name; // prayer title category name 
             $createPrayer->prayer_note = $request->prayer_note;
+
+            // add new user prayer
             if($createPrayer->save()){
+                //get  user latest prayer  
+                $getPrayers = UserPrayer::with('UserName')->where('user_id',auth()->user()->id)->where('is_deleted','0')->latest()->first();
+              
+                // create task 
+                $addTask = new  CreateTask;
+                $addTask->t_id =$request->time_stamp?$request->time_stamp:"" ;  //timestamp milliseconds
+                $addTask->task_name = $createPrayer->prayer_title; 
+                $addTask->user_id = auth()->user()->id; 
+                $addTask->task_time_stamp = $request->time_stamp?$request->time_stamp:"" ;   //timestamp milliseconds
+                $addTask->create_time_stamp =$request->time_stamp?$request->time_stamp:"" ;  //timestamp milliseconds
+                $addTask->note = $createPrayer->prayer_note;                                    // prayer note 
+                $addTask->task_type = "prayer"; 
+                $addTask->date_format = $request->current_date?$request->current_date:"" ; 
+                $addTask->start_task_time = $getPrayers->UserName->prayer_start_time;
+                $addTask->end_task_time =$getPrayers->UserName->prayer_end_time;
+                // add prayer task 
+                $addTask->save();
                 return response()->json([
                     'status' => true,
                     'status_code' => true,
                     'data' =>$createPrayer,
                     'message' => 'User Prayer Added Successfully.'
-
                 ]);
             }else{
                 return response()->json([
@@ -129,6 +149,7 @@ class ApiPrayerController extends Controller
             ]);
         }
     }
+    
     /**
      * prayer setting  
      */
@@ -148,7 +169,9 @@ class ApiPrayerController extends Controller
             if($req->prayer_end_time != null){
                 $user->prayer_end_time = $req->prayer_end_time;
             }
+           // update prayer  setting 
             if($user->save()){
+               
                 return response()->json([
                     'status' => true,
                     'status_code' => true,
@@ -164,6 +187,10 @@ class ApiPrayerController extends Controller
         }
 
     }
+
+    /**
+     * get prayer setting
+     */
     public function GetPrayeSetting(){
         $getDetail = User::where('id',auth()->user()->id)->first();
         if($getDetail){
@@ -180,16 +207,26 @@ class ApiPrayerController extends Controller
     }
 
 
+    /**
+     * get prayer categories
+     */
     public function GetPrayerCategory(Request $req){
 
-       $getCategory = PrayerCategory::orderBy('prayer_category_name')->get();
+        $pendingPrayers = UserPrayer::where('user_id',auth()->user()->id)->where('prayer_status','pending')->get();
+        $getCategory = PrayerCategory::orderBy('prayer_category_name')->get();
+
+        if(count($pendingPrayers) !=0){
+            $pendingPrayer = $pendingPrayers->toArray();
+            $ids = array_column($pendingPrayer,'category_id');
+           $getCategory = PrayerCategory::whereNotIn('id', $ids)->orderBy('prayer_category_name')->get();
+        }
        if($getCategory){
-        return response()->json([
-            'status' => true,
-            'status_code' => true,
-            'data' => $getCategory,
-        ]);
-    }
+            return response()->json([
+                'status' => true,
+                'status_code' => true,
+                'data' => $getCategory,
+            ]);
+        }
     }
 
 }

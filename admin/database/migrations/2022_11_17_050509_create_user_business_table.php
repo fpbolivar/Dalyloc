@@ -23,6 +23,7 @@ class CreateUserBusinessTable extends Migration
             $table->enum('online_booking',['0','1'])->default(1);
             $table->bigInteger('is_acceptance')->default(1);
             $table->enum('is_active_payment',['0','1'])->default(1);
+            $table->enum('is_deleted',['0','1'])->default(0);
             $table->string('business_address')->nullable();
             $table->double('lat',15,8)->nullable();
             $table->double('lng',15,8)->nullable();

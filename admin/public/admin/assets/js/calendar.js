@@ -47,6 +47,7 @@ $(function(e) {
 		date: new Date(),
 		viewMode: 'YMD',
 		onDateChange: function(e){
+			console.log(this.getValue(),"event",this.getText());
 			$('#date-text2').text(this.getText());
 			$('#date-text-ymd2').text(this.getText('yyyy-MM-dd'));
 			$('#date-value2').text(this.getValue());

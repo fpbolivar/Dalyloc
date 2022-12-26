@@ -7,7 +7,7 @@
 4. In .env file please update the values for the relevant variables / services mentioned including the database configuration details.
 5. Open the cmd in the project location and run command ```composer install``` (Note: If there will be any error then use command = composer update) .
 6. After the composer installation, run another command ```php artisan migrate``` for the database migration.
-7. When database migrated successfully, hit again a command ```php artisan db:seed``` for getting admin login details.
+7. When database migrated successfully, hit again a command ```php artisan db:seed``` for getting admin login details, Admin Prayer, Subscription Plans, Subscription Sub/Types Plans and Admin Commission.
 8. Now all configuration setup done, to run the project on the local browser, run command ```php artisan serve```.
 
 ## ADMIN LOGIN DETAILS
@@ -129,6 +129,8 @@ when we hit this cmd it create and add this key automatically in env file.
     -   Workout Exercise
         -   List of Workout Exercises
         -   Add a new Workout Exercise
+    -  Exercise Terms
+        -   Update/View Terms
 -   Devotional
     -   Prayer Category
         -   View Prayer Category
@@ -147,6 +149,13 @@ when we hit this cmd it create and add this key automatically in env file.
        -   Create a new Notification
     -  Notification Log
        -   List of sent Notifications  
+-   Booking
+    -  Admin Commission(View/Update)
+    -  View all Business Appoinment
+    -  View Appoinment Transactions
+-   Payouts
+    -  View Pending Payouts
+    -  View Payouts History
 
 
 ## COMMIT DETAILS

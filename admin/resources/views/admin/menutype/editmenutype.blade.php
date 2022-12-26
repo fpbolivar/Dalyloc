@@ -1,5 +1,6 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'Add Meal Type'}} @endsection
 <style>
 .dropify-clear {
     display: none !important;

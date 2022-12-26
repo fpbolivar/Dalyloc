@@ -31,8 +31,8 @@ class ExerciseController extends Controller
             $this->validate($req, [
                 'exercise_name' => 'required',
                 'exercise_time' => 'required',
-                'exercise_video' => 'mimetypes:video/mp4',
-                'exercise_image' => 'mimes:jpeg,png,jpg',
+                'exercise_video' => 'required|mimetypes:video/mp4',
+                'exercise_image' => 'required|mimes:jpeg,png,jpg',
               
             ]);
             // add  new exercise

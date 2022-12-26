@@ -1,5 +1,6 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'Edit Workout Levels' }} @endsection
 
 <div class="app-content  my-3 my-md-5">
     <div class="side-app">
@@ -24,14 +25,14 @@
                         @include('admin.layouts.message')
                         <div class="row">
                             <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Name</label>
-                                        <input type="text" class="form-control" placeholder="Enter Allergies name" name="allergies_name"
-                                            value="{{$getAllergy->name}}">
-                                        @error("name")
-                                        <span class="help-block  text text-danger">{{$message}}</span>
-                                        @enderror
-                                    </div>
+                                <div class="form-group">
+                                    <label class="form-label">Name</label>
+                                    <input type="text" class="form-control" placeholder="Enter Allergies name"
+                                        name="allergies_name" value="{{$getAllergy->name}}">
+                                    @error("name")
+                                    <span class="help-block  text text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="body">
@@ -60,7 +61,7 @@
 @endsection
 @section('js')
 <script type="text/javascript">
-$('.dropify-event').dropify();
+    $('.dropify-event').dropify();
 
 $('.dropify-clear').click(function(e) {
                 e.preventDefault();

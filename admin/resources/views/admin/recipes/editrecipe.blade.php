@@ -1,5 +1,6 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'Edit Recipe' }} @endsection
 
 <style>
     .chosen-container {
@@ -31,9 +32,10 @@
         appearance: none;
         margin: 0;
     }
-.dropify-clear {
-    display: none !important;
-}
+
+    .dropify-clear {
+        display: none !important;
+    }
 </style>
 
 <div class="app-content  my-3 my-md-5">

@@ -20,6 +20,7 @@ class CreateCreateTasksTable extends Migration
             $table->string('task_name')->nullable();
             $table->string('utc_date_time')->nullable();
             $table->bigInteger('user_id');
+            $table->integer('business_appt_id')->nullable();
             $table->bigInteger('task_time_stamp')->nullable();
             $table->bigInteger('create_time_stamp')->nullable();
             $table->enum('how_long',['1m','15m','30m','45m','1h','1.5h'])->nullable();

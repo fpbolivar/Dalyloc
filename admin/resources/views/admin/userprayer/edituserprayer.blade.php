@@ -1,5 +1,6 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'User Prayer Response' }} @endsection
 
 <div class="app-content  my-3 my-md-5">
     <div class="side-app">
@@ -26,7 +27,7 @@
                             <div class="col-md-12">
                                 <div class="body">
                                     <label class="form-label" style="font-weight:bold">Title</label>
-                                    <p style="font-size:16px">{{ucfirst($getPrayer->prayer_note)}}</p>
+                                    <p style="font-size:16px">{{ucfirst($getPrayer->prayer_title)}}</p>
                                 </div>
                             </div>
                             <div class="col-md-12">

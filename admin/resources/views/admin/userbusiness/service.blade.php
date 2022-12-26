@@ -1,5 +1,7 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'View User Business Services' }} @endsection
+
 
 <div class="app-content  my-3 my-md-5">
     <div class="side-app">
@@ -59,7 +61,7 @@
 
 @section('js')
 <script type="text/javascript">
-$('#usersTable').DataTable({
+    $('#usersTable').DataTable({
     // dom: 'Bfrtip',
     dom: 'frtip',
     // buttons: [{

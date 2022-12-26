@@ -689,7 +689,7 @@ class BusinessApiController extends Controller
                  'status' => true,
                  'status_code' => true,
                  'data' =>$updateDeposit,
-             ]);
+                ]);
            }else{
               return response()->json([
                   'status' => false,
@@ -698,9 +698,16 @@ class BusinessApiController extends Controller
               ]);
            }
            
+        }else{
+
+            return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'error' =>'error'
+            ]);
         }
       
-     }
+    }
 
 
     //get user business service detail

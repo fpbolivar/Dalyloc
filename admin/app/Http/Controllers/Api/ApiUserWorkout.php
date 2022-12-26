@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Model\WorkoutLevel;
 use App\Models\Model\Workout;
 use App\Models\Model\Exercise;
+use App\Models\User;
 use App\Models\Model\UserWorkout;
+use App\Models\Model\AdminSetting;
 use Validator;
 
 class ApiUserWorkout extends Controller
@@ -21,6 +23,56 @@ class ApiUserWorkout extends Controller
         ]);
     }
 
+    //GetExericeTermConditions
+    public function GetExericeTermConditions(){
+        $terms = AdminSetting::where('id',2)->first();
+        if($terms){
+             return response()->json([
+                'status' => true,
+                'status_code' => true,
+                'data' => $terms,
+            ]);
+        }
+         return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'data' => 'No Data Found.',
+            ]);
+    }
+    //AcceptExericeTermConditions
+    public function AcceptExericeTermConditions(Request $request){
+        // validate
+    	$validator = Validator::make($request->all(),[
+            'is_accepted' => 'required',
+        ]);
+         // if validation fails
+    	  if ($validator->fails()) {
+            $error = $validator->messages()->all();
+            return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' =>$error[0]
+            ]);
+        }
+        $user = User::where('id',auth()->user()->id)->first();
+        if($user){
+            $user->is_exercise_terms = $request->is_accepted;
+            if($user->save()){
+                return response()->json([
+                'status' => true,
+                'status_code' => true,
+                'message' =>'Accepted Susscessfully.',
+                 'is_exercise_terms' => $user['is_exercise_terms']
+            ]);  
+            }else{
+                  return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' =>'Something Went Wrong.'
+            ]);
+            }
+        }
+    }
     public function GetWorkoutByWorkoutLevelId(Request $request){
         // validate
     	 $validator = Validator::make($request->all(),[
@@ -114,6 +166,23 @@ class ApiUserWorkout extends Controller
                 'message' =>$error[0]
             ]);
         }
+                $checkPendingWorkout = UserWorkout::where('workout_id',$request->workout_id)->where('workout_status','pending')->where('user_id',auth()->user()->id)->first();
+                if($checkPendingWorkout){
+                      return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' => 'Workout Is Already Added.'
+            ]);
+                }
+
+        $checkPendingWorkout = UserWorkout::where('workout_id',$request->workout_id)->where('workout_status','pending')->where('user_id',auth()->user()->id)->first();
+        if($checkPendingWorkout){
+              return response()->json([
+        'status' => false,
+        'status_code' => true,
+        'message' => 'Workout Is Already Added.'
+        ]);
+        }
 
         $createUserWorkout = new UserWorkout;
         $createUserWorkout->user_id = auth()->user()->id;
@@ -152,7 +221,7 @@ class ApiUserWorkout extends Controller
                 'message' =>$error[0]
             ]);
         }
-        $userPendingWorkout = UserWorkout::where('id',$request->workout_id)->where('workout_status','pending')->where('user_id',auth()->user()->id)->first();
+        $userPendingWorkout = UserWorkout::where('workout_id',$request->workout_id)->where('workout_status','pending')->where('user_id',auth()->user()->id)->first();
         if($userPendingWorkout != null){
             $userPendingWorkout->workout_status = 'completed';
             if($userPendingWorkout->save()){
@@ -175,6 +244,48 @@ class ApiUserWorkout extends Controller
                 'status' => false,
                 'status_code' => true,
                 'message' =>'Data Not Found.'
+            ]);
+        }
+    }
+    
+     public function ExerciseSetting(Request $req){
+        $user = User::where("id",auth()->user()->id)->first();
+        if( $user != null){
+            if($req->exercise_notify != null){
+                $user->exercise_notify = $req->exercise_notify;
+            }
+            if($req->exercise_start_time != null){
+                $user->exercise_start_time = $req->exercise_start_time;
+
+            }
+            if($req->exercise_end_time != null){
+                $user->exercise_end_time = $req->exercise_end_time;
+            }
+           // update prayer  setting 
+            if($user->save()){
+               
+                return response()->json([
+                    'status' => true,
+                    'status_code' => true,
+                    'data' => $user,
+                ]);
+            }else{
+                return response()->json([
+                    'status' => false,
+                    'status_code' => true,
+                    'message' =>'data not found.'
+                ]);
+            }
+        }
+
+    }
+       public function GetExerciseSetting(){
+        $getDetail = User::where('id',auth()->user()->id)->first();
+        if($getDetail){
+            return response()->json([
+                'status' => true,
+                'status_code' => true,
+                'data' => $getDetail,
             ]);
         }
     }

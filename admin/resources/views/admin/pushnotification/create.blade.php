@@ -1,16 +1,18 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'Add Notification'}} @endsection
+
 <style type="text/css">
-.select2-selection--multiple .select2-selection__rendered {
-    height: 100px !important;
-    overflow-y: auto !important;
-}
+    .select2-selection--multiple .select2-selection__rendered {
+        height: 100px !important;
+        overflow-y: auto !important;
+    }
 </style>
 
 <div class="app-content  my-3 my-md-5">
     <div class="side-app">
         <div class="page-header">
-            <h6 class="page-title">Push Notification</h6>
+            <h6 class="page-title">Add Notification</h6>
         </div>
         <!--Page-Header-->
         <div class="row ">
@@ -115,7 +117,7 @@
 <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
 <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 <script>
-$('#scheduledatetimepicker').datetimepicker({
+    $('#scheduledatetimepicker').datetimepicker({
     uiLibrary: 'bootstrap4',
     modal: true,
     footer: true,
@@ -124,7 +126,7 @@ $('#scheduledatetimepicker').datetimepicker({
 </script>
 
 <script type="text/javascript">
-$('#is_sent').change(function() {
+    $('#is_sent').change(function() {
     var is_sent = this.value;
     if (is_sent == 1) {
         $('#ScheduleDateTime').show();
@@ -138,7 +140,7 @@ $('#is_sent').change(function() {
 });
 </script>
 <script type="text/javascript">
-$("#validateNotification").validate({
+    $("#validateNotification").validate({
     errorClass: "text-danger",
     //validClass: "text-success",
     rules: {

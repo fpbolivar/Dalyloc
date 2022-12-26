@@ -7,6 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Model\CreateTask;
 use App\Models\Model\CreateSubtask;
 use Validator;
+use App\Models\Model\UserWorkout;
+use App\Models\Model\UserAppointment;
+
 class CreateTaskController extends Controller
 {
     public function CreateTask(Request $request){
@@ -201,13 +204,57 @@ class CreateTaskController extends Controller
         $userId = auth()->user()->id;
         $date = $request->dateString;
         $allTask = CreateTask::with('SubTaks')->where('user_id',$userId)->where('date_format',$date)->get();
+        $allPendingWorkouts = UserWorkout::with('UserWorkout')->where('user_id',$userId)->where('workout_status','pending')->get();
+        foreach($allPendingWorkouts as $key){
+            foreach($key->UserWorkout as $name){
+                $key['task_name'] = $name->workout_name;
+            }
+        }
         // $allSubTask = CreateSubtask::where('user_id',$userId)->where('date_format',$date)->get();
             return response()->json([
                 'status' => true,
                 'status_code' => true,
                 'allTask' => $allTask,
+                'allPendingWorkouts' => $allPendingWorkouts
             ]);
 
+    }
+
+    public function GetApptDeatilCreateTask(Request $request){
+        //validate
+    	 $validator = Validator::make($request->all(),[
+            'task_type' => 'required',
+            'appt_id' => 'required'
+        ]);
+         // if validation fails
+    	  if ($validator->fails()) {
+            $error = $validator->messages()->all();
+            return response()->json([
+                'status' => false,
+                'status_code' => true,
+                'message' =>$error[0]
+            ]);
+        }
+
+        $businessApptDetail = UserAppointment::where('id',$request->appt_id)->first();
+        if($businessApptDetail){
+            if($request->task_type = "user_appointment"){
+                $businessApptDetail['detail_about'] = 'user_appointment';
+            }else if($request->task_type = "business_appointment"){
+                $businessApptDetail['detail_about'] = 'business_appointment';
+            }
+            return response()->json([
+                'status' => true,
+                'status_code' => true,
+                'data' => $businessApptDetail,
+            ]);
+        }else{
+            return response()->json([
+                'status' => true,
+                'status_code' => true,
+                'data' => 'No Data Found.',
+            ]);
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'Edit Business Category'}} @endsection
 
 <div class="app-content  my-3 my-md-5">
     {{--@php echo $category->name; exit;@endphp --}}
@@ -7,7 +8,8 @@
         <div class="page-header">
             <h6 class="page-title">Edit Business Category</h6>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{env('BACK_URL').'business-category'}}"> <i class="fa fa-arrow-left "></i>
+                <li class="breadcrumb-item"><a href="{{env('BACK_URL').'business-category'}}"> <i
+                            class="fa fa-arrow-left "></i>
                         Go
                         Back</a></li>
             </ol>
@@ -25,14 +27,14 @@
                         @include('admin.layouts.message')
                         <div class="row">
                             <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Name</label>
-                                        <input type="text" class="form-control" placeholder="Enter business category name" name="business_category_name"
-                                            value="{{$editBusiness->business_category_name}}">
-                                        @error("business_category_name")
-                                        <span class="help-block  text text-danger">{{$message}}</span>
-                                        @enderror
-                                    </div>
+                                <div class="form-group">
+                                    <label class="form-label">Name</label>
+                                    <input type="text" class="form-control" placeholder="Enter business category name"
+                                        name="business_category_name" value="{{$editBusiness->business_category_name}}">
+                                    @error("business_category_name")
+                                    <span class="help-block  text text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="body">
@@ -61,7 +63,7 @@
 @endsection
 @section('js')
 <script type="text/javascript">
-$('.dropify-event').dropify();
+    $('.dropify-event').dropify();
 
 $('.dropify-clear').click(function(e) {
                 e.preventDefault();

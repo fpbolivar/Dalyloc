@@ -16,20 +16,22 @@ class Kernel extends ConsoleKernel
 
     protected $commands = [
         Commands\SendSchedulePushNotificationCron::class,
-        Commands\PrayerCorn::class,
-        Commands\UserMealCorn::class,
+        Commands\PrayerCron::class,
+        Commands\UserMealCron::class,
+        Commands\BusinessBankStatusCron::class,
+        Commands\TesCron::class,
     ];
 
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('SendSchedule:PushNotification')->cron('*/10 * * * *')->withoutOverlapping();
+        $schedule->command('SendSchedule:PushNotification')->withoutOverlapping();
         $schedule->command('WeeklyWorkout:ThisWeek')->cron('01 0 * * *')->withoutOverlapping();
         $schedule->command('devotional:prayer')->withoutOverlapping();
         $schedule->command('user:meal')->withoutOverlapping();
+        $schedule->command('bank:status')->cron('*/30 * * * *')->withoutOverlapping();
+        $schedule->command('test:log')->withoutOverlapping();
         
-        // $schedule->command('inspire')->hourly();
     }
-
     /**
      * Register the commands for the application.
      *

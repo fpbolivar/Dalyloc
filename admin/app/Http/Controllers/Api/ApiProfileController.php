@@ -116,7 +116,13 @@ class ApiProfileController extends Controller
             $user->gender = $request->gender;
         }
         $user->name = $request->name;
-        $user->email = $request->email;
+         if($request->has('email')){
+            $user->email = $request->email;
+        }
+          if($request->has('country_code')){
+            $user->country_code = $request->country_code;
+        }
+        
         if($request->has('phone_no')){
             if($user->phone_no == $request->phone_no){
                 return response()->json([

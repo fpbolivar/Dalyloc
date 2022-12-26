@@ -1,5 +1,6 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'Add Workout Levels' }} @endsection
 
 <div class="app-content  my-3 my-md-5">
     <div class="side-app">
@@ -41,9 +42,7 @@
                                         <label class="form-label">Workout Description</label>
                                         <textarea rows="8" class="form-control" cols="8"
                                             name="workout_description"></textarea>
-                                        @error("workout_description")
-                                        <span class="help-block  text text-danger">{{$message}}</span>
-                                        @enderror
+
                                     </div>
                                 </div>
                             </div>

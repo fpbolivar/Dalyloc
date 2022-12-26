@@ -19,7 +19,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Poppins" rel="stylesheet">
 
         <!-- Title -->
-        <title>Daly Doc - Dashboard</title>
+        <title>Daly Doc - @yield('title')</title>
 
         <!-- Bootstrap css -->
         <link href="{{asset('admin/assets/plugins/bootstrap-4.3.1/css/bootstrap.min.css')}}" rel="stylesheet" />

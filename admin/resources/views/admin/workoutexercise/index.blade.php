@@ -1,5 +1,6 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'View Workout Exercise' }} @endsection
 
 <div class="app-content  my-3 my-md-5">
     <div class="side-app">
@@ -12,9 +13,9 @@
             <div class="col-md-12 col-lg-12">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">View Workout Exercise  </div>
-                        <div class="ml-auto"><a href="{{ url('/admin/add-workout-exercise') }}" title="Add Workout Exercise"
-                                data-toggle="tooltip" class="btn bg-blue-custom">Add</a>
+                        <div class="card-title">View Workout Exercise </div>
+                        <div class="ml-auto"><a href="{{ url('/admin/add-workout-exercise') }}"
+                                title="Add Workout Exercise" data-toggle="tooltip" class="btn bg-blue-custom">Add</a>
                         </div>
                     </div>
                     <div class="card-body">
@@ -25,7 +26,7 @@
                                         <th class="wd-15p">#</th>
                                         <th class="wd-15p">Workout </th>
                                         <th class="wd-15p">Exercise </th>
-                                      
+
                                         <!-- <th class="wd-15p">Action</th> -->
                                     </tr>
                                 </thead>
@@ -35,7 +36,7 @@
                                         <td>{{$loop->iteration}}</td>
                                         <td>{{($key->workout)?$key->workout->workout_name:'N/A'}}</td>
                                         <td>{{($key->name)?$key->name:'N/A'}}</td>
-                                       
+
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -54,7 +55,7 @@
 
 @section('js')
 <script type="text/javascript">
-$('#usersTable').DataTable({
+    $('#usersTable').DataTable({
     // dom: 'Bfrtip',
     dom: 'frtip',
     // buttons: [{

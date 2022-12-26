@@ -1,5 +1,7 @@
 @extends('admin.layouts.main')
 @section('contents')
+
+@section('title') {{'Recipe Detail' }} @endsection
 <style type="text/css">
     .custom-switch {
         padding-left: unset !important;

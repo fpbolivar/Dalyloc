@@ -1,10 +1,11 @@
 @extends('admin.layouts.main')
 @section('contents')
+@section('title') {{'Push Notification Recorde' }} @endsection
 
 <div class="app-content  my-3 my-md-5">
     <div class="side-app">
         <div class="page-header">
-            <h6 class="page-title">Push Notifications Recorde</h6>
+            <h6 class="page-title">Notification Log</h6>
         </div>
         @include('admin.layouts.message')
         <!--Page-Header-->
@@ -12,11 +13,7 @@
             <div class="col-md-12 col-lg-12">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">View Push Notifications Recorde</div>
-                        {{-- <div class="ml-auto"><a href="{{ url('/admin/create-notification') }}"
-                                title="Create Push Notification" data-toggle="tooltip" class="btn bg-blue-custom">+Push
-                                Notification</a>
-                        </div> --}}
+                        <div class="card-title">Notification Log</div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">

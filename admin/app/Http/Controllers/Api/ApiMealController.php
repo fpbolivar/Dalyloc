@@ -372,7 +372,6 @@ class ApiMealController extends Controller
                 'status_code' => true,
                 'data' =>$allAllergies
             ]);
-
         }
 
            //return all dislike if type dislike

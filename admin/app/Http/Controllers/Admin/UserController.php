@@ -12,7 +12,7 @@ class UserController extends Controller
 {
     public function Index(Request $request)
     {    
-        $allUsers =  User::where(['is_deleted'=>'0'])->get();
+        $allUsers =  User::with('BusinessPlan')->where(['is_deleted'=>'0'])->get();
        return view('admin.users.index',compact('allUsers'));
     }
     
@@ -32,7 +32,6 @@ class UserController extends Controller
 
     public function UserView($id){
         $user = User::with('UserSubscription')->find($id);
-        //dd($user);
         return view('admin.users.detail',compact('user'));
 
     }

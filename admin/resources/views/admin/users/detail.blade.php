@@ -1,15 +1,17 @@
 {{-- @dd($getUser->toArray()) --}}
 @extends('admin.layouts.main')
 @section('contents')
-<style type="text/css">
-.custom-switch {
-    padding-left: unset !important;
-}
+@section('title') {{'User Detail' }} @endsection
 
-.text-muted {
-    color: black !important;
-    font-weight: 800;
-}
+<style type="text/css">
+    .custom-switch {
+        padding-left: unset !important;
+    }
+
+    .text-muted {
+        color: black !important;
+        font-weight: 800;
+    }
 </style>
 <div class="app-content  my-3 my-md-5">
     <div class="side-app">
@@ -48,7 +50,8 @@
                                         {{($user->phone_no)?$user->phone_no:'N/A'}}
                                     </td>
                                     <td>
-                                        {{($user->phone_verified_at)?date('m-d-Y H:i:s',strtotime($user->phone_verified_at)):'N/A'}}
+                                        {{($user->phone_verified_at)?date('m-d-Y
+                                        H:i:s',strtotime($user->phone_verified_at)):'N/A'}}
                                     </td>
                                     <td>
                                         {{($user->device_type)?$user->device_type:'N/A'}}
@@ -56,7 +59,7 @@
                                     <td>
                                         {{($user->login_type)?ucfirst($user->login_type):'N/A'}}
                                     </td>
-                                   
+
                                 </tr>
                             </table>
                             <hr>
@@ -129,7 +132,8 @@
                                 <td>{{($key->plan_type)?ucfirst($key->plan_type):'N/A'}}</td>
                                 <td>{{($key->subscription_type)?ucfirst($key->subscription_type):'N/A'}}</td>
                                 <td>${{($key->amount)?$key->amount:'N/A'}}</td>
-                                <td>@if($key->subscription_type == 'apple_pay'){{$key->apple_subscription_id}}@else{{$key->subscription_id}}@endif</td>
+                                <td>@if($key->subscription_type ==
+                                    'apple_pay'){{$key->apple_subscription_id}}@else{{$key->subscription_id}}@endif</td>
                                 <td>{{($key->start_date)?date('m-d-Y', strtotime($key->start_date)):'N/A'}}</td>
                                 <td>{{($key->end_date)?date('m-d-Y', strtotime($key->end_date)):'N/A'}}</td>
                                 <td>{{($key->cancel_date)?date('m-d-Y',strtotime($key->cancel_date)):'N/A'}}</td>
@@ -150,7 +154,7 @@
 
 @section('js')
 <script type="text/javascript">
-$('#usersTable').DataTable({
+    $('#usersTable').DataTable({
     // dom: 'Bfrtip',
     dom: 'frtip',
     // buttons: [{

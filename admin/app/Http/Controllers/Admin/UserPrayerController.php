@@ -58,6 +58,8 @@ class UserPrayerController extends Controller
                     $notification_source = 'dashboard'; 
                     if (!empty($deviceToken)) {
                         $helper->SendNotification($deviceToken,$title,$msg,$userId,$notification_type,$notification_source);
+                    }else{
+                        $status = $helper->addNotificationRecord($userId,$notification_type,$title,$msg,$notification_source);
                     }
                 }
                 return redirect('admin/edit-response/'.$id)->with('success', 'Prayer response sent successfully.');
